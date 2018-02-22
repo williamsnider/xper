@@ -21,7 +21,7 @@ public class PngObjectSpec {
 
 	static {
 		s = new XStream();
-		s.alias("StimSpec", PngObjectSpec.class);
+		s.alias("PngObjectSpec", PngObjectSpec.class);
 	}
 
 	public String toXml() {

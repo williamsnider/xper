@@ -41,10 +41,10 @@ public class PngDbUtil extends DbUtil {
 		return l;
 	}
 	
-	public void writeStimObjData(long id, String javaspec, String mstickspec, String blenderspec, String data) {
+	public void writeStimObjData(long id, String descId, String javaspec, String mstickspec, String blenderspec, String dataspec) {
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		jt.update("insert into StimObjData (id, javaspec, mstickspec, blenderspec dataspec) values (?, ?, ?)", 
-				new Object[] { id, javaspec, mstickspec, blenderspec, data });
+		jt.update("insert into StimObjData (id, descId, javaspec, mstickspec, blenderspec, dataspec) values (?, ?, ?, ?, ?, ?)", 
+				new Object[] { id, descId,  javaspec, mstickspec, blenderspec, dataspec });
 	}
 	
 	public void updateStimObjData(long id, String data) {

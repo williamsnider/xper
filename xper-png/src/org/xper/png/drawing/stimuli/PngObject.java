@@ -25,6 +25,7 @@ public class PngObject implements Drawable {
 		if (pngSpec.doStickGen) {
 			stick = new MatchStick();
 			stick.genMatchStickRand();
+			stickSpec = new MStickSpec();
 			stickSpec.setMStickInfo(stick);
 		} else if (pngSpec.doStickMorph) {
 			stick = new MatchStick();

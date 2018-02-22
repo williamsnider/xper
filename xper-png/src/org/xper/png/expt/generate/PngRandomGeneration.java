@@ -82,7 +82,7 @@ public class PngRandomGeneration {
 			if (c==0) {
 				genNum = 1;
 				runNum = runNum + 1;
-				prefix = "getPrefix";
+				prefix = "getPrefix"; // TODO: get a proper prefix
 				createFirstGen();
 			} else {
 				runNum = c;

@@ -59,7 +59,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setLineage(lineage);
 		
 		// create stimObjId and add it to this and PngStimDataEntry, then write them to the DB
-		dbUtil.writeStimObjData(stimObjId, s.toXml(), "", "", d.toXml());
+		dbUtil.writeStimObjData(stimObjId,descId, s.toXml(), "", "", d.toXml());
 		
 		return stimObjId;
 	}
@@ -99,7 +99,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setLineage(lineage);
 		
 		// create stimObjId and add it to this and PngStimDataEntry, then write them to the DB
-		dbUtil.writeStimObjData(stimObjId, jspec.toXml(), stickspec.toXml(), "", d.toXml());
+		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec.toXml(), "", d.toXml());
 		
 		return stimObjId;
 	}
@@ -144,7 +144,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setLineage(lineage);
 		
 		// create stimObjId and add it to this and PngStimDataEntry, then write them to the DB
-		dbUtil.writeStimObjData(stimObjId, jspec.toXml(), stickspec.toXml(), parent_blenderSpec, d.toXml());
+		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec.toXml(), parent_blenderSpec, d.toXml());
 		
 		return stimObjId;
 	}
