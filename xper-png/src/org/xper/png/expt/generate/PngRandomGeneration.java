@@ -42,32 +42,24 @@ public class PngRandomGeneration {
 	@Dependency
 	int taskCount;
 	
-
-	// ---- global variables:
-	boolean realExp = true;							// controls output to file of expt info
-	boolean saveThumbnails = true;								// do you want to save stim thumbnails?
+	boolean doSaveThumbnails = true;
+	boolean useFakeSpikes = true;
 	
-	PNGmaker pngMaker;									// set of methods for creating and saving thumbnails
+	PNGmaker pngMaker;
 	
 	String prefix = "";
 	long runNum = 1;
 	long genNum = 1;
 	
-	static public enum TrialType { GA };				// trial types
+	static public enum TrialType { GA };
 	TrialType trialType;
-	
-	int GA_numTrials;
-	
+		
 	public void generateGA() {	
-				
-		System.out.println("Generating GA run... ");
 		trialType = TrialType.GA;
 		generator.setTrialType(trialType);
-				
-		saveThumbnails = true;
 		
-		GA_numTrials = dbUtil.readReadyGenerationInfo().getTaskCount();
-
+		doSaveThumbnails = true;
+		
 		writeExptStart();
 		
 		genNum = getGenNum();
@@ -106,7 +98,6 @@ public class PngRandomGeneration {
 	}
 	
 	void createFirstGen() {
-		
 		// -- create stimuli
 		List<Long> blankStimObjIds = new ArrayList<Long>();
 		List<Long> stimObjIds = new ArrayList<Long>();	// track stimObjIds for all stimuli created
@@ -126,7 +117,7 @@ public class PngRandomGeneration {
 		}
 		
 		// create PNG thumbnails (not for blanks)
-		if (saveThumbnails) {
+		if (doSaveThumbnails) {
 			System.out.println("Saving PNGs.");
 			pngMaker.MakeFromIds(stimObjIds);
 		}
@@ -141,7 +132,7 @@ public class PngRandomGeneration {
 		createGATrialsFromStimObjs(stimObjIds);
 		
 		// write updated global genId and number of trials in this generation to db:
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, GA_numTrials);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, PngGAParams.GA_numTasks);
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -208,7 +199,7 @@ public class PngRandomGeneration {
 		
 		// TODO: BLENDER CALL
 	
-		if (saveThumbnails) {
+		if (doSaveThumbnails) {
 			System.out.println("Saving PNGs.");
 			pngMaker.MakeFromIds(stimObjIds);
 		}
@@ -221,7 +212,7 @@ public class PngRandomGeneration {
 		createGATrialsFromStimObjs(stimObjIds);
 
 		// write updated global genId and number of trials in this generation to db:
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, GA_numTrials);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, PngGAParams.GA_numTasks);
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -247,7 +238,7 @@ public class PngRandomGeneration {
 		long taskId;
 		int stimCounter = 0;
 
-		for (int n=0;n<GA_numTrials;n++) {
+		for (int n=0;n<PngGAParams.GA_numTasks;n++) {
 			taskId = globalTimeUtil.currentTimeMicros();
 
 			// create trialspec using sublist and taskId
@@ -258,7 +249,7 @@ public class PngRandomGeneration {
 
 			if(n==0)
 				writeExptFirstTrial(taskId);
-			else if(n==GA_numTrials-1)
+			else if(n==PngGAParams.GA_numTasks-1)
 				writeExptLastTrial(taskId);
 			
 			// save spec and tasktodo to db
@@ -312,6 +303,12 @@ public class PngRandomGeneration {
 			// get spike data for all trials:
 			SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> spikeEntry;
 			spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
+			
+			if (useFakeSpikes) {
+				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum);
+			} else {
+				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
+			}
 			
 			// for each trial done in a generation:
 				// get blank FRs:
