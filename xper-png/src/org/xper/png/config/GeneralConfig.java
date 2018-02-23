@@ -20,6 +20,7 @@ import org.xper.classic.SlideEventLogger;
 import org.xper.classic.SlideTrialExperiment;
 import org.xper.classic.TrialDrawingController;
 import org.xper.classic.TrialEventListener;
+import org.xper.classic.TrialEventLogger;
 import org.xper.classic.TrialExperimentConsoleRenderer;
 import org.xper.classic.TrialExperimentMessageDispatcher;
 import org.xper.classic.TrialExperimentMessageHandler;
@@ -198,7 +199,7 @@ public class GeneralConfig {
 	public List<TrialEventListener> trialEventListeners () {
 		List<TrialEventListener> trialEventListener = new LinkedList<TrialEventListener>();
 		trialEventListener.add(classicConfig.eyeMonitorController());
-		trialEventListener.add((TrialEventListener) trialEventLogger());
+		trialEventListener.add(trialEventLogger());
 		trialEventListener.add(classicConfig.experimentProfiler());
 		trialEventListener.add(messageDispatcher());
 		trialEventListener.add(classicConfig.juiceController());
@@ -209,8 +210,8 @@ public class GeneralConfig {
 	}
 	
 	@Bean
-	public SlideEventLogger trialEventLogger() {
-		SlideEventLogger logger = new SlideEventLogger();
+	public TrialEventLogger trialEventLogger() {
+		TrialEventLogger logger = new TrialEventLogger();
 		return logger;
 	}
 	
