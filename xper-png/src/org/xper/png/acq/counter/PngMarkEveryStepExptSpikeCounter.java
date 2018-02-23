@@ -19,8 +19,8 @@ public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpi
 	@Dependency
 	PngDbUtil dbUtil;
 		
-	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpikeByGeneration(long genId) {
-		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByGeneration(genId);
+	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpikeByGeneration(String prefix, long runNum, long genNum) {
+		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum);
 		return getFakeTaskSpike(taskDone.getDoneTasks());
 	}
 	
