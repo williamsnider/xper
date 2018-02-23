@@ -68,34 +68,35 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
 
-		PngObjectSpec s = new PngObjectSpec();
+		PngObjectSpec jspec = new PngObjectSpec();
 		DataObject d = new DataObject();
 		
 		String descId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + stimNum;
 		
-		s.setId(stimObjId);
-		s.setDescId(descId);
-		s.setGaPrefix(prefix);
-		s.setGaRunNum(runNum);
+		jspec.setId(stimObjId);
+		jspec.setDescId(descId);
+		jspec.setGaPrefix(prefix);
+		jspec.setGaRunNum(runNum);
 		
-		PngObjectSpec jspec = new PngObjectSpec();
-		MStickSpec stickspec = new MStickSpec();
+		String stickspec_str = "";
 		
 		if (Math.random() > PngGAParams.GA_randgen_prob_objvsenvt) {
-			s.setStimType(StimType.OBJECT.toString());
-			s.setDoStickGen(true);
+			jspec.setStimType(StimType.OBJECT.toString());
+			jspec.setDoStickGen(true);
 			
 			PngObject object = new PngObject();
-			object.setSpec_java(s);
+			object.setSpec_java(jspec);
 			jspec = object.getSpec_java();
-			stickspec = object.getSpec_stick();
+			MStickSpec stickspec = object.getSpec_stick();
+			stickspec_str = stickspec.toXml();
 			
 			String vertSpec = object.getStick().getSmoothObj().getVertAsStr();
 			String faceSpec = object.getStick().getSmoothObj().getFaceAsStr();
 			
 			dbUtil.writeVertSpec(stimObjId,descId,vertSpec,faceSpec);
-		} else
-			s.setStimType(StimType.ENVT.toString());
+		} else 
+			jspec.setStimType(StimType.ENVT.toString());
+
 		
 		// -- set data values
 		d.setStimObjId(stimObjId);
@@ -104,7 +105,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setBirthGen(gen);
 		d.setLineage(lineage);
 		
-		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec.toXml(), "", d.toXml());
+		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec_str, "", d.toXml());
 		
 		return stimObjId;
 	}

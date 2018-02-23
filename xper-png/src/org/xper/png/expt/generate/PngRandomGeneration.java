@@ -115,25 +115,29 @@ public class PngRandomGeneration {
 		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
 			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));	
 		}
+		System.out.println("Blank stimuli added.");
 				
 		// make random stims:		
 		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
 			for (int k=0;k<PngGAParams.GA_numNonBlankStimsPerLin;k++) {
 				stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, n, k));
+				System.out.println("Lineage " + n + ": Generating and saving stimulus " + k);
 			}
 		}
 		
 		// create PNG thumbnails (not for blanks)
 		if (saveThumbnails) {
+			System.out.println("Saving PNGs.");
 			pngMaker.MakeFromIds(stimObjIds);
 		}
 		
-		// DO BLENDER CALL
+		// TODO: BLENDER CALL
 		
 		// now add blanks
 		stimObjIds.addAll(blankStimObjIds);
 		
 		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for this generation.");
 		createGATrialsFromStimObjs(stimObjIds);
 		
 		// write updated global genId and number of trials in this generation to db:
@@ -152,17 +156,17 @@ public class PngRandomGeneration {
 		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
 			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));
 		}
+		System.out.println("Blank stimuli added.");
 		
 		// make random stims:		
 		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
 			for (int k=0;k<PngGAParams.GA_morph_numNewStimPerLin;k++) {
 				stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, n, k));
+				System.out.println("Lineage " + n + ": Generating and saving random stimulus " + k);
 			}
 		}
 		
-		// make offspring stims:
-		// create stimulus/FR structure, sort by FR, randomly choose parents from FR quintiles
-		// create morphed offspring from parents
+		System.out.println("Calculating fitness and selecting parents.");
 		int numDecendantObjs = PngGAParams.GA_numNonBlankStimsPerLin-PngGAParams.GA_morph_numNewStimPerLin;
 		
 		// for each non-blank stimulus shown previously, find lineage and avgFR, then add to appropriate list:
@@ -197,19 +201,23 @@ public class PngRandomGeneration {
 		// create morphed stimuli:
 		for (int n=0;n<numDecendantObjs;n++) {
 			stimObjIds.add(generator.generateMorphStim(prefix, runNum, genNum, 0,stimsToMorph_lin1.get(n),n));
+			System.out.println("Lineage 0: Generating and saving random stimulus " + n);
 			stimObjIds.add(generator.generateMorphStim(prefix, runNum, genNum, 1,stimsToMorph_lin2.get(n),n));
+			System.out.println("Lineage 1: Generating and saving random stimulus " + n);
 		}
 		
-		// DO BLENDER CALL
+		// TODO: BLENDER CALL
 	
 		if (saveThumbnails) {
-//			pngMaker.MakeFromIds(stimObjIds);
+			System.out.println("Saving PNGs.");
+			pngMaker.MakeFromIds(stimObjIds);
 		}
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
 		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for this generation.");
 		createGATrialsFromStimObjs(stimObjIds);
 
 		// write updated global genId and number of trials in this generation to db:

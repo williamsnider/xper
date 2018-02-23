@@ -17,6 +17,7 @@ import org.xper.drawing.Drawable;
 import org.xper.png.drawing.stick.MStickSpec;
 import org.xper.png.drawing.stimuli.PngObject;
 import org.xper.png.drawing.stimuli.PngObjectSpec;
+import org.xper.png.expt.PngExptSpecGenerator.StimType;
 import org.xper.png.util.PngDbUtil;
 
 public class PNGmaker {
@@ -27,6 +28,8 @@ public class PNGmaker {
 	
 	PngDbUtil dbUtil;
 	
+	List<Long> stimObjIds;
+	
 	public PNGmaker() {}
 	
 	public PNGmaker(PngDbUtil dbUtil) {
@@ -34,21 +37,25 @@ public class PNGmaker {
 	}
 	
 	public void MakeFromIds(List<Long> stimObjIds) {
+		this.stimObjIds = stimObjIds;
 		List<Drawable> objs = spec2obj(id2spec(stimObjIds));
-		createAndSavePNGsfromObjs(objs,stimObjIds);
+		createAndSavePNGsfromObjs(objs,this.stimObjIds);
 	}
 	
 	private Map<MStickSpec, PngObjectSpec> id2spec(List<Long> stimObjIds) {
 		Map<MStickSpec, PngObjectSpec> specs = new HashMap<MStickSpec, PngObjectSpec>();
+		List<Long> ids = new ArrayList<Long>();
 		
 		for (Long id : stimObjIds) {
-			String jspec_str = dbUtil.readStimSpec_java(id).getSpec();
-			String stickspec_str = dbUtil.readStimSpec_stick(id).getSpec();
-			MStickSpec stickspec = MStickSpec.fromXml(stickspec_str);
-			PngObjectSpec jspec = PngObjectSpec.fromXml(jspec_str);
-			jspec.setDoStickGen(false);
-			specs.put(stickspec, jspec);
+			PngObjectSpec jspec = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(id).getSpec());
+			if (StimType.valueOf(jspec.getStimType()) == StimType.OBJECT) {
+				MStickSpec stickspec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(id).getSpec());
+				jspec.setDoStickGen(false); jspec.setDoBlenderMorph(false); jspec.setDoStickMorph(false);
+				specs.put(stickspec, jspec);
+				ids.add(id);
+			}
 		}
+		this.stimObjIds = ids;
 		return specs;
 	}
 	
@@ -73,14 +80,12 @@ public class PNGmaker {
 		testWindow.setBackgroundColor(0.3f,0.3f,0.3f);
 		testWindow.setPngMaker(this);
 		testWindow.setImageFolderName(imageFolderName);
-		System.out.println("creating and saving PNGs...");
 
 		testWindow.setStimObjs(objs);
 		testWindow.setStimObjIds(stimObjIds);
 		
 		testWindow.drawStimuli();
 		testWindow.close();
-		System.out.println("...done saving PNGs");
 	}
 	
 	public void saveImage_db(long stimObjId, int height, int width) {
