@@ -14,7 +14,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 public class MatchStick {
-    final double scaleForMAxisShape = 12;
+    final double scaleForMAxisShape = 30;
     
     private double[] finalRotation;
     private Point3d finalShiftinDepth;
@@ -796,6 +796,7 @@ public class MatchStick {
     			comp[i].drawSurfPt(colorCode[i-1],scaleForMAxisShape);
             }
         else
+        	init();
         	obj1.drawVect();
     }
 
@@ -4057,33 +4058,31 @@ public class MatchStick {
     }
     
     public void setTextureType(String tt) {
-    	textureType = tt;
+		textureType = tt;
     }
-    
     public MStickObj4Smooth getSmoothObj() {
-    	return obj1;
+    		return obj1;
     }
-    
     public int getNComponent() {
-    	return nComponent;
+    		return nComponent;
     }
     public int getNEndPt() {
-    	return nEndPt;
+    		return nEndPt;
     }
     public int getNJuncPt() {
-    	return nJuncPt;
+    		return nJuncPt;
     }
     public EndPt_struct getEndPtStruct(int i) {
-    	return endPt[i];
+    		return endPt[i];
     }
     public JuncPt_struct getJuncPtStruct(int i) {
-    	return JuncPt[i];
+    		return JuncPt[i];
     }
     public TubeComp getTubeComp(int i) {
-    	return comp[i];
+    		return comp[i];
     }
     public double getFinalRotation(int i) {
-    	return finalRotation[i];
+    		return finalRotation[i];
     }
 }
 

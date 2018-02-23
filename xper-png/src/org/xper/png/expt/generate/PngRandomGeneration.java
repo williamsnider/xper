@@ -1,8 +1,11 @@
 package org.xper.png.expt.generate;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +85,9 @@ public class PngRandomGeneration {
 			if (c==0) {
 				genNum = 1;
 				runNum = runNum + 1;
-				prefix = "getPrefix"; // TODO: get a proper prefix
+				DateFormat df = new SimpleDateFormat("yyMMdd");
+				prefix = df.format(new Date()); 
+				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum);
 				createFirstGen();
 			} else {
 				runNum = c;
@@ -118,12 +123,12 @@ public class PngRandomGeneration {
 			}
 		}
 		
-		// DO BLENDER CALL
-
 		// create PNG thumbnails (not for blanks)
 		if (saveThumbnails) {
-//			pngMaker.MakeFromIds(stimObjIds);
+			pngMaker.MakeFromIds(stimObjIds);
 		}
+		
+		// DO BLENDER CALL
 		
 		// now add blanks
 		stimObjIds.addAll(blankStimObjIds);
@@ -138,8 +143,6 @@ public class PngRandomGeneration {
 		getSpikeResponses();
 		
 	}
-	
-	
 	
 	void createNextGen() {		
 		List<Long> blankStimObjIds = new ArrayList<Long>();		
@@ -180,9 +183,6 @@ public class PngRandomGeneration {
 				stimObjId2avgFR_lin2.put(stimObjId, data.getAvgFR());
 			}
 		}
-		
-
-		// TODO: write a parent selection class that chooses decendants
 		
 		// choose stims top morph:
 			// which fitness method? 	1 = using fixed probabilities by FR quintile

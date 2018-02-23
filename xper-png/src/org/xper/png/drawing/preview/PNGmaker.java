@@ -6,16 +6,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jzy3d.plot3d.rendering.image.GLImage;
 import org.lwjgl.opengl.GL11;
 import org.xper.drawing.Drawable;
+import org.xper.png.drawing.stick.MStickSpec;
+import org.xper.png.drawing.stimuli.PngObject;
+import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.util.PngDbUtil;
 
 public class PNGmaker {
 	int height = 600;
 	int width = 600;
+	
+	String imageFolderName = "";
 	
 	PngDbUtil dbUtil;
 	
@@ -24,8 +32,43 @@ public class PNGmaker {
 	public PNGmaker(PngDbUtil dbUtil) {
 		this.dbUtil = dbUtil;
 	}
+	
+	public void MakeFromIds(List<Long> stimObjIds) {
+		List<Drawable> objs = spec2obj(id2spec(stimObjIds));
+		createAndSavePNGsfromObjs(objs,stimObjIds);
+	}
+	
+	private Map<MStickSpec, PngObjectSpec> id2spec(List<Long> stimObjIds) {
+		Map<MStickSpec, PngObjectSpec> specs = new HashMap<MStickSpec, PngObjectSpec>();
+		
+		for (Long id : stimObjIds) {
+			String jspec_str = dbUtil.readStimSpec_java(id).getSpec();
+			String stickspec_str = dbUtil.readStimSpec_stick(id).getSpec();
+			MStickSpec stickspec = MStickSpec.fromXml(stickspec_str);
+			PngObjectSpec jspec = PngObjectSpec.fromXml(jspec_str);
+			jspec.setDoStickGen(false);
+			specs.put(stickspec, jspec);
+		}
+		return specs;
+	}
+	
+	private List<Drawable> spec2obj(Map<MStickSpec, PngObjectSpec> specs) {
+		List<Drawable> objs = new ArrayList<Drawable>();
+		
+		for (Map.Entry<MStickSpec, PngObjectSpec> entry : specs.entrySet()) {
+			MStickSpec stickspec = entry.getKey();
+			PngObjectSpec jspec = entry.getValue();
+			PngObject obj = new PngObject();
+			obj.setSpec_stick(stickspec);
+			obj.setSpec_java(jspec);
+			
+			objs.add(obj);
+		}
+		
+		return objs;
+	}
 
-	public void createAndSavePNGsfromObjs(List<Drawable> objs,List<Long> stimObjIds,String imageFolderName) {
+	public void createAndSavePNGsfromObjs(List<Drawable> objs,List<Long> stimObjIds) {
 		DrawingManager testWindow = new DrawingManager(height,width);
 		testWindow.setBackgroundColor(0.3f,0.3f,0.3f);
 		testWindow.setPngMaker(this);
@@ -40,7 +83,13 @@ public class PNGmaker {
 		System.out.println("...done saving PNGs");
 	}
 	
-	public void saveImage(long stimObjId, int height, int width,String imageFolderName) {
+	public void saveImage_db(long stimObjId, int height, int width) {
+		byte[] data = screenShotBinary(width,height);  
+		
+		dbUtil.writeThumbnail(stimObjId,data);		
+	}
+	
+	public void saveImage_file(long stimObjId, int height, int width,String imageFolderName) {
 		byte[] data = screenShotBinary(width,height);  
 
 		try {
@@ -94,6 +143,10 @@ public class PNGmaker {
 	public static ByteBuffer allocBytes(int howmany) {
 		final int SIZE_BYTE = 4;
 		return ByteBuffer.allocateDirect(howmany * SIZE_BYTE).order(ByteOrder.nativeOrder());
+	}
+	
+	public void setImageFolderName(String imageFolderName) {
+		this.imageFolderName = imageFolderName;
 	}
 	
 }

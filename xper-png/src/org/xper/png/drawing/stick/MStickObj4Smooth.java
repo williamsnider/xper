@@ -1032,7 +1032,22 @@ public class MStickObj4Smooth {
         return box;
     }
     
-    
+    public String getVertAsStr() {
+		String str = new String();
+		
+		for(int i=1; i<=nVect; i++) {
+			str = str + vect_info[i].x + "," + vect_info[i].y + "," + vect_info[i].z + "\n";
+		}
+		return str;
+	}
+	
+	public String getFaceAsStr() {
+		String str = new String();
+		for(int i=0; i<nFac; i++) {
+			str = str + facInfo[i][0] + "," + facInfo[i][1] + "," + facInfo[i][2] + "\n";
+		}
+		return str;
+	}
     
     /**
      *   This function is actually not in use

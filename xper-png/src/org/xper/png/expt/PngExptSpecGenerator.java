@@ -71,25 +71,31 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		PngObjectSpec s = new PngObjectSpec();
 		DataObject d = new DataObject();
 		
-		// -- set spec values
-		
 		String descId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + stimNum;
 		
 		s.setId(stimObjId);
 		s.setDescId(descId);
-		if (Math.random() > PngGAParams.GA_randgen_prob_objvsenvt)
-			s.setStimType(StimType.OBJECT.toString());
-		else
-			s.setStimType(StimType.ENVT.toString());
-		
 		s.setGaPrefix(prefix);
 		s.setGaRunNum(runNum);
-		s.setDoStickGen(true);
 		
-		PngObject object = new PngObject();
-		object.setSpec_java(s);
-		PngObjectSpec jspec = object.getSpec_java();
-		MStickSpec stickspec = object.getSpec_stick();
+		PngObjectSpec jspec = new PngObjectSpec();
+		MStickSpec stickspec = new MStickSpec();
+		
+		if (Math.random() > PngGAParams.GA_randgen_prob_objvsenvt) {
+			s.setStimType(StimType.OBJECT.toString());
+			s.setDoStickGen(true);
+			
+			PngObject object = new PngObject();
+			object.setSpec_java(s);
+			jspec = object.getSpec_java();
+			stickspec = object.getSpec_stick();
+			
+			String vertSpec = object.getStick().getSmoothObj().getVertAsStr();
+			String faceSpec = object.getStick().getSmoothObj().getFaceAsStr();
+			
+			dbUtil.writeVertSpec(stimObjId,descId,vertSpec,faceSpec);
+		} else
+			s.setStimType(StimType.ENVT.toString());
 		
 		// -- set data values
 		d.setStimObjId(stimObjId);
@@ -98,7 +104,6 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setBirthGen(gen);
 		d.setLineage(lineage);
 		
-		// create stimObjId and add it to this and PngStimDataEntry, then write them to the DB
 		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec.toXml(), "", d.toXml());
 		
 		return stimObjId;
@@ -143,7 +148,6 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setBirthGen(gen);
 		d.setLineage(lineage);
 		
-		// create stimObjId and add it to this and PngStimDataEntry, then write them to the DB
 		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec.toXml(), parent_blenderSpec, d.toXml());
 		
 		return stimObjId;

@@ -22,18 +22,16 @@ public class PngObject implements Drawable {
 	
 	
 	void finalizeObject() {
+		stick = new MatchStick();
 		if (pngSpec.doStickGen) {
-			stick = new MatchStick();
 			stick.genMatchStickRand();
 			stickSpec = new MStickSpec();
 			stickSpec.setMStickInfo(stick);
 		} else if (pngSpec.doStickMorph) {
-			stick = new MatchStick();
 			stick.genMatchStickFromShapeSpec(stickSpec);
 			stick.mutate(0);
 			stickSpec.setMStickInfo(stick);
-		} else if (pngSpec.doBlenderMorph) {
-			stick = new MatchStick();
+		} else { // if (pngSpec.doBlenderMorph) {
 			stick.genMatchStickFromShapeSpec(stickSpec);
 		}
 	}
@@ -68,6 +66,10 @@ public class PngObject implements Drawable {
 	}
 	public void setSpec_stick(MStickSpec spec) {
 		this.stickSpec = spec;
+	}
+	
+	public MatchStick getStick() {
+		return stick;
 	}
 
 

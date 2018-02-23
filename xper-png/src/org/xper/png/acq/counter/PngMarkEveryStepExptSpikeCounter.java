@@ -18,9 +18,7 @@ import org.xper.png.util.PngMathUtil;
 public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpikeCounter {	
 	@Dependency
 	PngDbUtil dbUtil;
-	
-	// added by SHS for fake spikes:
-	
+		
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpikeByGeneration(long genId) {
 		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByGeneration(genId);
 		return getFakeTaskSpike(taskDone.getDoneTasks());

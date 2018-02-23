@@ -150,6 +150,21 @@ public class PngDbUtil extends DbUtil {
 		return new String(cEI.toString() + "_r-" + gaRun + "_g-" + genNum);
 	}
 	
+	public void writeCurrentDescriptivePrefixAndGen(long tstamp, String prefix, long gaRun, long genNum) {
+        JdbcTemplate jt = new JdbcTemplate(dataSource);
+         
+        jt.update("insert into DescriptiveInfo (tstamp, prefix, gaRun, genNum) values (?, ?, ?, ?)", 
+				new Object[] { tstamp, prefix, gaRun, genNum });
+    }
+	
+	public void writeCurrentDescriptivePrefixAndGen(long tstamp, String prefix, long gaRun, long genNum, long firstTrial, long lastTrial) {
+        JdbcTemplate jt = new JdbcTemplate(dataSource);
+         
+        jt.update("insert into DescriptiveInfo (tstamp, prefix, gaRun, genNum, firstTrial, lastTrial) values (?, ?, ?, ?, ?, ?)", 
+				new Object[] { tstamp, prefix, gaRun, genNum, firstTrial, lastTrial });
+    }
+	
+	
 	public void writeDescriptiveFirstTrial(Long id) {
         JdbcTemplate jt = new JdbcTemplate(dataSource);
         long tstamp = jt.queryForLong("SELECT max(tstamp) FROM DescriptiveInfo");
@@ -178,17 +193,12 @@ public class PngDbUtil extends DbUtil {
 				new Object[] { mStickSpec, id });
 	}
 	
-	public void writeVertSpec(long id, String descId, String vertSpec, String faceSpec, String normSpec) {
+	public void writeVertSpec(long id, String descId, String vertSpec, String faceSpec) {
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		jt.update("insert into StimObjData_vert (id, descId, vertSpec, faceSpec, normSpec) values (?, ?, ?, ?, ?)", 
-				new Object[] { id, descId, vertSpec, faceSpec, normSpec});
+		jt.update("insert into StimObjData_vert (id, descId, vertSpec, faceSpec) values (?, ?, ?, ?)", 
+				new Object[] { id, descId, vertSpec, faceSpec});
 	}
 	
-	public void writeVertSpec_update(long id, String vertSpec, String faceSpec, String normSpec) {
-		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		jt.update("update StimObjData_vert set vertSpec=?, faceSpec=?, normSpec=? where id=?", 
-				new Object[] { vertSpec, faceSpec, normSpec, id });
-	}
 	
 	/**
 	 * Get done tasks for the generation.

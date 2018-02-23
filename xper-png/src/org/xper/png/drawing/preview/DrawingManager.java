@@ -72,8 +72,11 @@ public class DrawingManager implements Drawable{
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 			GL11.glClearColor(backgroundColor.getRed(),backgroundColor.getGreen(),backgroundColor.getGreen(),1);
 			renderer.draw(this,context);
-			pngMaker.saveImage(stimObjIds.get(stimCounter),height,width, imageFolderName);
 			window.swapBuffers();
+			
+			if (!imageFolderName.isEmpty())
+				pngMaker.saveImage_file(stimObjIds.get(stimCounter),height,width, imageFolderName);
+			pngMaker.saveImage_db(stimObjIds.get(stimCounter),height,width);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
