@@ -5,6 +5,7 @@ public class MAxisInfo {
 	public int nEndPt;
 	public int nJuncPt;
 	public double[] finalRotation = new double[3];
+	public double[] finalShiftinDepth = new double[3];
 	public EndPt_Info[] EndPt;
 	public JuncPt_Info[] JuncPt;
     public TubeInfo[] Tube;
@@ -33,5 +34,8 @@ public class MAxisInfo {
 		
 		for (int i=0; i<3; i++)
 			finalRotation[i] = inStick.getFinalRotation(i);
+		
+		for (int i=0; i<3; i++)
+			finalShiftinDepth[i] = inStick.getFinalShiftInDepth(i);
 	}
 }

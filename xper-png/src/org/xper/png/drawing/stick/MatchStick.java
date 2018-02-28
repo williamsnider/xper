@@ -28,12 +28,12 @@ public class MatchStick {
     private MStickObj4Smooth obj1;
     private boolean[] LeafBranch = new boolean[10];
 
-    private final double[] PARAM_nCompDist = {0.0 ,0.2, 0.6, 1.0, 0.0, 0.0, 0.0, 0.0};
+    private final double[] PARAM_nCompDist = {0.0 ,0.1, 0.3, 0.4, 0.5, 0.6, 0.8, 1};
 
-    private final double PROB_addToEndorJunc = 1; 	// 60% add to end or junction pt, 40% to the branch
-    private final double PROB_addToEnd_notJunc = 0; // when "addtoEndorJunc", 50% add to end, 50% add to junc
+    private final double PROB_addToEndorJunc = 0.6; 	// 60% add to end or junction pt, 40% to the branch
+    private final double PROB_addToEnd_notJunc = 0.5; // when "addtoEndorJunc", 50% add to end, 50% add to junc
                       								// however, if # of junc Pt == 0, always add to End
-    private final double PROB_addTiptoBranch = 0; 	// when "add new component to the branch is true"
+    private final double PROB_addTiptoBranch = 0.5; 	// when "add new component to the branch is true"
     private final double ChangeRotationVolatileRate = 0;
                       								// the prob. of chg the final rot angle after a GA mutate
     private final double TangentSaveZone = Math.PI / 6.0;
@@ -3553,14 +3553,14 @@ public class MatchStick {
 
         //debug, no rot now
 
-        this.finalShiftinDepth = this.obj1.subCenterOfMass();
+//        this.finalShiftinDepth = this.obj1.subCenterOfMass();
         
 //        this.obj1.rotateMesh(finalRotation);
         this.obj1.scaleTheObj(scaleForMAxisShape);
 
 //        this.finalShiftinDepth = new Point3d();
 //        if ( shiftOriginToSurface) // a boolean
-//            this.finalShiftinDepth = this.obj1.translateVertexOnZ(scaleForMAxisShape);
+            this.finalShiftinDepth = this.obj1.translateVertexOnZ(scaleForMAxisShape);
 
 //        System.out.println("depthshift: " + this.finalShiftinDepth.x + ", " + this.finalShiftinDepth.y + ", " + this.finalShiftinDepth.z);
 
@@ -4083,6 +4083,14 @@ public class MatchStick {
     }
     public double getFinalRotation(int i) {
     		return finalRotation[i];
+    }
+    public double getFinalShiftInDepth(int i) {
+	    	switch(i) {
+		    	case 0: return finalShiftinDepth.x; 
+		    	case 1: return finalShiftinDepth.y;
+		    	case 2: return finalShiftinDepth.z;
+		    	default: return 0;
+	    	}
     }
 }
 
