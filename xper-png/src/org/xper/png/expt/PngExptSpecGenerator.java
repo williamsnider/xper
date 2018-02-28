@@ -1,9 +1,12 @@
 package org.xper.png.expt; 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.xper.Dependency;
 import org.xper.drawing.renderer.AbstractRenderer;
+import org.xper.png.drawing.preview.DrawingManager;
+import org.xper.png.drawing.preview.PNGmaker;
 import org.xper.png.drawing.stick.MStickSpec;
 import org.xper.png.drawing.stimuli.PngObject;
 import org.xper.png.drawing.stimuli.PngObjectSpec;
@@ -83,21 +86,23 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		if (Math.random() > PngGAParams.GA_randgen_prob_objvsenvt) {
 			jspec.setStimType(StimType.OBJECT.toString());
 			jspec.setDoStickGen(true);
-			
 			PngObject object = new PngObject();
-			object.setSpec_java(jspec);
-			jspec = object.getSpec_java();
+			object.setSpec_java(jspec); 
+			object.finalizeObject();
+						
+			jspec.setDoStickGen(false);
 			MStickSpec stickspec = object.getSpec_stick();
+			stickspec.vertex = null;
 			stickspec_str = stickspec.toXml();
-			
+						
 			String vertSpec = object.getStick().getSmoothObj().getVertAsStr();
 			String faceSpec = object.getStick().getSmoothObj().getFaceAsStr();
 			
 			dbUtil.writeVertSpec(stimObjId,descId,vertSpec,faceSpec);
+			
 		} else 
 			jspec.setStimType(StimType.ENVT.toString());
 
-		
 		// -- set data values
 		d.setStimObjId(stimObjId);
 		d.setTrialType(TrialType.GA.toString());
@@ -106,8 +111,30 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setLineage(lineage);
 		
 		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec_str, "", d.toXml());
-		
 		return stimObjId;
+	}
+	
+	void drawTest(PngObject o, long id) {
+		List<PngObject> objs = new ArrayList<PngObject>();
+		objs.add(o);
+		List<Long> stimObjIds = new ArrayList<Long>();
+		stimObjIds.add(id);
+		
+		
+		DrawingManager testWindow = new DrawingManager(600,600);
+		testWindow.setBackgroundColor(0.3f,0.3f,0.3f);
+		testWindow.setStimObjs(objs);
+		testWindow.setStimObjIds(stimObjIds);
+		testWindow.drawStimuli();
+		testWindow.close();
+	}
+	
+	void drawTest(long id) {
+		List<Long> stimObjIds = new ArrayList<Long>();
+		stimObjIds.add(id);
+		PNGmaker testMaker = new PNGmaker(dbUtil);
+		testMaker.MakeFromIds(stimObjIds);
+
 	}
 	
 	public long generateMorphStim(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum) {
@@ -138,7 +165,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		
 		PngObject object = new PngObject();
 		object.setSpec_stick(parent_stickSpec);
-		object.setSpec_java(s);
+		object.setSpec_java(s); object.finalizeObject();
 		PngObjectSpec jspec = object.getSpec_java();
 		MStickSpec stickspec = object.getSpec_stick();
 

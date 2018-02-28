@@ -21,7 +21,7 @@ public class PngObject implements Drawable {
 	}
 	
 	
-	void finalizeObject() {
+	public void finalizeObject() {
 		stick = new MatchStick();
 		if (pngSpec.doStickGen) {
 			stick.genMatchStickRand();
@@ -59,7 +59,6 @@ public class PngObject implements Drawable {
 	}
 	public void setSpec_java(PngObjectSpec spec) {
 		this.pngSpec = spec;
-		finalizeObject();
 	}
 	public MStickSpec getSpec_stick() {
 		return stickSpec;

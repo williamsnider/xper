@@ -43,6 +43,9 @@ public class PngExptScene extends AbstractTaskScene {
 			
 			obj.setSpec_java(pngSpec);
 			obj.setSpec_stick(mstickSpec);
+			obj.getSpec_java().setDoStickGen(false);
+			obj.getSpec_java().setDoStickMorph(false);
+			obj.finalizeObject();
 			
 			objects.add(obj);
 		}
