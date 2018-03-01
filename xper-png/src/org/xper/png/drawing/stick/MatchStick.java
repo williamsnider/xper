@@ -3552,21 +3552,23 @@ public class MatchStick {
         // so this is what we need to do.
 
         //debug, no rot now
-
-//        this.finalShiftinDepth = this.obj1.subCenterOfMass();
         
 //        this.obj1.rotateMesh(finalRotation);
         this.obj1.scaleTheObj(scaleForMAxisShape);
 
+        this.finalShiftinDepth = this.obj1.subCenterOfMass();
+        
 //        this.finalShiftinDepth = new Point3d();
 //        if ( shiftOriginToSurface) // a boolean
-            this.finalShiftinDepth = this.obj1.translateVertexOnZ(scaleForMAxisShape);
+//            this.finalShiftinDepth = this.obj1.translateVertexOnZ(scaleForMAxisShape);
+//          this.finalShiftinDepth = this.obj1.translateVertexOnZ_ram();
 
 //        System.out.println("depthshift: " + this.finalShiftinDepth.x + ", " + this.finalShiftinDepth.y + ", " + this.finalShiftinDepth.z);
 
 
 
         return true;
+        
     }
 
     /**
