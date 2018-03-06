@@ -24,6 +24,7 @@ import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.expt.PngExptSpec;
 import org.xper.png.expt.PngExptSpecGenerator;
 import org.xper.png.parsedata.DataObject;
+import org.xper.png.util.BlenderRunnable;
 import org.xper.png.util.ExpLogMessage;
 import org.xper.png.util.PngDbUtil;
 import org.xper.png.util.PngIOUtil;
@@ -122,7 +123,20 @@ public class PngRandomGeneration {
 			pngMaker.MakeFromIds(stimObjIds);
 		}
 		
-		// TODO: BLENDER CALL
+		/* 
+		 * This python script is called within blender.
+		 * It reads the latest descriptive ID from the DB
+		 * and makes a list of stimuli to create. It then does
+		 * a parallel blenderrender call to save all the blenderspec
+		 * to stimobjdata. Finally, it does a cluster call
+		 * to render png images. When done, it rsyncs all pngs
+		 * to the rig and to ecpc31.
+		 */
+		
+		BlenderRunnable blenderRunner = new BlenderRunnable();
+		String scriptPath = "script/path/goes/here";
+		blenderRunner.setScriptPath(scriptPath);
+		blenderRunner.run();
 		
 		// now add blanks
 		stimObjIds.addAll(blankStimObjIds);
@@ -197,8 +211,20 @@ public class PngRandomGeneration {
 			System.out.println("Lineage 1: Generating and saving random stimulus " + n);
 		}
 		
-		// TODO: BLENDER CALL
-	
+		/* 
+		 * This python script is called within blender.
+		 * It reads the latest descriptive ID from the DB
+		 * and makes a list of stimuli to create. It then does
+		 * a parallel blenderrender call to save all the blenderspec
+		 * to stimobjdata. Finally, it does a cluster call
+		 * to render png images. When done, it rsyncs all pngs
+		 * to the rig and to ecpc31.
+		 */
+		BlenderRunnable blenderRunner = new BlenderRunnable();
+		String scriptPath = "script/path/goes/here";
+		blenderRunner.setScriptPath(scriptPath);
+		blenderRunner.run();
+			
 		if (doSaveThumbnails) {
 			System.out.println("Saving PNGs.");
 			pngMaker.MakeFromIds(stimObjIds);
