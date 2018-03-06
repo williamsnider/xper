@@ -68,6 +68,7 @@ public class PNGmaker {
 			PngObject obj = new PngObject();
 			obj.setSpec_stick(stickspec);
 			obj.setSpec_java(jspec);
+			obj.finalizeObject();
 			
 			objs.add(obj);
 		}
