@@ -28,7 +28,8 @@ public class MatchStick {
     private MStickObj4Smooth obj1;
     private boolean[] LeafBranch = new boolean[10];
 
-    private final double[] PARAM_nCompDist = {0.0 ,0.1, 0.3, 0.4, 0.5, 0.6, 0.8, 1};
+    private final double[] PARAM_nCompDist = {0.0 ,0.1, 0.4, 0.8, 1.0, 1.0, 1.0, 1.0};
+    //private final double[] PARAM_nCompDist = {0.0 ,0.1, 0.3, 0.4, 0.5, 0.6, 0.8, 1};
 
     private final double PROB_addToEndorJunc = 0.6; 	// 60% add to end or junction pt, 40% to the branch
     private final double PROB_addToEnd_notJunc = 0.5; // when "addtoEndorJunc", 50% add to end, 50% add to junc

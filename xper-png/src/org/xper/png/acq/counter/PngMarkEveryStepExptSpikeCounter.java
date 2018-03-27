@@ -13,12 +13,17 @@ import org.xper.db.vo.TaskDoneEntry;
 import org.xper.png.expt.PngExptSpec;
 import org.xper.png.util.PngDbUtil;
 import org.xper.png.util.PngMathUtil;
+//import org.xper.util.DbUtil;
 
 
 public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpikeCounter {	
 	@Dependency
 	PngDbUtil dbUtil;
-		
+	
+	public void setDbUtil(PngDbUtil dbUtil) {
+		this.dbUtil = dbUtil;
+	}
+	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpikeByGeneration(String prefix, long runNum, long genNum) {
 		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum);
 		return getFakeTaskSpike(taskDone.getDoneTasks());

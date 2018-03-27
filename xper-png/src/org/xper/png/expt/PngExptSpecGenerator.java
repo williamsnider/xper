@@ -26,7 +26,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 	@Dependency
 	AbstractRenderer renderer;
 	
-	static public enum StimType { OBJECT, ENVT, COMPOSITE, BLANK };
+	static public enum StimType { OBJECT, ENVT, COMPOSITE, STABILITY, ANIMACY, DENSITY, BLANK };
 
 	TrialType trialType;	
 	long taskId;	
@@ -83,7 +83,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		
 		String stickspec_str = "";
 		
-		if (Math.random() > PngGAParams.GA_randgen_prob_objvsenvt) {
+		if (Math.random() < PngGAParams.GA_randgen_prob_objvsenvt) {
 			jspec.setStimType(StimType.OBJECT.toString());
 			jspec.setDoStickGen(true);
 			PngObject object = new PngObject();
@@ -137,16 +137,16 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 
 	}
 	
-	public long generateMorphStim(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum) {
+	public List<String> generateMorphStim(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum) {
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
 		
 		// PARENT STIM
 		PngObjectSpec parent_pngSpec = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(parentId).getSpec());
-		MStickSpec parent_stickSpec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(parentId).getSpec());
 		String parent_blenderSpec = dbUtil.readStimSpec_blender(parentId).getSpec();
 		
 		String descId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + stimNum;
+		String whichBlenderCall = "NewBSpec";
 		
 		PngObjectSpec s = new PngObjectSpec();
 		DataObject d = new DataObject();
@@ -158,17 +158,42 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		s.setGaPrefix(prefix);
 		s.setGaRunNum(runNum);
 		
-		if (Math.random() > PngGAParams.GA_morph_prob_stick)
-			s.setDoStickMorph(true);
-		else
-			s.setDoBlenderMorph(true);
+		String stickspec_str = "";
+		System.out.println(parent_pngSpec.getStimType());
 		
-		PngObject object = new PngObject();
-		object.setSpec_stick(parent_stickSpec);
-		object.setSpec_java(s); object.finalizeObject();
-		PngObjectSpec jspec = object.getSpec_java();
-		MStickSpec stickspec = object.getSpec_stick();
-
+		if (parent_pngSpec.getStimType().equals("ENVT"))
+			s.setDoBlenderMorph(true);
+			
+		else {
+			
+			if (Math.random() < PngGAParams.GA_morph_prob_stick) {
+				whichBlenderCall = "RestoreBSpec";
+				
+				if (Math.random() < PngGAParams.GA_morph_prob_stick_new)
+					s.setDoStickGen(true);
+				
+				else
+					s.setDoStickMorph(true);
+			}
+			
+			else {
+				s.setDoBlenderMorph(true);
+				whichBlenderCall = "NewBSpec";
+			}
+				
+			MStickSpec parent_stickSpec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(parentId).getSpec());
+			PngObject object = new PngObject();
+			object.setSpec_stick(parent_stickSpec);
+			object.setSpec_java(s); object.finalizeObject();
+			MStickSpec stickspec = object.getSpec_stick();
+			stickspec_str = stickspec.toXml();
+			
+			String vertSpec = object.getStick().getSmoothObj().getVertAsStr();
+			String faceSpec = object.getStick().getSmoothObj().getFaceAsStr();
+			
+			dbUtil.writeVertSpec(stimObjId,descId,vertSpec,faceSpec);
+		}
+		
 		// -- set data values
 		d.setStimObjId(stimObjId);
 		d.setTrialType(TrialType.GA.toString());
@@ -176,11 +201,14 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		d.setBirthGen(gen);
 		d.setLineage(lineage);
 		
-		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec.toXml(), parent_blenderSpec, d.toXml());
+		dbUtil.writeStimObjData(stimObjId, descId, s.toXml(), stickspec_str, parent_blenderSpec, d.toXml());
 		
-		return stimObjId;
+		// create/return an array with stimObjId, whichBlenderCall
+		List<String> returnDetails = new ArrayList <String>();
+		returnDetails.add(Long.toString(stimObjId));
+		returnDetails.add(whichBlenderCall);
+		return returnDetails;
 	}
-	
 	
 	public PngExptSpec generateGATrial(List<Long> stimObjIds, String trialType) {
 		

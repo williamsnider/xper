@@ -1,9 +1,9 @@
 package org.xper.png.expt.generate;
 
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +20,9 @@ import org.xper.exception.NoMoreAcqDataException;
 import org.xper.exception.VariableNotFoundException;
 import org.xper.png.acq.counter.PngMarkEveryStepExptSpikeCounter;
 import org.xper.png.drawing.preview.PNGmaker;
+import org.xper.png.drawing.stimuli.BlenderSpec;
+import org.xper.png.drawing.stimuli.AldenSpec;
+import org.xper.png.drawing.stimuli.EnviroSpec;
 import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.expt.PngExptSpec;
 import org.xper.png.expt.PngExptSpecGenerator;
@@ -86,7 +89,27 @@ public class PngRandomGeneration {
 				runNum = c;
 				genNum = getGenId(runNum) + 1;
 				prefix = getPrefix(runNum);
-				createNextGen();
+				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum);
+				
+				String progressType = PngIOUtil.promptString("To continue GA, enter 'n'. To proceed with post-hoc, enter 'c' (composite), 's' (stability), 'a' (animacy), or 'd' (density)");
+
+				switch (progressType) {
+				case "n":
+					createNextGen();
+					break;
+				case "c":
+					createPHcomposite();
+					break;
+				case "s":
+					createPHstability();
+					break;
+				case "a":
+					createPHanimacy();
+					break;
+				case "d":
+					createPHdensity();
+					break;
+				}
 			}
 				
 			writeExptGenDone();
@@ -133,9 +156,8 @@ public class PngRandomGeneration {
 		 * to the rig and to ecpc31.
 		 */
 		
-		BlenderRunnable blenderRunner = new BlenderRunnable();
-		String scriptPath = "script/path/goes/here";
-		blenderRunner.setScriptPath(scriptPath);
+		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/randomSpec.py");
+//		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py");
 		blenderRunner.run();
 		
 		// now add blanks
@@ -154,7 +176,7 @@ public class PngRandomGeneration {
 	}
 	
 	void createNextGen() {		
-		List<Long> blankStimObjIds = new ArrayList<Long>();		
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
 		List<Long> stimObjIds = new ArrayList<Long>();
 
 		// make blank stims:		
@@ -171,25 +193,53 @@ public class PngRandomGeneration {
 			}
 		}
 		
+		/* 
+		 * This python script is called within blender.
+		 * It reads the latest descriptive ID from the DB
+		 * and makes a list of stimuli to create. It then does
+		 * a parallel blenderrender call to save all the blenderspec
+		 * to stimobjdata. Finally, it does a cluster call
+		 * to render png images. When done, it rsyncs all pngs
+		 * to the rig and to ecpc31.
+		 */
+		
+		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/randomSpec.py",stimObjIds);
+//		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py",stimObjIds);
+		blenderRunner.run();
+		
 		System.out.println("Calculating fitness and selecting parents.");
-		int numDecendantObjs = PngGAParams.GA_numNonBlankStimsPerLin-PngGAParams.GA_morph_numNewStimPerLin;
+		int numDescendantObjs = PngGAParams.GA_numNonBlankStimsPerLin-PngGAParams.GA_morph_numNewStimPerLin;
 		
-		// for each non-blank stimulus shown previously, find lineage and avgFR, then add to appropriate list:
-		Map<Long, Double> stimObjId2avgFR_lin1 = new HashMap<Long, Double>();
-		Map<Long, Double> stimObjId2avgFR_lin2 = new HashMap<Long, Double>();
+		// need fraction descendant objects  from obj and env
 		
-		List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,genNum);
-		
-		DataObject data;
-		long stimObjId;
-		for (int n=0;n<allStimObjIds.size();n++) {
-			stimObjId = allStimObjIds.get(n);
-			data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
-			
-			if (data.getLineage() == 0) {	// first lineage 
-				stimObjId2avgFR_lin1.put(stimObjId, data.getAvgFR());
-			} else {						// second lineage
-				stimObjId2avgFR_lin2.put(stimObjId, data.getAvgFR());
+		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
+		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
+		Map<Long, Double> stimObjId2FRZ_lin2 = new HashMap<Long, Double>();
+
+		for (int gen=1;gen<genNum;gen++) {
+			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
+
+			DataObject data;
+			long stimObjId;
+
+			for (int n=0;n<allStimObjIds.size();n++) {
+
+				stimObjId = allStimObjIds.get(n);
+				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(stimObjId).getSpec());
+
+				if (!pngSpecTemp.getStimType().equals("BLANK")) {
+					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
+
+					if (data.getLineage() == 0) {
+						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
+						stimObjId2FRZ_lin1.put(stimObjId, zScore);
+					}
+					
+					else {
+						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
+						stimObjId2FRZ_lin2.put(stimObjId, zScore);
+					}
+				}
 			}
 		}
 		
@@ -197,18 +247,48 @@ public class PngRandomGeneration {
 			// which fitness method? 	1 = using fixed probabilities by FR quintile
 			// 							2 = using distance in firing rate space
 		int fitnessMethod = 1;
-		List<Long> stimsToMorph_lin1 = GAMaths.chooseStimsToMorph(stimObjId2avgFR_lin1,numDecendantObjs,fitnessMethod); 
-		List<Long> stimsToMorph_lin2 = GAMaths.chooseStimsToMorph(stimObjId2avgFR_lin2,numDecendantObjs,fitnessMethod);
+		
+		List<Long> stimsToMorph_lin1 = GAMaths.chooseStimsToMorph(stimObjId2FRZ_lin1,numDescendantObjs,fitnessMethod); 
+		List<Long> stimsToMorph_lin2 = GAMaths.chooseStimsToMorph(stimObjId2FRZ_lin2,numDescendantObjs,fitnessMethod);
 		
 		System.out.println("lin1: " + stimsToMorph_lin1);
 		System.out.println("lin2: " + stimsToMorph_lin2);
 		
+//		// check generation designations of stimuli chosen to morph
+//		for (int n=0;n<stimsToMorph_lin1.size();n++) {
+//			System.out.println("LIN1 "+stimsToMorph_lin1.get(n)+" "+dbUtil.readDescriptiveIdFromStimObjId(stimsToMorph_lin1.get(n)));
+//			System.out.println("LIN2 "+stimsToMorph_lin2.get(n)+" "+dbUtil.readDescriptiveIdFromStimObjId(stimsToMorph_lin2.get(n)));
+//		}
+		
+		List<Long> stimsToMorph = new ArrayList<Long>();
+		List<Long> stimsToRestore = new ArrayList<Long>();
+		List<String> tempArray = new ArrayList<String>();
+		Long whichStim;
+		
 		// create morphed stimuli:
-		for (int n=0;n<numDecendantObjs;n++) {
-			stimObjIds.add(generator.generateMorphStim(prefix, runNum, genNum, 0,stimsToMorph_lin1.get(n),n));
-			System.out.println("Lineage 0: Generating and saving random stimulus " + n);
-			stimObjIds.add(generator.generateMorphStim(prefix, runNum, genNum, 1,stimsToMorph_lin2.get(n),n));
-			System.out.println("Lineage 1: Generating and saving random stimulus " + n);
+		for (int n=0;n<numDescendantObjs;n++) {
+			
+			tempArray = generator.generateMorphStim(prefix, runNum, genNum, 0,stimsToMorph_lin1.get(n),n+PngGAParams.GA_morph_numNewStimPerLin);
+			System.out.println("Lineage 0: Generating and saving morphed stimulus " + n);
+			whichStim = Long.parseLong(tempArray.get(0));
+			stimObjIds.add(whichStim);
+			
+			if (tempArray.get(1) == "NewBSpec")
+				stimsToMorph.add(whichStim);
+
+			else 
+				stimsToRestore.add(whichStim);
+			
+			tempArray = generator.generateMorphStim(prefix, runNum, genNum, 1,stimsToMorph_lin2.get(n),n+PngGAParams.GA_morph_numNewStimPerLin);
+			System.out.println("Lineage 1: Generating and saving morphed stimulus " + n);
+			whichStim = Long.parseLong(tempArray.get(0));
+			stimObjIds.add(whichStim);
+			
+			if (tempArray.get(1) == "NewBSpec")
+				stimsToMorph.add(whichStim);
+
+			else 
+				stimsToRestore.add(whichStim);
 		}
 		
 		/* 
@@ -220,11 +300,18 @@ public class PngRandomGeneration {
 		 * to render png images. When done, it rsyncs all pngs
 		 * to the rig and to ecpc31.
 		 */
-		BlenderRunnable blenderRunner = new BlenderRunnable();
-		String scriptPath = "script/path/goes/here";
-		blenderRunner.setScriptPath(scriptPath);
-		blenderRunner.run();
+		
+		System.out.println(stimsToMorph+" MORPH");
+		System.out.println(stimsToRestore+" RESTORE");
+		
+		BlenderRunnable blenderRunnerMorph = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/morphSpec.py",stimsToMorph);
+//		BlenderRunnable blenderRunnerMorph = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/morphSpec.py",stimsToMorph);
+		blenderRunnerMorph.run();
 			
+		BlenderRunnable blenderRunnerRestore = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
+//		BlenderRunnable blenderRunnerRestore = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
+		blenderRunnerRestore.run();
+		
 		if (doSaveThumbnails) {
 			System.out.println("Saving PNGs.");
 			pngMaker.MakeFromIds(stimObjIds);
@@ -245,6 +332,212 @@ public class PngRandomGeneration {
 
 	}
 	
+	void createPHcomposite() {
+		
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stims:		
+		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
+			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));
+		}
+		System.out.println("Blank stimuli added.");
+		
+		//create composite type where necessary
+		
+		System.out.println("Calculating fitness and selecting parents.");
+		int numDecendantObjs = PngGAParams.GA_numNonBlankStimsPerLin-PngGAParams.GA_morph_numNewStimPerLin;
+		
+		// this time, look at all individual features and create optimal environment that way
+		// OR look at individual high responders...
+		// for each, examine bspec for details, find z-score of z-score for shared details, combine and send text details to python, which invents new spec
+		// only alden parent, anyway.
+		
+		// best object, base material, architecture, plane material, tilt
+		// architecture material
+		// make architecture changes
+		// also distance of structure
+		
+		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
+		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
+		Map<Long, Double> stimObjId2FRZ_lin2 = new HashMap<Long, Double>();
+
+		// pass in all Z-scores as usual. when choosing stims, new GAMaths
+		
+		for (int gen=1;gen<genNum;gen++) {
+			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
+
+			DataObject data;
+			long stimObjId;
+
+			for (int n=0;n<allStimObjIds.size();n++) {
+
+				stimObjId = allStimObjIds.get(n);
+				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(stimObjId).getSpec());
+
+				if (!pngSpecTemp.getStimType().equals("BLANK")) {
+					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
+
+					if (data.getLineage() == 0) {
+						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
+						stimObjId2FRZ_lin1.put(stimObjId, zScore);
+					}
+					
+					else {
+						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
+						stimObjId2FRZ_lin2.put(stimObjId, zScore);
+					}
+				}
+			}
+		}
+		
+		// choose stims top morph:
+			// which fitness method? 	1 = using fixed probabilities by FR quintile
+			// 							2 = using distance in firing rate space
+		int fitnessMethod = 1;
+		
+		
+		
+		
+		List<Long> allIds = new ArrayList<Long>(stimObjId2FRZ_lin1.keySet());
+		int numIds = allIds.size();
+		Long currentId = null;
+		BlenderSpec data;
+		
+		Map<String, Double> enviroAttrs = new HashMap<String, Double>();
+		List<Long> morphIds = new ArrayList<Long>();
+		
+		// in composite case, need to take in allIds Z-scores. look at bspec of each Id to make maps of attribute to 
+		
+	// separate obj and env.
+		// find normal max of obj in shape. (sort, etc.)
+		// only one absolute winner for obj? perhaps make controllable in params
+		// find max obj material
+		
+		// for env, find max env horizonTilt, horizonMaterial, distance, structureMaterial, architecture (floor, ceiling, wallL, wallR, wallB)
+		
+		// how?
+		// only one absolute winner for the above attributes.
+		// have ids to z-scores. these z-scores are matched to attributes. no longer care about ids, just attributes. make a new map with attribute to 
+		// average Z-score in each case. (or Z-score of Z-score...? haha... yeah, I guess.)
+		
+		//can get from value
+		// ideally look at each id only once
+		
+		for (int n=0;n<numIds;n++) {
+// can just get blendspec and check there
+			currentId = allIds.get(n);
+			PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
+			
+			if (pngSpecTemp.getStimType().equals("OBJECT")) {
+//				System.out.println(dbUtil.readStimSpec_blender(currentId).getSpec());
+				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
+				
+				System.out.println(currentId);
+//				EnviroSpec enviroSpec = blendObject.getEnviroSpec();
+//				AldenSpec aldenSpec = blendObject.getAldenSpec();
+//				System.out.println(enviroSpec.getHorizonMaterial());
+//				System.out.println(aldenSpec.getAldenMaterial());
+//				data = BlendObject.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
+			}
+		}
+				
+				
+				
+				
+				
+		
+		
+		
+//		List<Long> stimsToMorph_lin1 = GAMaths.chooseStimsToMorphComposite(stimObjId2FRZ_lin1,numDecendantObjs,fitnessMethod); 
+//		List<Long> stimsToMorph_lin2 = GAMaths.chooseStimsToMorphComposite(stimObjId2FRZ_lin2,numDecendantObjs,fitnessMethod);
+//		
+//		System.out.println("lin1: " + stimsToMorph_lin1);
+//		System.out.println("lin2: " + stimsToMorph_lin2);
+//		
+////		// check generation designations of stimuli chosen to morph
+////		for (int n=0;n<stimsToMorph_lin1.size();n++) {
+////			System.out.println("LIN1 "+stimsToMorph_lin1.get(n)+" "+dbUtil.readDescriptiveIdFromStimObjId(stimsToMorph_lin1.get(n)));
+////			System.out.println("LIN2 "+stimsToMorph_lin2.get(n)+" "+dbUtil.readDescriptiveIdFromStimObjId(stimsToMorph_lin2.get(n)));
+////		}
+//		
+//		List<Long> stimsToMorph = new ArrayList<Long>();
+//		List<Long> stimsToRestore = new ArrayList<Long>();
+//		List<String> tempArray = new ArrayList<String>();
+//		Long whichStim;
+//		
+//		// create morphed stimuli:
+//		for (int n=0;n<numDecendantObjs;n++) {
+//			
+//			tempArray = generator.generateMorphStim(prefix, runNum, genNum, 0,stimsToMorph_lin1.get(n),n+PngGAParams.GA_morph_numNewStimPerLin);
+//			System.out.println("Lineage 0: Generating and saving morphed stimulus " + n);
+//			whichStim = Long.parseLong(tempArray.get(0));
+//			stimObjIds.add(whichStim);
+//			
+//			if (tempArray.get(1) == "NewBSpec")
+//				stimsToMorph.add(whichStim);
+//
+//			else 
+//				stimsToRestore.add(whichStim);
+//			
+//			tempArray = generator.generateMorphStim(prefix, runNum, genNum, 1,stimsToMorph_lin2.get(n),n+PngGAParams.GA_morph_numNewStimPerLin);
+//			System.out.println("Lineage 1: Generating and saving morphed stimulus " + n);
+//			whichStim = Long.parseLong(tempArray.get(0));
+//			stimObjIds.add(whichStim);
+//			
+//			if (tempArray.get(1) == "NewBSpec")
+//				stimsToMorph.add(whichStim);
+//
+//			else 
+//				stimsToRestore.add(whichStim);
+//		}
+//		
+//		/* 
+//		 * This python script is called within blender.
+//		 * It reads the latest descriptive ID from the DB
+//		 * and makes a list of stimuli to create. It then does
+//		 * a parallel blenderrender call to save all the blenderspec
+//		 * to stimobjdata. Finally, it does a cluster call
+//		 * to render png images. When done, it rsyncs all pngs
+//		 * to the rig and to ecpc31.
+//		 */
+//		
+//		BlenderRunnable blenderRunnerMorph = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/compositePostHoc.py",stimsToMorph);
+////		BlenderRunnable blenderRunnerMorph = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/compositePostHoc.py",stimsToMorph);
+//		blenderRunnerMorph.run();
+//		
+//		// remove for post-hocs? not sure this is really necessary...
+//		if (doSaveThumbnails) {
+//			System.out.println("Saving PNGs.");
+//			pngMaker.MakeFromIds(stimObjIds);
+//		}
+//		
+//		// add blanks
+//		stimObjIds.addAll(blankStimObjIds);	
+//
+//		// create trial structure, populate stimspec, write task-to-do
+//		System.out.println("Creating trial spec for this generation.");
+//		createGATrialsFromStimObjs(stimObjIds);
+//
+//		// write updated global genId and number of trials in this generation to db:
+//		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, PngGAParams.GA_numTasks);
+//		
+//		// get acq info and put into db:
+//		getSpikeResponses();
+	}
+	//make generic post-hoc helper?
+	void createPHstability() {
+		
+	}
+	
+	void createPHanimacy() {
+		
+	}
+	
+	void createPHdensity() {
+		
+	}
+	
 	void createGATrialsFromStimObjs(List<Long> stimObjIds) {
 		// -- create trial structure, populate stimspec, write task-to-do
 		
@@ -263,6 +556,7 @@ public class PngRandomGeneration {
 		// create trials using shuffled stimuli:
 		long taskId;
 		int stimCounter = 0;
+		int filler = 0;
 
 		for (int n=0;n<PngGAParams.GA_numTasks;n++) {
 			taskId = globalTimeUtil.currentTimeMicros();
@@ -281,10 +575,14 @@ public class PngRandomGeneration {
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
 			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum);
+			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
 		}
 	}
+	
+	// once you get past a certain point (number of generations), start building composites from best of env and obj
+	// choose ideal
 	
 	public void getSpikeResponses() {
 		
@@ -328,7 +626,7 @@ public class PngRandomGeneration {
 		try{
 			// get spike data for all trials:
 			SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> spikeEntry;
-			spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
+//			spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
 			
 			if (useFakeSpikes) {
 				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum);
@@ -360,7 +658,8 @@ public class PngRandomGeneration {
 					spec = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(stimObjId).getSpec());
 					
 					if ( spec.getStimType().compareTo("BLANK") == 0) {
-						entIdx = 2*n+2;
+//						entIdx = 2*n+2;
+						entIdx = n;
 						blankFRs.add(ent.getSpikePerSec(entIdx)); 
 					}
 				}
@@ -386,7 +685,8 @@ public class PngRandomGeneration {
 					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
 					
 					// add acq info:					
-					entIdx = 2*n+2;
+//					entIdx = 2*n+2;
+					entIdx = n; ///!!!!!
 					data.addTaskDoneId(taskId);
 					data.setSampleFrequency(ent.getSampleFrequency());
 					data.addSpikesPerSec(ent.getSpikePerSec(entIdx));

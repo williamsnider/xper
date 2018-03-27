@@ -203,6 +203,9 @@ public class DataObject {
 	public double getStdFR() {
 		return stdFR;
 	}
+	public double getStdFRplusBkgd() {
+		return stdFR+stdBkgdFR;
+	}
 	private void setStdFR(double stdFR) {
 		this.stdFR = stdFR;
 	}
