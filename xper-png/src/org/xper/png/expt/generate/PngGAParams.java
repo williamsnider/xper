@@ -17,4 +17,9 @@ public final class PngGAParams {
 	
 	public static double[] GA_percentDivs = {0.3,0.5,0.7,0.9,1.0}; 			// thresholds on Z-score performance distribution for response binning
 	public static double[] GA_fracPerPercentDiv = {0.1,0.15,0.2,0.2,0.35}; 	// percent of stimuli to morph chosen from each GA_percentDivs bin
+	
+	public static int PH_stability_numMorphs = 7; 							// will remain the same unless burial depth selection changes: low pot with all depths (4) + high pot " (4) - original condition (1)
+	public static int PH_density_numMorphs = 10; //20
+	public static int PH_numResponders_highLow = 3; 							// method 1: number of highest-/lowest-response stimuli selected for post-hoc
+	public static double[] PH_percentDivs = {0.3,0.8,1.0}; 					// method 2: thresholds on Z-score performance distribution for low-, medium-, high-response stimulus selection
 }

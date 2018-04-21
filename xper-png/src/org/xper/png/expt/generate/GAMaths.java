@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.xper.Dependency;
 import org.xper.png.drawing.stimuli.PngObjectSpec;
@@ -14,9 +15,11 @@ import org.xper.png.parsedata.DataObject;
 import org.xper.png.util.PngDbUtil;
 import org.xper.png.util.PngMapUtil;
 
+import javax.vecmath.Point3d;
+
 public class GAMaths {
-	@Dependency
-	PngDbUtil dbUtil;
+//	@Dependency
+//	PngDbUtil dbUtil;
 	
 	static public List<Long> chooseStimsToMorph(Map<Long, Double> id_fr, int numChild, int method) {
 		
@@ -75,51 +78,182 @@ public class GAMaths {
 		return morphIds;
 	}
 	
-	public List<Long> chooseStimsToMorphComposite(Map<Long, Double> id_fr, int numChild, int method) {
+	static public Boolean chooseStimsToMorphComposite_Boolean(Map<Boolean, List<Double>> attr_zscore) {
 		
-		List<Long> allIds = new ArrayList<Long>(id_fr.keySet());
-		int numIds = allIds.size();
-		Long currentId = null;
-		BlenderSpec data;
+		Map<Boolean, Double> attr_zavg = new HashMap<Boolean, Double>();
+		List<Boolean> allAttrsRaw = new ArrayList<Boolean>(attr_zscore.keySet());
+		double zAvg;
+//		System.out.println("RAW "+attr_zscore);
 		
-		Map<String, Double> enviroAttrs = new HashMap<String, Double>();
-		List<Long> morphIds = new ArrayList<Long>();
-		
-		// in composite case, need to take in allIds Z-scores. look at bspec of each Id to make maps of attribute to 
-		
-	// separate obj and env.
-		// find normal max of obj in shape. (sort, etc.)
-		// only one absolute winner for obj? perhaps make controllable in params
-		// find max obj material
-		
-		// for env, find max env horizonTilt, horizonMaterial, distance, structureMaterial, architecture (floor, ceiling, wallL, wallR, wallB)
-		
-		// how?
-		// only one absolute winner for the above attributes.
-		// have ids to z-scores. these z-scores are matched to attributes. no longer care about ids, just attributes. make a new map with attribute to 
-		// average Z-score in each case. (or Z-score of Z-score...? haha... yeah, I guess.)
-		
-		//can get from value
-		// ideally look at each id only once
-		
-		for (int n=0;n<numIds;n++) {
-// can just get blendspec and check there
-			currentId = allIds.get(n);
-			PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
+		for (int n=0;n<attr_zscore.size();n++) {
+			Boolean currentAttr = allAttrsRaw.get(n);
+			List<Double> toAvg = attr_zscore.get(currentAttr);
+			int zNumber = toAvg.size();
+			zAvg = 0;
 			
-			if (pngSpecTemp.getStimType().equals("ENVT")) {
-				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
-//				data = BlendObject.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
-//				
-//				data.getLineage() == 0;
-//				
-//				enviroAttrs.put(stimObjId, zScore);
-//				
-			}
+			for (int m=0;m<zNumber;m++)
+				zAvg += toAvg.get(m);
 			
+			zAvg = zAvg/zNumber;
+			attr_zavg.put(currentAttr,zAvg);
 		}
 		
-//		 (do morph on architecture, position default settings)
+		attr_zavg = PngMapUtil.sortByValue(attr_zavg);
+		List<Boolean> allAttrs = new ArrayList<Boolean>(attr_zavg.keySet());
+		int numAttrs = allAttrs.size();
+//		System.out.println("AVERAGED "+attr_zavg);
+		return allAttrs.get(numAttrs-1);
+	}
+
+	static public Double chooseStimsToMorphComposite_Double(Map<Double, List<Double>> attr_zscore) {
+		
+		Map<Double, Double> attr_zavg = new HashMap<Double, Double>();
+		List<Double> allAttrsRaw = new ArrayList<Double>(attr_zscore.keySet());
+		double zAvg;
+//		System.out.println("RAW "+attr_zscore);
+		
+		for (int n=0;n<attr_zscore.size();n++) {
+			Double currentAttr = allAttrsRaw.get(n);
+			List<Double> toAvg = attr_zscore.get(currentAttr);
+			int zNumber = toAvg.size();
+			zAvg = 0;
+			
+			for (int m=0;m<zNumber;m++)
+				zAvg += toAvg.get(m);
+			
+			zAvg = zAvg/zNumber;
+			attr_zavg.put(currentAttr,zAvg);
+		}
+		
+		attr_zavg = PngMapUtil.sortByValue(attr_zavg);
+		List<Double> allAttrs = new ArrayList<Double>(attr_zavg.keySet());
+		int numAttrs = allAttrs.size();
+//		System.out.println("AVERAGED "+attr_zavg);
+		return allAttrs.get(numAttrs-1);
+	}
+	
+	static public String chooseStimsToMorphComposite_String(Map<String, List<Double>> attr_zscore) {
+		
+		Map<String, Double> attr_zavg = new HashMap<String, Double>();
+		List<String> allAttrsRaw = new ArrayList<String>(attr_zscore.keySet());
+		double zAvg;
+//		System.out.println("RAW "+attr_zscore);
+		
+		for (int n=0;n<attr_zscore.size();n++) {
+			String currentAttr = allAttrsRaw.get(n);
+			List<Double> toAvg = attr_zscore.get(currentAttr);
+			int zNumber = toAvg.size();
+			zAvg = 0;
+			
+			for (int m=0;m<zNumber;m++)
+				zAvg += toAvg.get(m);
+			
+			zAvg = zAvg/zNumber;
+			attr_zavg.put(currentAttr,zAvg);
+		}
+		
+		attr_zavg = PngMapUtil.sortByValue(attr_zavg);
+		List<String> allAttrs = new ArrayList<String>(attr_zavg.keySet());
+		int numAttrs = allAttrs.size();
+//		System.out.println("AVERAGED "+attr_zavg);
+		return allAttrs.get(numAttrs-1);
+	}
+	
+	static public Point3d chooseStimsToMorphComposite_Point3d(Map<Point3d, List<Double>> attr_zscore) {
+		
+		Map<Point3d, Double> attr_zavg = new HashMap<Point3d, Double>();
+		List<Point3d> allAttrsRaw = new ArrayList<Point3d>(attr_zscore.keySet());
+		double zAvg;
+//		System.out.println("RAW "+attr_zscore);
+		
+		for (int n=0;n<attr_zscore.size();n++) {
+			Point3d currentAttr = allAttrsRaw.get(n);
+			List<Double> toAvg = attr_zscore.get(currentAttr);
+			int zNumber = toAvg.size();
+			zAvg = 0;
+			
+			for (int m=0;m<zNumber;m++)
+				zAvg += toAvg.get(m);
+			
+			zAvg = zAvg/zNumber;
+			attr_zavg.put(currentAttr,zAvg);
+		}
+		
+		attr_zavg = PngMapUtil.sortByValue(attr_zavg);
+		List<Point3d> allAttrs = new ArrayList<Point3d>(attr_zavg.keySet());
+		int numAttrs = allAttrs.size();
+//		System.out.println("AVERAGED "+attr_zavg);
+		return allAttrs.get(numAttrs-1);
+	}
+	static public List<Long> choosePostHoc(Map<Long, Double> id_fr, int method) {
+		
+		List<Long> allIds = new ArrayList<Long>(id_fr.keySet());
+		List<Long> morphIds = new ArrayList<Long>();
+		
+		id_fr = PngMapUtil.sortByValue(id_fr);
+		allIds = new ArrayList<Long>(id_fr.keySet());
+		int numIds = allIds.size();
+		Long currentId = null;
+		
+		if (method == 1) {
+			int numHigh = PngGAParams.PH_numResponders_highLow;
+			int numLow = PngGAParams.PH_numResponders_highLow;
+			
+			if (numHigh+numLow < numIds) {
+				
+				for (int n=0;n<numLow;n++) {
+					// lowest first
+					currentId = allIds.get(n);
+					morphIds.add(currentId);
+				}
+				
+				for (int n=numIds-1;n>=numIds-numHigh;n--) {
+					// highest first
+					currentId = allIds.get(n);
+					morphIds.add(currentId);
+				}
+			}
+			else
+				morphIds = allIds;
+		}
+		else if (method == 2) {
+			List<Long> lows = new ArrayList<Long>(); 			// lower 30 percent
+			List<Long> mediums = new ArrayList<Long>(); 			// middle 60 percent
+			List<Long> highs = new ArrayList<Long>(); 			// upper 10 percent
+			
+			int numPercentDivs = PngGAParams.PH_percentDivs.length;
+			int[] stimsDivs = new int[numPercentDivs]; // how many stimuli in each group?
+			
+			for (int n=0;n<numPercentDivs;n++) {
+				stimsDivs[n] = (int)Math.round(numIds*PngGAParams.PH_percentDivs[n]);
+			}
+			
+			for (int n=0;n<numIds;n++) {
+				if (n < stimsDivs[0]) {
+					lows.add(allIds.get(n));
+				}
+				else if (n < stimsDivs[1]) {
+					mediums.add(allIds.get(n));
+				}
+				else if (n < numIds) {
+					highs.add(allIds.get(n));
+				}
+				
+			}
+			
+			int choice;
+			choice = new Random().nextInt(stimsDivs[0]);
+			morphIds.add(lows.get(choice));
+			
+			choice = new Random().nextInt(stimsDivs[1]-stimsDivs[0]);
+			morphIds.add(mediums.get(choice));
+			
+			choice = new Random().nextInt(stimsDivs[2]-stimsDivs[1]);
+			morphIds.add(highs.get(choice));
+		}
+		
+		else if (method == 3)
+			morphIds.add(allIds.get(numIds-1));					// highest stimulus
 		
 		return morphIds;
 	}

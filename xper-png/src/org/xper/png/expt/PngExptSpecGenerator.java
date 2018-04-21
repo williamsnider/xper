@@ -66,7 +66,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		
 		return stimObjId;
 	}
-	
+
 	public long generateRandStim(String prefix, long runNum, long gen, int lineage, int stimNum) {
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
@@ -83,7 +83,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		
 		String stickspec_str = "";
 		
-		if (Math.random() < PngGAParams.GA_randgen_prob_objvsenvt) {
+		if (Math.random() > PngGAParams.GA_randgen_prob_objvsenvt) {
 			jspec.setStimType(StimType.OBJECT.toString());
 			jspec.setDoStickGen(true);
 			PngObject object = new PngObject();
@@ -208,6 +208,54 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		returnDetails.add(Long.toString(stimObjId));
 		returnDetails.add(whichBlenderCall);
 		return returnDetails;
+	}
+	
+	//stimNum?
+	public long generatePHStim(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum, String postHoc) {
+		// GENERATE STIM	
+		long stimObjId = globalTimeUtil.currentTimeMicros();
+		
+		// PARENT STIM
+		String parent_blenderSpec = dbUtil.readStimSpec_blender(parentId).getSpec();
+		
+		String descId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + stimNum;
+		
+		PngObjectSpec s = new PngObjectSpec();
+		DataObject d = new DataObject();
+		
+		s.setId(stimObjId);
+		s.setDescId(descId);
+		s.setStimType(postHoc);
+		
+		s.setGaPrefix(prefix);
+		s.setGaRunNum(runNum);
+
+		String stickspec_str = "";
+		System.out.println(postHoc);
+
+		s.setDoBlenderMorph(true);
+
+		MStickSpec parent_stickSpec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(parentId).getSpec());
+		PngObject object = new PngObject();
+		object.setSpec_stick(parent_stickSpec);
+		object.setSpec_java(s); object.finalizeObject();
+		MStickSpec stickspec = object.getSpec_stick();
+		stickspec_str = stickspec.toXml();
+
+		String vertSpec = object.getStick().getSmoothObj().getVertAsStr();
+		String faceSpec = object.getStick().getSmoothObj().getFaceAsStr();
+
+		dbUtil.writeVertSpec(stimObjId,descId,vertSpec,faceSpec);
+
+		// -- set data values
+		d.setStimObjId(stimObjId);
+		d.setTrialType(TrialType.GA.toString());
+		d.setRunNum(runNum);
+		d.setBirthGen(gen);
+		d.setLineage(lineage);
+		
+		dbUtil.writeStimObjData(stimObjId, descId, s.toXml(), stickspec_str, parent_blenderSpec, d.toXml());
+		return stimObjId;
 	}
 	
 	public PngExptSpec generateGATrial(List<Long> stimObjIds, String trialType) {

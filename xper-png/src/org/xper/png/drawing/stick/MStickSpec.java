@@ -12,6 +12,9 @@ import javax.vecmath.Vector3d;
 
 import com.thoughtworks.xstream.XStream;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author aldenhung
  *
@@ -488,8 +491,27 @@ public class MStickSpec {
         return this.mAxis.nComponent;
     }
 
+    public int getNEndPt() {
+    		return this.mAxis.nEndPt;
+    }
 
-
+    public int getNDoubleEndPtComps(){
+    		int nDoubleEndPtComps = 0;
+    		List<Integer> representedComps = new ArrayList<Integer>();
+    	
+    		for (int n=1;n<this.mAxis.nEndPt+1;n++) {
+    			EndPt_Info currentEndPt = this.mAxis.EndPt[n];
+    			int whichComp = currentEndPt.comp;
+    			
+    			if (representedComps.contains(whichComp)) {
+    				nDoubleEndPtComps++;
+    			}
+    			
+    			representedComps.add(whichComp);
+    		}
+    		
+    		return nDoubleEndPtComps;
+    }
 
 
 

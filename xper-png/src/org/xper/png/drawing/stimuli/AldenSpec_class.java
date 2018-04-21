@@ -2,112 +2,45 @@ package org.xper.png.drawing.stimuli;
 
 import org.xper.drawing.RGBColor;
 
-import com.thoughtworks.xstream.XStream;
-
-import java.util.ArrayList;
+import javax.vecmath.Point3d;
 import java.util.List;
 
-import javax.vecmath.Point3d;
 
-//
-//class LimbSeparation{
-//	int howMany;
-//	int limbIndex0;
-//	int limbIndex1;
-//	int limbIndex2;
-//	int limbIndex3;
-//	int limbIndex4;
-//	int limbIndex5;
-//	int limbIndex6;
-//	int limbIndex7;
-//	
-//	public List<Integer> getAffectedLimbs() {
-//		List<Integer> affectedLimbs = new ArrayList<Integer>();
-//		affectedLimbs.add(x);
-//
-//		return affectedLimbs;
-//	}	
-//	public void setAffectedLimbs(List<Integer> affectedLimbs) {
-//		this.howMany = affectedLimbs.size();
-//		
-//		for (n=0;n<this.howMany;n++) {
-//			
-//		}
-//
-//	}
-//	public void setAffectedLimbs(LimbSeparation affectedLimbs) {
-//		this.howMany = affectedLimbs.howMany;
-//
-//	}
-//}
-//
-//class LimbMaterials{
-//	String limbMaterial0;
-//	String limbMaterial1;
-//	String limbMaterial2;
-//	String limbMaterial3;
-//	String limbMaterial4;
-//	String limbMaterial5;
-//	String limbMaterial6;
-//	String limbMaterial7;
-//	
-//	public List<String> getLimbMaterials() {
-//		List<String> limbMaterials = new ArrayList<String>();
-//		limbMaterials.add(x);
-//
-//		return limbMaterials;
-//	}	
-//	public void setLimbMaterials(List<String> limbMaterials) {
-//		this.x = limbMaterials.get(0);
-//		
-//	}
-//	public void setLimbMaterials(LimbMaterials limbMaterials) {
-//		this.x = limbMaterials.x;
-//
-//	}
-//}
+public class AldenSpec_class {
+	boolean aldenPresent;
+	String id;
+	boolean blocky;
+	Point3d bilateralSymmetry;
+	int fixationPoint;
+	String whichWiggle;
+	int location;
+	double implantation;
+	int scaleShiftInDepth;
+	int wallInteraction;
 
-public class AldenSpec {
-	public boolean aldenPresent;
-	public String id;
-	public boolean blocky;
-	public MirrorSymmetry bilateralSymmetry;
-	public int fixationPoint;
-	public String whichWiggle;
-	public int location;
-	public double implantation;
-	public int scaleShiftInDepth;
-	public int wallInteraction;
+	boolean densityUniform;
+	List<Integer> affectedLimbs;
+	List<String> limbMaterials;
+	int howMany;
 
-	public boolean densityUniform;
-//	List<Integer> affectedLimbs = new ArrayList<Integer>(); //including howMany...
-//	List<String> limbMaterials = new ArrayList<String>();
+	String material;
+	boolean optical;
+	RGBColor opticalBeerLambertColor;
+	double opticalIOR;
+	double opticalTranslucency;
+	double opticalAttenuation;
+	double opticalTransparency;
+	double opticalRoughness;
+	double opticalReflectivity;
 
-	public String material;
-	public boolean optical;
-	public RGBColor opticalBeerLambertColor;
-	public double opticalIOR;
-	public double opticalTranslucency;
-	public double opticalAttenuation;
-	public double opticalTransparency;
-	public double opticalRoughness;
-	public double opticalReflectivity;
+	boolean lowPotentialEnergy;
+	Point3d makePrecarious;
+	Point3d rotation;
+	Point3d sun;
 
-	public boolean lowPotentialEnergy;
-	public Point3d makePrecarious;
-	public Point3d rotation;
-	public Point3d sun;
-	
-//	transient static XStream s;
-//
-//	static {
-//		s = new XStream();
-//		s.alias("AldenSpec", AldenSpec.class);
-//	}
-//	
-	public AldenSpec () {}
-	
-	public AldenSpec(AldenSpec d) {
+	public AldenSpec_class () {}
+
+	public AldenSpec_class(AldenSpec_class d) {
 		this.aldenPresent = d.getAldenPresent();
 		this.wallInteraction = d.getWallInteraction();
 		this.material = d.getAldenMaterial();
@@ -123,9 +56,10 @@ public class AldenSpec {
 		this.scaleShiftInDepth = d.getScaleShiftInDepth();
 
         this.densityUniform = d.getIsUniformDensity();
-//        this.affectedLimbs = d.getAffectedLimbs();
-//        this.limbMaterials = d.getLimbMaterials();
-//        
+        this.affectedLimbs = d.getAffectedLimbs();
+        this.limbMaterials = d.getLimbMaterials(); 
+        this.howMany = d.getNumLimbs();
+        
         this.optical = d.getIsOptical();
         this.opticalBeerLambertColor = d.getBeerLambertColor();
         this.opticalIOR = d.getIOR();
@@ -139,7 +73,6 @@ public class AldenSpec {
         this.makePrecarious = d.getMakePrecarious();
         this.rotation = d.getRotation();
         this.sun = d.getSun();
-        
 	}
 	
 	public void setAldenPresent(boolean aldenPresent) {
@@ -163,10 +96,10 @@ public class AldenSpec {
 		return blocky;
 	}
 	
-	public void setBilateralSymmetry(MirrorSymmetry bilateralSymmetry) {
+	public void setBilateralSymmetry(Point3d bilateralSymmetry) {
 		this.bilateralSymmetry = bilateralSymmetry;
 	}
-	public MirrorSymmetry getBilateralSymmetry(){
+	public Point3d getBilateralSymmetry(){
 		return bilateralSymmetry;
 	}
 	
@@ -218,28 +151,32 @@ public class AldenSpec {
 	public boolean getIsUniformDensity(){
 		return densityUniform;
 	}
+
+	public void setAffectedLimbs(List<Integer> affectedLimbs){
+		this.affectedLimbs =  affectedLimbs;
+	}
+	public List<Integer> getAffectedLimbs(){
+		return affectedLimbs;
+	}
 	
-//	public void setAffectedLimbs(List<Integer> affectedLimbs){
-//		this.affectedLimbs.set =  affectedLimbs;
-//	}
-//	public List<Integer> getAffectedLimbs(){
-//	return affectedLimbs;
-//}
+	public void setLimbMaterials(List<String> limbMaterials){
+		this.limbMaterials =  limbMaterials;
+	}
+	public List<String> getLimbMaterials(){
+		return limbMaterials;
+	}
 	
-//	public void setLimbMaterials(List<String> limbMaterials){
-//		this.limbMaterials =  limbMaterials;
-//	}
-//	public List<String> getLimbMaterials(){
-//	return limbMaterials;
-//}
-	
+	public int getNumLimbs(){
+		return howMany;
+	}
+
 	public void setAldenMaterial(String material){
 		this.material =  material;
 	}
 	public String getAldenMaterial(){
 		return material;
 	}
-	
+
 	public void setIsOptical(boolean optical){
 		this.optical =  optical;
 	}
@@ -323,5 +260,4 @@ public class AldenSpec {
 	public Point3d getSun(){
 		return sun;
 	}
-
 }

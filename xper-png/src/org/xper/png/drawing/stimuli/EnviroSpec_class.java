@@ -3,35 +3,29 @@ package org.xper.png.drawing.stimuli;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.thoughtworks.xstream.XStream;
+import javax.vecmath.Point3d;
 
-public class EnviroSpec {
-	public double horizonTilt;
-	public double horizonSlant;
-	public String horizonMaterial;
-	public boolean gravity;
-	public String context;
-	public boolean architecture;
-	public boolean floor;
-	public boolean ceiling;
-	public boolean wallL;
-	public boolean wallR;
-	public boolean wallB;
-	public double architectureThickness;
-	public double distance;
-	public String structureMaterial;
-	public boolean aperture;
-
-//	transient static XStream s;
-//
-//	static {
-//		s = new XStream();
-//		s.alias("EnvironmentSpec", EnviroSpec.class);
-//	}
+public class EnviroSpec_class {
+	double horizonTilt;
+	double horizonSlant;
+	String horizonMaterial;
+	boolean gravity;
+	String context;
+	boolean architecture;
+	boolean floor;
+	boolean ceiling;
+	boolean wallL;
+	boolean wallR;
+	boolean wallB;
+	double architectureThickness;
+	double distance;
+	String structureMaterial;
+	boolean aperture;
 	
-	public EnviroSpec() {}
 	
-	public EnviroSpec(EnviroSpec d) {
+	public EnviroSpec_class() {}
+	
+	public EnviroSpec_class(EnviroSpec_class d) {
 		this.horizonTilt = d.getHorizonTilt();
 		this.horizonSlant = d.getHorizonSlant();
 		this.horizonMaterial = d.getHorizonMaterial();
@@ -50,6 +44,7 @@ public class EnviroSpec {
         this.distance = d.getDistance();
         this.structureMaterial = d.getStructureMaterial();
         this.aperture = d.getAperture();
+        
 	}	
 	
 	public void setHorizonTilt(double horizonTilt){
@@ -167,5 +162,5 @@ public class EnviroSpec {
 	public boolean getAperture() {
 		return aperture;
 	}
-	
+
 }

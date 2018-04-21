@@ -14,6 +14,8 @@ public class BlenderRunnable implements Runnable {
 	boolean doWaitFor = false;
 	String scriptPath;
 	List<Long> stimObjIds = new ArrayList<Long>();
+	List<String> environAttrs = new ArrayList<String>();
+	List<Integer> possiblePositions = new ArrayList<Integer>();
 	
 	static String appPath = "/Applications/blender-279/Blender.app/Contents/MacOS/blender";
 //	static String appPath = "/Applications/blender279/Blender.app/Contents/MacOS/blender";
@@ -27,6 +29,12 @@ public class BlenderRunnable implements Runnable {
 	public BlenderRunnable(String scriptPath, List<Long> stimObjIds) {
 		this.scriptPath = scriptPath;
 		this.stimObjIds = stimObjIds;
+	}
+	
+	public BlenderRunnable(String scriptPath, List<String> environAttrs, List<Integer> possiblePositions) {
+		this.scriptPath = scriptPath;
+		this.environAttrs = environAttrs;
+		this.possiblePositions = possiblePositions;
 	}
 	
 	@Override
@@ -45,9 +53,24 @@ public class BlenderRunnable implements Runnable {
 			args.add(Long.toString(stimObjId));
 		}
 		
+		String environAttr;
+		
+		for (int n=0;n<environAttrs.size();n++) {
+			environAttr = environAttrs.get(n);
+			args.add(environAttr);
+		}
+		
+		int possiblePosition;
+		
+		for (int n=0;n<possiblePositions.size();n++) {
+			possiblePosition = possiblePositions.get(n);
+			args.add(Integer.toString(possiblePosition));
+		}
+		
 		try {
 			ProcessBuilder builder = new ProcessBuilder(args);
 			Process process = builder.start();
+//			process.getOutputStream();
 			if (doWaitFor)
 				process.waitFor();
 			
