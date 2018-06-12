@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.jzy3d.plot3d.rendering.image.GLImage;
 import org.lwjgl.opengl.GL11;
@@ -39,6 +40,7 @@ public class PNGmaker {
 	public void MakeFromIds(List<Long> stimObjIds) {
 		this.stimObjIds = stimObjIds;
 		List<Drawable> objs = spec2obj(id2spec(stimObjIds));
+		System.out.println(objs);
 		createAndSavePNGsfromObjs(objs,this.stimObjIds);
 	}
 	
@@ -48,7 +50,7 @@ public class PNGmaker {
 		
 		for (Long id : stimObjIds) {
 			PngObjectSpec jspec = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(id).getSpec());
-			if (StimType.valueOf(jspec.getStimType()) == StimType.OBJECT) {
+			if (Arrays.asList(StimType.OBJECT,StimType.COMPOSITE,StimType.STABILITY,StimType.ANIMACY,StimType.DENSITY,StimType.MASS).contains(StimType.valueOf(jspec.getStimType()))) {
 				MStickSpec stickspec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(id).getSpec());
 				jspec.setDoStickGen(false); jspec.setDoBlenderMorph(false); jspec.setDoStickMorph(false);
 				specs.put(stickspec, jspec);

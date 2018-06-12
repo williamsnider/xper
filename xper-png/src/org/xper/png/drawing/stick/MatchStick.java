@@ -3565,9 +3565,6 @@ public class MatchStick {
 //          this.finalShiftinDepth = this.obj1.translateVertexOnZ_ram();
 
 //        System.out.println("depthshift: " + this.finalShiftinDepth.x + ", " + this.finalShiftinDepth.y + ", " + this.finalShiftinDepth.z);
-
-
-
         return true;
         
     }
@@ -3951,6 +3948,326 @@ public class MatchStick {
 
     }
 
+    public void changeRadProfile(int radType, int limb)
+    {
+        int i, j;
+
+        System.out.println(" Try to do radChange type = " + radType);
+        double mini_rad = 0.4;
+        double fat_rad = 0.8;
+        //need num juncpt, endpt, and limb
+        // do we already have a record of this? maybe... check
+        //we always want to assign at tips & center
+        // new thing in spec that has junction and endpts of each comp?
+        // have the limb number... can determine the end pts and junc pts based on that, no?
+        comp[limb].radInfo[0][0] = 0.0;
+        comp[limb].radInfo[1][0] = 0.5;
+        comp[limb].radInfo[2][0] = 1.0;
+
+        if (radType == 1) //thin stick
+        {
+        	comp[limb].radInfo[0][1] = mini_rad;
+        	comp[limb].radInfo[1][1] = mini_rad;
+        	comp[limb].radInfo[2][1] = mini_rad;
+        }
+        else if ( radType == 2) //fat stick
+        {
+        	comp[limb].radInfo[0][1] = fat_rad;
+        	comp[limb].radInfo[1][1] = fat_rad;
+        	comp[limb].radInfo[2][1] = fat_rad;
+        }
+        else if ( radType == 3) // tip away at end-point
+        {
+            double rMin, rMax;
+            double nowRad, u_value;
+            int try_times = 0;
+            boolean retry;
+
+            // 0. initialize to negative value
+            while (true) {
+            	
+            	comp[limb].radInfo[0][1] = -10.0; comp[limb].radInfo[1][1] = -10.0; comp[limb].radInfo[2][1] = -10.0;
+
+            	// 1. assign at JuncPt
+            	for (i=1; i<=nJuncPt; i++)
+            	{
+            		int nRelated_comp = JuncPt[i].nComp;
+            		nowRad = 0.6 - 0.05 *try_times; // a strict value
+            		if ( i== 1)
+            			System.out.println("type == 3, retry , nowRad " + nowRad);
+            		// assign the value to each component
+
+            		JuncPt[i].rad = nowRad;
+
+            		for (int checkComp=0;checkComp<JuncPt[i].nComp;checkComp++) {
+            			
+            			if (JuncPt[i].comp[checkComp] == limb) {
+
+            				for (j = 1 ; j <= nRelated_comp ; j++)
+            				{
+            					u_value = ((double)JuncPt[i].uNdx[j]-1.0) / (51.0-1.0);
+            					if ( Math.abs( u_value - 0.0) < 0.0001)
+            					{
+            						comp[JuncPt[i].comp[j]].radInfo[0][0] = 0.0;
+            						comp[JuncPt[i].comp[j]].radInfo[0][1] = nowRad;
+            					}
+            					else if ( Math.abs(u_value - 1.0) < 0.0001)
+            					{
+            						comp[JuncPt[i].comp[j]].radInfo[2][0] = 1.0;
+            						comp[JuncPt[i].comp[j]].radInfo[2][1] = nowRad;
+            					}
+            					else // middle u value
+            					{
+            						comp[JuncPt[i].comp[j]].radInfo[1][0] = u_value;
+            						comp[JuncPt[i].comp[j]].radInfo[1][1] = nowRad;
+            					}
+            				}
+            			}
+            		}
+            	} // loop nJuncPt
+
+            	// 2. assign at endPt
+            	for ( i = 1 ;  i <= nEndPt ; i++)
+            	{
+            		int nowComp = endPt[i].comp;
+            		
+            		if (nowComp == limb) {
+            			u_value = ((double)endPt[i].uNdx -1.0 ) / (51.0 -1.0);
+
+                		nowRad = 0.00001;
+                		endPt[i].rad = nowRad;
+
+                		if ( Math.abs( u_value - 0.0) < 0.0001)
+                		{
+                			comp[nowComp].radInfo[0][0] = 0.0;
+                			comp[nowComp].radInfo[0][1] = nowRad;
+                		}
+                		else if (Math.abs(u_value - 1.0) < 0.0001)
+                		{
+                			comp[nowComp].radInfo[2][0] = 1.0;
+                			comp[nowComp].radInfo[2][1] = nowRad;
+                		}
+            		}
+            	}
+
+            	// 3. other middle Pt
+            	if ( comp[limb].radInfo[1][1] == -10.0 ) // this component need a intermediate value
+            	{
+            		int branchPt = comp[limb].mAxisInfo.branchPt;
+            		u_value = ((double)branchPt-1.0) / (51.0 -1.0);
+
+            		rMin = comp[limb].mAxisInfo.arcLen / 10.0;
+            		rMax = Math.min(comp[limb].mAxisInfo.arcLen / 3.0, 0.5 * comp[limb].mAxisInfo.rad);
+            		nowRad = StickMath_lib.randDouble( rMin, rMax);
+            		nowRad = 0.5* (comp[limb].radInfo[0][1] + comp[limb].radInfo[2][1] );
+            		comp[limb].radInfo[1][0] = u_value;
+            		comp[limb].radInfo[1][1] = nowRad;
+            	}
+
+            	retry = false;
+            	if ( comp[limb].RadApplied_Factory() == false)
+            		retry = true;
+            	try_times++;
+            	if ( retry == false) break;
+
+
+            } // while loop
+
+        }
+        else if ( radType == 4) // balloon dog
+        {
+        	boolean retry;
+        	int try_times = 0;
+        	while (true)
+        	{
+        		System.out.println("radType = 4, try time" + try_times);
+        		double rMin, rMax;
+        		rMin = comp[limb].mAxisInfo.arcLen/ 10.0;
+        		rMax =  Math.min( 0.5 *comp[limb].mAxisInfo.rad,
+        				comp[limb].mAxisInfo.arcLen / 3.0);
+        		rMin = 0.2;
+        		rMax = 0.9 - try_times * 0.1;
+        		comp[limb].radInfo[0][1] = rMin;
+        		comp[limb].radInfo[1][1] = rMax;
+        		comp[limb].radInfo[2][1] = rMin;
+
+        		//comp[limb].radInfo[0][1] = ball_end;
+        		//comp[limb].radInfo[1][1] = ball_body;
+        		//comp[limb].radInfo[2][1] = ball_end;
+
+        		// immediately try to apply the rad, if fail, try some
+        		// conservative values
+
+        		retry = false;
+        		if ( comp[limb].RadApplied_Factory() == false)
+        			retry = true;
+        		try_times++;
+        		if ( retry == false) break;
+        	} // while loop
+        }
+
+        else if ( radType == 5) // opposite of balloon dog, dumbbell
+        {
+        	boolean retry;
+        	int try_times = 0;
+        	while (true)
+        	{
+        		System.out.println("radType = 5, try time" + try_times);
+        		double rMin = 0.3;
+        		double rMax = 1.1 - try_times * 0.1;
+        		System.out.println("rMin, rmax: " + rMin + " " + rMax);
+
+        		comp[limb].radInfo[0][1] = rMax;
+        		comp[limb].radInfo[1][1] = rMin;
+        		comp[limb].radInfo[2][1] = rMax;
+
+        		retry = false;
+
+        		if ( comp[limb].RadApplied_Factory() == false)
+        			retry = true;
+        		try_times++;
+        		if ( retry == false) break;
+        	} // while loop
+
+        }
+        else if ( radType == 6) // opposite of tip-away
+        {
+        	double rMin, rMax;
+        	double nowRad, u_value, tempX;
+        	boolean retry;
+        	int try_times =0;
+        	
+        	while (true)
+        	{
+        		System.out.println("radType 6, retry " + try_times);
+        		// 0. initialize to negative value
+
+        		comp[limb].radInfo[0][1] = -10.0; comp[limb].radInfo[1][1] = -10.0; comp[limb].radInfo[2][1] = -10.0;
+
+        		// 1. assign at JuncPt
+        		for (i=1; i<=nJuncPt; i++)
+        		{
+        			rMin = -10.0; rMax = 100000.0;
+        			int nRelated_comp = JuncPt[i].nComp;
+        			for (j = 1 ; j <= nRelated_comp; j++)
+        			{
+        				if (JuncPt[i].comp[j] == limb) {
+
+        					rMin = Math.max( rMin, comp[JuncPt[i].comp[j]].mAxisInfo.arcLen / 10.0);
+        					tempX = Math.min( 0.5 *comp[JuncPt[i].comp[j]].mAxisInfo.rad,
+        							comp[JuncPt[i].comp[j]].mAxisInfo.arcLen / 3.0);
+        					rMax = Math.min( rMax, tempX);
+        				}
+        			}
+
+        			// select a value btw rMin and rMax
+
+        			//nowRad = rMax;
+        			nowRad = 0.2;
+        			// assign the value to each component
+        			JuncPt[i].rad = nowRad;
+
+        			for (j = 1 ; j <= nRelated_comp ; j++)
+        			{
+        				if (JuncPt[i].comp[j] == limb) {
+        					u_value = ((double)JuncPt[i].uNdx[j]-1.0) / (51.0-1.0);
+        					if ( Math.abs( u_value - 0.0) < 0.0001)
+        					{
+        						comp[JuncPt[i].comp[j]].radInfo[0][0] = 0.0;
+        						comp[JuncPt[i].comp[j]].radInfo[0][1] = nowRad;
+        					}
+        					else if ( Math.abs(u_value - 1.0) < 0.0001)
+        					{
+        						comp[JuncPt[i].comp[j]].radInfo[2][0] = 1.0;
+        						comp[JuncPt[i].comp[j]].radInfo[2][1] = nowRad;
+        					}
+        					else // middle u value
+        					{
+        						comp[JuncPt[i].comp[j]].radInfo[1][0] = u_value;
+        						comp[JuncPt[i].comp[j]].radInfo[1][1] = nowRad;
+        					}
+        				}
+        			}
+        		} // loop nJuncPt
+
+        		// 2. assign at endPt
+        		for ( i = 1 ;  i <= nEndPt ; i++)
+        		{
+        			int nowComp = endPt[i].comp;
+
+        			if (nowComp == limb) {
+
+        				u_value = ((double)endPt[i].uNdx -1.0 ) / (51.0 -1.0);
+
+        				nowRad = 0.7 - 0.05 * try_times;
+        				endPt[i].rad = nowRad;
+
+        				if ( Math.abs( u_value - 0.0) < 0.0001)
+        				{
+        					comp[nowComp].radInfo[0][0] = 0.0;
+        					comp[nowComp].radInfo[0][1] = nowRad;
+        				}
+        				else if (Math.abs(u_value - 1.0) < 0.0001)
+        				{
+        					comp[nowComp].radInfo[2][0] = 1.0;
+        					comp[nowComp].radInfo[2][1] = nowRad;
+        				}
+        			}
+        		}
+        		// 3. other middle Pt
+
+        		if ( comp[limb].radInfo[1][1] == -10.0 ) // this component need a intermediate value
+        		{
+        			int branchPt = comp[limb].mAxisInfo.branchPt;
+        			u_value = ((double)branchPt-1.0) / (51.0 -1.0);
+
+        			rMin = comp[limb].mAxisInfo.arcLen / 10.0;
+        			rMax = Math.min(comp[limb].mAxisInfo.arcLen / 3.0, 0.5 * comp[limb].mAxisInfo.rad);
+        			nowRad = StickMath_lib.randDouble( rMin, rMax);
+        			nowRad = 0.5* (comp[limb].radInfo[0][1] + comp[limb].radInfo[2][1] );
+        			comp[limb].radInfo[1][0] = u_value;
+        			comp[limb].radInfo[1][1] = nowRad;
+        		}
+
+        		// 4. modification for tubes that have double endPt
+
+        		int nowCount = 0;
+        		for (j=1; j<= nEndPt; j++)
+        			if (endPt[j].comp == limb)
+        				nowCount ++;
+
+        		if ( nowCount == 2) // double end-ed
+        		{
+        			System.out.println("tube " + limb + " is double float end");
+        			comp[limb].radInfo[1][1] =  comp[limb].radInfo[0][1] / 2.0;
+        		}
+
+        		retry = false;
+
+        		if ( comp[limb].RadApplied_Factory() == false)
+        		{
+        			retry = true;
+        			System.out.println("tube " + limb + " error ");
+        		}
+        		try_times++;
+        		if ( retry == false) break;
+
+
+        	} // while loop
+        }
+
+        if ( comp[limb].RadApplied_Factory() == false)
+        {
+        	System.out.println("ERROR: this rad profile not work! at comp " + limb);
+        }
+
+        // do a fake Smooth, (no smooth at all)
+        // but we want to have the scale and rotation and translation
+        this.centerShapeAtOrigin(-1);
+        this.changeFinalRotation();
+        this.fake_smoothizeMStick();
+    }
+
     /**
      *   This is for work for the radius Profile change only
      *   We want to scale & rotate the shape, but we don't need
@@ -3990,7 +4307,7 @@ public class MatchStick {
         // so this is what we need to do.
 
         //debug, no rot now
-        this.obj1.rotateMesh(finalRotation);
+//        this.obj1.rotateMesh(finalRotation);
 
         this.obj1.scaleTheObj(scaleForMAxisShape);
             // then, we don't need to call rotateMesh in other place at all
@@ -3998,7 +4315,8 @@ public class MatchStick {
         this.finalShiftinDepth = new Point3d();
 
         if ( shiftOriginToSurface) // a boolean
-            this.finalShiftinDepth = this.obj1.translateVertexOnZ(scaleForMAxisShape);
+//            this.finalShiftinDepth = this.obj1.translateVertexOnZ(scaleForMAxisShape);
+        		this.finalShiftinDepth = this.obj1.subCenterOfMass();
     }
 
 	protected void init() {

@@ -34,9 +34,21 @@ public class PngObject implements Drawable {
 			stick.genMatchStickFromShapeSpec(stickSpec);
 			stick.mutate(0);
 			stickSpec.setMStickInfo(stick);
+		} else if (pngSpec.doControlledStickMorph) {
+			stick.genMatchStickFromShapeSpec(stickSpec);
+//			stickSpec.setMStickInfo(stick); //#######
 		} else { // if (pngSpec.doBlenderMorph) {
 			stick.genMatchStickFromShapeSpec(stickSpec);
 			
+		}
+	}
+	
+	public void finalizeObject(int profile, int limb) {
+		stick = new MatchStick();
+		if (pngSpec.doControlledStickMorph) {
+			stick.genMatchStickFromShapeSpec(stickSpec);
+			stick.changeRadProfile(profile,limb);
+			stickSpec.setMStickInfo(stick);
 		}
 	}
 	

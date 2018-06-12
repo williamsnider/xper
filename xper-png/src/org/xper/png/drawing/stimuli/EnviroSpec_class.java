@@ -9,18 +9,18 @@ public class EnviroSpec_class {
 	double horizonTilt;
 	double horizonSlant;
 	String horizonMaterial;
-	boolean gravity;
+	int gravity;
 	String context;
-	boolean architecture;
-	boolean floor;
-	boolean ceiling;
-	boolean wallL;
-	boolean wallR;
-	boolean wallB;
+	int architecture;
+	int floor;
+	int ceiling;
+	int wallL;
+	int wallR;
+	int wallB;
 	double architectureThickness;
 	double distance;
 	String structureMaterial;
-	boolean aperture;
+	int aperture;
 	
 	
 	public EnviroSpec_class() {}
@@ -68,10 +68,10 @@ public class EnviroSpec_class {
 		return horizonMaterial;
 	}
 	
-	public void setGravity(boolean gravity){
+	public void setGravity(int gravity){
 		this.gravity =  gravity;
 	}
-	public boolean getGravity() {
+	public int getGravity() {
 		return gravity;
 	}
 	
@@ -82,10 +82,10 @@ public class EnviroSpec_class {
 		return context;
 	}
 	
-	public void setHasArchitecture(boolean architecture){
+	public void setHasArchitecture(int architecture){
 		this.architecture =  architecture;
 	}
-	public boolean getHasArchitecture() {
+	public int getHasArchitecture() {
 		return architecture;
 	}
 	
@@ -96,8 +96,8 @@ public class EnviroSpec_class {
 		return architectureThickness;
 	}
 	
-	public List<Boolean> getArchitectureInfo(){
-		List<Boolean> archiInfo = new ArrayList<Boolean>();
+	public List<Integer> getArchitectureInfo(){
+		List<Integer> archiInfo = new ArrayList<Integer>();
 		archiInfo.add(architecture);
 		archiInfo.add(floor);
 		archiInfo.add(ceiling);
@@ -107,38 +107,38 @@ public class EnviroSpec_class {
 		return archiInfo;
 	}
 	
-	public void setHasFloor(boolean floor){
+	public void setHasFloor(int floor){
 		this.floor =  floor;
 	}
-	public boolean getHasFloor() {
+	public int getHasFloor() {
 		return floor;
 	}
 	
-	public void setHasCeiling(boolean ceiling){
+	public void setHasCeiling(int ceiling){
 		this.ceiling =  ceiling;
 	}
-	public boolean getHasCeiling() {
+	public int getHasCeiling() {
 		return ceiling;
 	}
 	
-	public void setHasWallL(boolean wallL){
+	public void setHasWallL(int wallL){
 		this.wallL =  wallL;
 	}
-	public boolean getHasWallL() {
+	public int getHasWallL() {
 		return wallL;
 	}
 	
-	public void setHasWallR(boolean wallR){
+	public void setHasWallR(int wallR){
 		this.wallR =  wallR;
 	}
-	public boolean getHasWallR() {
+	public int getHasWallR() {
 		return wallR;
 	}
 	
-	public void setHasWallB(boolean wallB){
+	public void setHasWallB(int wallB){
 		this.wallB =  wallB;
 	}
-	public boolean getHasWallB() {
+	public int getHasWallB() {
 		return wallB;
 	}
 	
@@ -156,10 +156,10 @@ public class EnviroSpec_class {
 		return structureMaterial;
 	}
 	
-	public void setAperture(boolean aperture){
+	public void setAperture(int aperture){
 		this.aperture =  aperture;
 	}
-	public boolean getAperture() {
+	public int getAperture() {
 		return aperture;
 	}
 

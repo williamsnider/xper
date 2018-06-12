@@ -105,6 +105,33 @@ public class GAMaths {
 		return allAttrs.get(numAttrs-1);
 	}
 
+	static public Integer chooseStimsToMorphComposite_Integer(Map<Integer, List<Double>> attr_zscore) {
+		
+		Map<Integer, Double> attr_zavg = new HashMap<Integer, Double>();
+		List<Integer> allAttrsRaw = new ArrayList<Integer>(attr_zscore.keySet());
+		double zAvg;
+//		System.out.println("RAW "+attr_zscore);
+		
+		for (int n=0;n<attr_zscore.size();n++) {
+			int currentAttr = allAttrsRaw.get(n);
+			List<Double> toAvg = attr_zscore.get(currentAttr);
+			int zNumber = toAvg.size();
+			zAvg = 0;
+			
+			for (int m=0;m<zNumber;m++)
+				zAvg += toAvg.get(m);
+			
+			zAvg = zAvg/zNumber;
+			attr_zavg.put(currentAttr,zAvg);
+		}
+		
+		attr_zavg = PngMapUtil.sortByValue(attr_zavg);
+		List<Integer> allAttrs = new ArrayList<Integer>(attr_zavg.keySet());
+		int numAttrs = allAttrs.size();
+//		System.out.println("AVERAGED "+attr_zavg);
+		return allAttrs.get(numAttrs-1);
+	}
+	
 	static public Double chooseStimsToMorphComposite_Double(Map<Double, List<Double>> attr_zscore) {
 		
 		Map<Double, Double> attr_zavg = new HashMap<Double, Double>();
@@ -159,6 +186,30 @@ public class GAMaths {
 		return allAttrs.get(numAttrs-1);
 	}
 	
+	static public List<String> chooseStimsToMorphComposite_String_OrderedChoice(Map<String, List<Double>> attr_zscore) {
+		
+		Map<String, Double> attr_zavg = new HashMap<String, Double>();
+		List<String> allAttrsRaw = new ArrayList<String>(attr_zscore.keySet());
+		double zAvg;
+		
+		for (int n=0;n<attr_zscore.size();n++) {
+			String currentAttr = allAttrsRaw.get(n);
+			List<Double> toAvg = attr_zscore.get(currentAttr);
+			int zNumber = toAvg.size();
+			zAvg = 0;
+			
+			for (int m=0;m<zNumber;m++)
+				zAvg += toAvg.get(m);
+			
+			zAvg = zAvg/zNumber;
+			attr_zavg.put(currentAttr,zAvg);
+		}
+		
+		attr_zavg = PngMapUtil.sortByValue(attr_zavg);
+		List<String> allAttrs = new ArrayList<String>(attr_zavg.keySet());
+		return allAttrs;
+	}
+	
 	static public Point3d chooseStimsToMorphComposite_Point3d(Map<Point3d, List<Double>> attr_zscore) {
 		
 		Map<Point3d, Double> attr_zavg = new HashMap<Point3d, Double>();
@@ -194,19 +245,23 @@ public class GAMaths {
 		allIds = new ArrayList<Long>(id_fr.keySet());
 		int numIds = allIds.size();
 		Long currentId = null;
-		
-		if (method == 1) {
+
+		switch (method) {
+		case 1:
+			morphIds.add(allIds.get(numIds-1));					// highest stimulus
+			break;
+		case 2:
 			int numHigh = PngGAParams.PH_numResponders_highLow;
 			int numLow = PngGAParams.PH_numResponders_highLow;
-			
+
 			if (numHigh+numLow < numIds) {
-				
+
 				for (int n=0;n<numLow;n++) {
 					// lowest first
 					currentId = allIds.get(n);
 					morphIds.add(currentId);
 				}
-				
+
 				for (int n=numIds-1;n>=numIds-numHigh;n--) {
 					// highest first
 					currentId = allIds.get(n);
@@ -215,19 +270,19 @@ public class GAMaths {
 			}
 			else
 				morphIds = allIds;
-		}
-		else if (method == 2) {
+			break;
+		case 3:
 			List<Long> lows = new ArrayList<Long>(); 			// lower 30 percent
 			List<Long> mediums = new ArrayList<Long>(); 			// middle 60 percent
 			List<Long> highs = new ArrayList<Long>(); 			// upper 10 percent
-			
+
 			int numPercentDivs = PngGAParams.PH_percentDivs.length;
 			int[] stimsDivs = new int[numPercentDivs]; // how many stimuli in each group?
-			
+
 			for (int n=0;n<numPercentDivs;n++) {
 				stimsDivs[n] = (int)Math.round(numIds*PngGAParams.PH_percentDivs[n]);
 			}
-			
+
 			for (int n=0;n<numIds;n++) {
 				if (n < stimsDivs[0]) {
 					lows.add(allIds.get(n));
@@ -238,24 +293,18 @@ public class GAMaths {
 				else if (n < numIds) {
 					highs.add(allIds.get(n));
 				}
-				
 			}
-			
 			int choice;
 			choice = new Random().nextInt(stimsDivs[0]);
 			morphIds.add(lows.get(choice));
-			
+
 			choice = new Random().nextInt(stimsDivs[1]-stimsDivs[0]);
 			morphIds.add(mediums.get(choice));
-			
+
 			choice = new Random().nextInt(stimsDivs[2]-stimsDivs[1]);
 			morphIds.add(highs.get(choice));
+			break;
 		}
-		
-		else if (method == 3)
-			morphIds.add(allIds.get(numIds-1));					// highest stimulus
-		
 		return morphIds;
 	}
-
 }

@@ -104,6 +104,23 @@ public class PngDbUtil extends DbUtil {
 				stimObjId);
 	}
 	
+	public StimSpecEntry readStimSpec_blender(String descId) {
+		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);
+		return jt.queryForObject(
+				" select id, blenderspec from stimobjdata where descId = ? ", 
+				new ParameterizedRowMapper<StimSpecEntry> () {
+					public StimSpecEntry mapRow(ResultSet rs, int rowNum)
+							throws SQLException {
+						StimSpecEntry ent = new StimSpecEntry();
+
+						ent.setStimId(rs.getLong("id")); 
+						ent.setSpec(rs.getString("blenderspec")); 
+
+						return ent;
+					}},
+				descId);
+	}
+	
 	public StimSpecEntry readStimSpec_data(long stimObjId) {
 		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);
 		return jt.queryForObject(

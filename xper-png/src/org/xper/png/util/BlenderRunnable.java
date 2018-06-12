@@ -16,6 +16,7 @@ public class BlenderRunnable implements Runnable {
 	List<Long> stimObjIds = new ArrayList<Long>();
 	List<String> environAttrs = new ArrayList<String>();
 	List<Integer> possiblePositions = new ArrayList<Integer>();
+	List<String> constantAttributes = new ArrayList<String>();
 	
 	static String appPath = "/Applications/blender-279/Blender.app/Contents/MacOS/blender";
 //	static String appPath = "/Applications/blender279/Blender.app/Contents/MacOS/blender";
@@ -36,6 +37,12 @@ public class BlenderRunnable implements Runnable {
 		this.environAttrs = environAttrs;
 		this.possiblePositions = possiblePositions;
 	}
+	
+	public BlenderRunnable(String scriptPath, List<String> constantAttributes, String lineage) {
+		this.scriptPath = scriptPath;
+		this.constantAttributes = constantAttributes;
+	}
+	
 	
 	@Override
 	public void run() {
@@ -67,7 +74,16 @@ public class BlenderRunnable implements Runnable {
 			args.add(Integer.toString(possiblePosition));
 		}
 		
+		String constantAttribute;
+		
+		for (int n=0;n<constantAttributes.size();n++) {
+			constantAttribute = constantAttributes.get(n);
+			args.add(constantAttribute);
+		}
+		
+		
 		try {
+			System.out.println(args);
 			ProcessBuilder builder = new ProcessBuilder(args);
 			Process process = builder.start();
 //			process.getOutputStream();

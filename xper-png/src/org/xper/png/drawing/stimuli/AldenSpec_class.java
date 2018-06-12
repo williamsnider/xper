@@ -7,9 +7,9 @@ import java.util.List;
 
 
 public class AldenSpec_class {
-	boolean aldenPresent;
+	int aldenPresent;
 	String id;
-	boolean blocky;
+	int blocky;
 	Point3d bilateralSymmetry;
 	int fixationPoint;
 	String whichWiggle;
@@ -18,13 +18,14 @@ public class AldenSpec_class {
 	int scaleShiftInDepth;
 	int wallInteraction;
 
-	boolean densityUniform;
+	int densityUniform;
 	List<Integer> affectedLimbs;
 	List<String> limbMaterials;
 	int howMany;
+	String massManipulationLimb;
 
 	String material;
-	boolean optical;
+	int optical;
 	RGBColor opticalBeerLambertColor;
 	double opticalIOR;
 	double opticalTranslucency;
@@ -33,7 +34,7 @@ public class AldenSpec_class {
 	double opticalRoughness;
 	double opticalReflectivity;
 
-	boolean lowPotentialEnergy;
+	int lowPotentialEnergy;
 	Point3d makePrecarious;
 	Point3d rotation;
 	Point3d sun;
@@ -75,10 +76,10 @@ public class AldenSpec_class {
         this.sun = d.getSun();
 	}
 	
-	public void setAldenPresent(boolean aldenPresent) {
+	public void setAldenPresent(int aldenPresent) {
 		this.aldenPresent = aldenPresent;
 	}
-	public boolean getAldenPresent(){
+	public int getAldenPresent(){
 		return aldenPresent;
 	}
 	
@@ -89,10 +90,10 @@ public class AldenSpec_class {
 		return id;
 	}
 	
-	public void setBlockiness(boolean blocky){
+	public void setBlockiness(int blocky){
 		this.blocky = blocky;
 	}
-	public boolean getBlockiness(){
+	public int getBlockiness(){
 		return blocky;
 	}
 	
@@ -145,10 +146,10 @@ public class AldenSpec_class {
 		return wallInteraction;
 	}
 	
-	public void setIsUniformDensity(boolean densityUniform){
+	public void setIsUniformDensity(int densityUniform){
 		this.densityUniform =  densityUniform;
 	}
-	public boolean getIsUniformDensity(){
+	public int getIsUniformDensity(){
 		return densityUniform;
 	}
 
@@ -169,6 +170,13 @@ public class AldenSpec_class {
 	public int getNumLimbs(){
 		return howMany;
 	}
+	
+	public void setMassManipulationLimb(String massManipulationLimb){
+		this.massManipulationLimb = massManipulationLimb;
+	}
+	public String getMassManipulationLimb(){
+		return massManipulationLimb;
+	}
 
 	public void setAldenMaterial(String material){
 		this.material =  material;
@@ -177,10 +185,10 @@ public class AldenSpec_class {
 		return material;
 	}
 
-	public void setIsOptical(boolean optical){
+	public void setIsOptical(int optical){
 		this.optical =  optical;
 	}
-	public boolean getIsOptical(){
+	public int getIsOptical(){
 		return optical;
 	}
 	
@@ -233,10 +241,10 @@ public class AldenSpec_class {
 		return opticalReflectivity;
 	}
 	
-	public void setLowPotentialEnergy(boolean lowPotentialEnergy){
+	public void setLowPotentialEnergy(int lowPotentialEnergy){
 		this.lowPotentialEnergy =  lowPotentialEnergy;
 	}
-	public boolean getLowPotentialEnergy(){
+	public int getLowPotentialEnergy(){
 		return lowPotentialEnergy;
 	}
 	
@@ -260,4 +268,5 @@ public class AldenSpec_class {
 	public Point3d getSun(){
 		return sun;
 	}
+
 }

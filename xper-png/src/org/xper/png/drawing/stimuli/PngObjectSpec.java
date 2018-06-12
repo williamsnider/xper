@@ -16,6 +16,7 @@ public class PngObjectSpec {
 	boolean doStickGen = false;
 	boolean doStickMorph = false;
 	boolean doBlenderMorph = false;
+	boolean doControlledStickMorph = false;
 	
 	transient static XStream s;
 
@@ -61,6 +62,9 @@ public class PngObjectSpec {
 		
 		this.doStickGen = d.doStickGen;
 		this.doStickMorph = d.doStickMorph;
+		
+		this.doBlenderMorph = d.doBlenderMorph;
+		this.doControlledStickMorph = d.doControlledStickMorph;
 	}
 
 	// getters and setters
@@ -112,6 +116,12 @@ public class PngObjectSpec {
 	}
 	public void setDoBlenderMorph(boolean doBlenderMorph) {
 		this.doBlenderMorph = doBlenderMorph;
+	}
+	public boolean getDoControlledStickMorph() {
+		return doControlledStickMorph;
+	}
+	public void setControlledStickMorph(boolean doControlledStickMorph) {
+		this.doControlledStickMorph = doControlledStickMorph;
 	}
 	
 	

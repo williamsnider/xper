@@ -26,7 +26,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 	@Dependency
 	AbstractRenderer renderer;
 	
-	static public enum StimType { OBJECT, ENVT, COMPOSITE, STABILITY, ANIMACY, DENSITY, BLANK };
+	static public enum StimType { OBJECT, ENVT, COMPOSITE, STABILITY, ANIMACY, DENSITY, MASS, BLANK };
 
 	TrialType trialType;	
 	long taskId;	
@@ -83,7 +83,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		
 		String stickspec_str = "";
 		
-		if (Math.random() > PngGAParams.GA_randgen_prob_objvsenvt) {
+		if (Math.random() < PngGAParams.GA_randgen_prob_objvsenvt) {
 			jspec.setStimType(StimType.OBJECT.toString());
 			jspec.setDoStickGen(true);
 			PngObject object = new PngObject();
@@ -210,14 +210,83 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		return returnDetails;
 	}
 	
-	//stimNum?
+	public long generatePHControlledMorph(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum, int profile, String postHoc, int fitnessMethod) {
+		
+		// load blenderspec back in order to extract id of limb of interest
+
+		// FITNESS METHOD 1 -- 
+		// 0 : 5 morphs (1 2 3 4 5) : all
+
+		// FITNESS METHOD 2 --
+		// 1 = minima, maxima
+		// 0 : 5 morphs (2 3 4 5 6) : 2 to <= length+1
+		// 1 : 5 morphs (7 8 9 10 11) : length < to <= length*2+1
+
+		// FITNESS METHOD 3 -- 
+		// 2 = low, medium, high designation and random selection
+		// 0 : 5 morphs (3 4 5 6 7) : 2 to <= length+1
+		// 1 : 5 morphs (8 9 10 11 12) : length < to <= length*2+1
+		// 2 : 5 morphs (13 14 15 16 17) : length*2+1 < to <= length*3+1
+
+		int refStim = Math.floorDiv(stimNum-fitnessMethod, PngGAParams.PH_bulbousness_morphs.length);
+		String referenceDescId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + refStim;
+		System.out.println(referenceDescId+' '+stimNum);
+
+		// GENERATE STIM	
+		long stimObjId = globalTimeUtil.currentTimeMicros();
+		String descId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + stimNum;
+
+		// PARENT STIM
+		String parent_blenderSpec = dbUtil.readStimSpec_blender(referenceDescId).getSpec();
+		// extract chosen limb, take in profile
+		int limb = 1;
+
+		PngObjectSpec s = new PngObjectSpec();
+		DataObject d = new DataObject();
+
+		s.setId(stimObjId);
+		s.setDescId(descId);
+		s.setStimType(postHoc);
+
+		s.setGaPrefix(prefix);
+		s.setGaRunNum(runNum);
+
+		String stickspec_str = "";
+//		System.out.println(postHoc);
+
+		s.setControlledStickMorph(true);
+
+		MStickSpec parent_stickSpec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(parentId).getSpec());
+		PngObject object = new PngObject();
+		object.setSpec_stick(parent_stickSpec);
+		object.setSpec_java(s); object.finalizeObject(profile,limb); //####
+		MStickSpec stickspec = object.getSpec_stick();
+		stickspec_str = stickspec.toXml();
+
+		String vertSpec = object.getStick().getSmoothObj().getVertAsStr();
+		String faceSpec = object.getStick().getSmoothObj().getFaceAsStr();
+
+		dbUtil.writeVertSpec(stimObjId,descId,vertSpec,faceSpec);
+
+		// -- set data values
+		d.setStimObjId(stimObjId);
+		d.setTrialType(TrialType.GA.toString());
+		d.setRunNum(runNum);
+		d.setBirthGen(gen);
+		d.setLineage(lineage);
+
+		dbUtil.writeStimObjData(stimObjId, descId, s.toXml(), stickspec_str, parent_blenderSpec, d.toXml());
+		return stimObjId;
+	}
+
+
 	public long generatePHStim(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum, String postHoc) {
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
-		
+
 		// PARENT STIM
 		String parent_blenderSpec = dbUtil.readStimSpec_blender(parentId).getSpec();
-		
+
 		String descId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + stimNum;
 		
 		PngObjectSpec s = new PngObjectSpec();
@@ -231,7 +300,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		s.setGaRunNum(runNum);
 
 		String stickspec_str = "";
-		System.out.println(postHoc);
+//		System.out.println(postHoc);
 
 		s.setDoBlenderMorph(true);
 
