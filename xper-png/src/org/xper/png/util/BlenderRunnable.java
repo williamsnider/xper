@@ -43,6 +43,7 @@ public class BlenderRunnable implements Runnable {
 		this.constantAttributes = constantAttributes;
 	}
 	
+	public BlenderRunnable() {}
 	
 	@Override
 	public void run() {
@@ -97,6 +98,22 @@ public class BlenderRunnable implements Runnable {
 		}
 	}
 	
+	public void runArgs() {
+		try {
+			System.out.println(args);
+			ProcessBuilder builder = new ProcessBuilder(args);
+			Process process = builder.start();
+//			process.getOutputStream();
+			if (doWaitFor)
+				process.waitFor();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void setScriptPath(String scriptPath) {
 		this.scriptPath = scriptPath;
 	}
@@ -105,4 +122,8 @@ public class BlenderRunnable implements Runnable {
 		this.doWaitFor = doWaitFor;
 	}
 
+	public void setArgs(List<String> args) {
+		this.args = args;
+	}
+	
 }

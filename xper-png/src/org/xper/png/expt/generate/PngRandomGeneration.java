@@ -359,10 +359,24 @@ public class PngRandomGeneration {
 			pngMaker.MakeFromIds(stimObjIds);
 		}
 
-		BlenderRunnable blenderRender = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/singleRender.py");
-//		BlenderRunnable blenderRender = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/singleRender.py");
-		blenderRender.run();
+//		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+//		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+//		
+//        BlenderRunnable photoRunner = new BlenderRunnable();
+//        List<String> args = new ArrayList<String>();
+//        args.add("ssh");
+//        args.add("alexandriya@172.30.9.11");
+//        args.add("\"/home/alexandriya/blendRend/masterSubmitScript.sh " + Integer.toString(numJobs) + " " + prefixRunGen + "\"");
+//        photoRunner.setArgs(args);
+//        photoRunner.setDoWaitFor(false);
+//        photoRunner.runArgs();
 		
+//		
+//		
+//		BlenderRunnable blenderRender = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/singleRender.py");
+////		BlenderRunnable blenderRender = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/singleRender.py");
+//		blenderRender.run();
+//		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
@@ -1240,7 +1254,10 @@ public class PngRandomGeneration {
 		 limbCounts.add(fitnessMethod); // document the number of objects in use per lineage
 
 		//each stimulus has associated number of limbs, should be repeated that many times
-
+		// generatePHStimAnimacy in lieu of generatePHStim drops the face and vert spec save to the database--to save time, animatePostHoc.py references the parent stimulus mesh 
+		// that has already been saved in the inherited parent blender spec
+		// now, we just have to limit the number of renders executed by the cluster and duplicate images as appropriate...
+		 
 		// ready database for animacy spec generation
 		// looking at each stimulus to morph individually
 		int stimNum = 0;
@@ -1255,7 +1272,7 @@ public class PngRandomGeneration {
 
 			for (int m=0;m<3;m++) {
 				// plain unchanged stimulus
-				long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+				long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
 				stimObjIds.add(whichStim_lin1);
 				stims_lin1.add(whichStim_lin1);
 				System.out.println("Lineage 0: Generating and saving stimulus " + n + ", conserved stimulus");
@@ -1266,19 +1283,19 @@ public class PngRandomGeneration {
 			for (int m=0;m<numPHanimations;m++) {
 
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+					long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
 					stimObjIds.add(whichStim_lin1);
 					stims_lin1.add(whichStim_lin1);
 					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", still");
 					stimNum ++;
 					
-					whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY");
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY");
 					stimObjIds.add(whichStim_lin1);
 					stims_lin1.add(whichStim_lin1);
 					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", animated");
 					stimNum ++;
 					
-					whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
 					stimObjIds.add(whichStim_lin1);
 					stims_lin1.add(whichStim_lin1);
 					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", still");
@@ -1288,7 +1305,7 @@ public class PngRandomGeneration {
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
 					
 						for (int s=0;s<3;s++) {
-							long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+							long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
 							stimObjIds.add(whichStim_lin1);
 							stims_lin1.add(whichStim_lin1);
 							System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", still");
@@ -1310,7 +1327,7 @@ public class PngRandomGeneration {
 
 			for (int m=0;m<3;m++) {
 				// plain unchanged stimulus
-				long whichStim_lin2 = generator.generatePHStim(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+				long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
 				stimObjIds.add(whichStim_lin2);
 				stims_lin2.add(whichStim_lin2);
 				System.out.println("Lineage 1: Generating and saving stimulus " + n + ", conserved stimulus");
@@ -1321,19 +1338,19 @@ public class PngRandomGeneration {
 			for (int m=0;m<numPHanimations;m++) {
 
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin2 = generator.generatePHStim(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+					long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
 					stimObjIds.add(whichStim_lin2);
 					stims_lin2.add(whichStim_lin2);
 					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", still");
 					stimNum ++;
 					
-					whichStim_lin2 = generator.generatePHStim(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY");
+					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY");
 					stimObjIds.add(whichStim_lin2);
 					stims_lin2.add(whichStim_lin2);
 					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", animated");
 					stimNum ++;
 					
-					whichStim_lin2 = generator.generatePHStim(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
 					stimObjIds.add(whichStim_lin2);
 					stims_lin2.add(whichStim_lin2);
 					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", still");
@@ -1343,7 +1360,7 @@ public class PngRandomGeneration {
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
 					
 						for (int s=0;s<3;s++) {
-							long whichStim_lin2 = generator.generatePHStim(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+							long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
 							stimObjIds.add(whichStim_lin2);
 							stims_lin2.add(whichStim_lin2);
 							System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", still");
@@ -1811,6 +1828,17 @@ public class PngRandomGeneration {
 //			pngMaker.MakeFromIds(stimObjIds);
 //		}
 		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(stimObjIds.size()));
+        args.add(prefix + "_r-" + runNum + "_g-" + genNum);
+        photoRunner.setArgs(args);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.runArgs();
+        
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 

@@ -2,7 +2,7 @@ package org.xper.png.expt.generate;
 
 public final class PngGAParams {
 	public static final int GA_maxNumGens = 10;
-	public static final int GA_numNonBlankStimsPerLin = 40;	//40
+	public static final int GA_numNonBlankStimsPerLin = 10;	//40
 	public static final int GA_numStimsPerLin = GA_numNonBlankStimsPerLin + 1;
 	public static final int GA_numRepsPerStim = 5;			
 	public static final int GA_numStimsPerTrial = 4;
