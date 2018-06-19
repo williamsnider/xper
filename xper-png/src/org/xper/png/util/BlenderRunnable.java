@@ -11,7 +11,7 @@ import org.xper.png.drawing.stimuli.PngObjectSpec;
 
 public class BlenderRunnable implements Runnable {
 	List<String> args = new ArrayList<String>();
-	boolean doWaitFor = false;
+	boolean doWaitFor = true;
 	String scriptPath;
 	List<Long> stimObjIds = new ArrayList<Long>();
 	List<String> environAttrs = new ArrayList<String>();
@@ -98,7 +98,7 @@ public class BlenderRunnable implements Runnable {
 		}
 	}
 	
-	public void runArgs() {
+	public void run(List<String> args) {
 		try {
 			System.out.println(args);
 			ProcessBuilder builder = new ProcessBuilder(args);

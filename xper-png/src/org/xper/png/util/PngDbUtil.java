@@ -148,6 +148,13 @@ public class PngDbUtil extends DbUtil {
 		return jt.queryForObject("SELECT descId from stimobjdata where id = ?",String.class, stimObjId);
 	}
 	
+	public int readRenderStatus(String prefix, long runNum, long genNum) {
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		int renderStatus = jt.queryForInt("SELECT rendersFinished FROM descriptiveinfo WHERE prefix = ? "
+				+ "AND gaRun = ? AND genNum = ?", new Object[] { prefix, runNum, genNum });
+		return renderStatus;
+	}
+	
 	public String readCurrentDescriptivePrefix() {
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		long tstamp = jt.queryForLong("SELECT max(tstamp) FROM DescriptiveInfo");
@@ -180,7 +187,6 @@ public class PngDbUtil extends DbUtil {
         jt.update("insert into DescriptiveInfo (tstamp, prefix, gaRun, genNum, firstTrial, lastTrial) values (?, ?, ?, ?, ?, ?)", 
 				new Object[] { tstamp, prefix, gaRun, genNum, firstTrial, lastTrial });
     }
-	
 	
 	public void writeDescriptiveFirstTrial(Long id) {
         JdbcTemplate jt = new JdbcTemplate(dataSource);

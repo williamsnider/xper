@@ -175,10 +175,19 @@ public class PngRandomGeneration {
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py");
 		blenderRunner.run();
 
-		BlenderRunnable blenderRender = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/singleRender.py");
-//		BlenderRunnable blenderRender = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/singleRender.py");
-		blenderRender.run();
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
 		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+
 		// now add blanks
 		stimObjIds.addAll(blankStimObjIds);
 
@@ -189,9 +198,14 @@ public class PngRandomGeneration {
 		// write updated global genId and number of trials in this generation to db:
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, PngGAParams.GA_numTasks);
 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// get acq info and put into db:
 		getSpikeResponses();
-
 	}
 
 	void createNextGen() {
@@ -354,29 +368,24 @@ public class PngRandomGeneration {
 //		BlenderRunnable blenderRunnerRestore = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
 		blenderRunnerRestore.run();
 
-		if (doSaveThumbnails) {
-			System.out.println("Saving PNGs.");
-			pngMaker.MakeFromIds(stimObjIds);
-		}
-
-//		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-//		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
-//		
-//        BlenderRunnable photoRunner = new BlenderRunnable();
-//        List<String> args = new ArrayList<String>();
-//        args.add("ssh");
-//        args.add("alexandriya@172.30.9.11");
-//        args.add("\"/home/alexandriya/blendRend/masterSubmitScript.sh " + Integer.toString(numJobs) + " " + prefixRunGen + "\"");
-//        photoRunner.setArgs(args);
-//        photoRunner.setDoWaitFor(false);
-//        photoRunner.runArgs();
+//		if (doSaveThumbnails) {
+//			System.out.println("Saving PNGs.");
+//			pngMaker.MakeFromIds(stimObjIds);
+//		}
 		
-//		
-//		
-//		BlenderRunnable blenderRender = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/singleRender.py");
-////		BlenderRunnable blenderRender = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/singleRender.py");
-//		blenderRender.run();
-//		
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
@@ -387,6 +396,12 @@ public class PngRandomGeneration {
 		// write updated global genId and number of trials in this generation to db:
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, PngGAParams.GA_numTasks);
 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// get acq info and put into db:
 		getSpikeResponses();
 
@@ -1115,6 +1130,19 @@ public class PngRandomGeneration {
 			blenderRunnerComposite_lin2.run();
 		}
 
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
@@ -1126,6 +1154,12 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
@@ -1134,10 +1168,30 @@ public class PngRandomGeneration {
 		List<Long> blankStimObjIds = new ArrayList<Long>();	
 		List<Long> stimObjIds = new ArrayList<Long>();
 
-		// make blank stims:		
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));
-		}
+		List<List<Long>> trialGroups = new ArrayList<List<Long>>();
+		List<Long> trialSubGroup = new ArrayList<Long>();
+
+		// make blank stims. assuming two linages.		
+		long blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, 0);
+		blankStimObjIds.add(blankStimObjId);
+
+		trialSubGroup.add(blankStimObjId);
+		trialSubGroup.add(blankStimObjId);
+		trialSubGroup.add(blankStimObjId);
+		trialGroups.add(trialSubGroup);
+
+		trialSubGroup = new ArrayList<Long>();
+		
+		blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, 1);
+		blankStimObjIds.add(blankStimObjId);
+
+		trialSubGroup.add(blankStimObjId);
+		trialSubGroup.add(blankStimObjId);
+		trialSubGroup.add(blankStimObjId);
+		trialGroups.add(trialSubGroup);
+
+		trialSubGroup = new ArrayList<Long>();
+
 		System.out.println("Blank stimuli added.");
 
 		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
@@ -1247,19 +1301,19 @@ public class PngRandomGeneration {
 
 		System.out.println("lin1: " + stimsToMorph_lin1);
 		System.out.println("lin2: " + stimsToMorph_lin2);
-		
-		 List<String> placeholder = new ArrayList<String>();
-		 List<Integer> limbCounts = new ArrayList<Integer>();
-		 limbCounts.add(PngGAParams.PH_animacy_numMaterials); // document the number of materials in use
-		 limbCounts.add(fitnessMethod); // document the number of objects in use per lineage
 
+		List<String> placeholder = new ArrayList<String>();
+		List<Integer> limbCounts = new ArrayList<Integer>();
+		limbCounts.add(PngGAParams.PH_animacy_numMaterials); // document the number of materials in use
+		limbCounts.add(fitnessMethod); // document the number of objects in use per lineage
+		
 		//each stimulus has associated number of limbs, should be repeated that many times
 		// generatePHStimAnimacy in lieu of generatePHStim drops the face and vert spec save to the database--to save time, animatePostHoc.py references the parent stimulus mesh 
 		// that has already been saved in the inherited parent blender spec
 		// now, we just have to limit the number of renders executed by the cluster and duplicate images as appropriate...
-		 
+
 		// ready database for animacy spec generation
-		// looking at each stimulus to morph individually
+		// minimal descIds
 		int stimNum = 0;
 
 		for (int n=0;n<stimsToMorph_lin1.size();n++) {
@@ -1267,53 +1321,64 @@ public class PngRandomGeneration {
 			int numPHanimations = stimObjId2numAnimations_lin1.get(currentId);
 			numPHanimations = Math.min(PngGAParams.PH_max_animacy_animations,numPHanimations);
 			limbCounts.add(numPHanimations); // document the number of limbs per object
-			
+
 			List<Long> stims_lin1 = new ArrayList<Long>();
 
-			for (int m=0;m<3;m++) {
-				// plain unchanged stimulus
-				long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
-				stimObjIds.add(whichStim_lin1);
-				stims_lin1.add(whichStim_lin1);
-				System.out.println("Lineage 0: Generating and saving stimulus " + n + ", conserved stimulus");
-				stimNum ++;
-			}
+			// plain unchanged stimulus
+			long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+			stimObjIds.add(whichStim_lin1);
+			stims_lin1.add(whichStim_lin1);
+			System.out.println("Lineage 0: Generating and saving stimulus " + n + ", conserved stimulus");
+			stimNum ++;
+			
+			trialSubGroup.add(whichStim_lin1);
+			trialSubGroup.add(whichStim_lin1);
+			trialSubGroup.add(whichStim_lin1);
+			trialGroups.add(trialSubGroup);
+			
+			trialSubGroup = new ArrayList<Long>();
 
-			// include a copy for animation and two copies for still
+			// include a copy for animation and a copy for still
 			for (int m=0;m<numPHanimations;m++) {
 
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin1);
-					stims_lin1.add(whichStim_lin1);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", still");
+					long whichStim_lin1_still = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+					stimObjIds.add(whichStim_lin1_still);
+					stims_lin1.add(whichStim_lin1_still);
+					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
+					stimNum ++;
+
+					long whichStim_lin1_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY");
+					stimObjIds.add(whichStim_lin1_anim);
+					stims_lin1.add(whichStim_lin1_anim);
+					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
 					stimNum ++;
 					
-					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY");
-					stimObjIds.add(whichStim_lin1);
-					stims_lin1.add(whichStim_lin1);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", animated");
-					stimNum ++;
+					trialSubGroup.add(whichStim_lin1_still);
+					trialSubGroup.add(whichStim_lin1_anim);
+					trialSubGroup.add(whichStim_lin1_still);
+					trialGroups.add(trialSubGroup);
 					
-					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin1);
-					stims_lin1.add(whichStim_lin1);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", still");
-					stimNum ++;
+					trialSubGroup = new ArrayList<Long>();
 				}
 
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
+
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+					stimObjIds.add(whichStim_lin1);
+					stims_lin1.add(whichStim_lin1);
+					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", stiff still");
+					stimNum ++;
 					
-						for (int s=0;s<3;s++) {
-							long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
-							stimObjIds.add(whichStim_lin1);
-							stims_lin1.add(whichStim_lin1);
-							System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", still");
-							stimNum ++;
-						}
-					}
+					trialSubGroup.add(whichStim_lin1);
+					trialSubGroup.add(whichStim_lin1);
+					trialSubGroup.add(whichStim_lin1);
+					trialGroups.add(trialSubGroup);
+					
+					trialSubGroup = new ArrayList<Long>();
 				}
 			}
+		}
 
 		stimNum = 0;
 
@@ -1322,53 +1387,64 @@ public class PngRandomGeneration {
 			int numPHanimations = stimObjId2numAnimations_lin2.get(currentId);
 			numPHanimations = Math.min(PngGAParams.PH_max_animacy_animations,numPHanimations);
 			limbCounts.add(numPHanimations); // document the number of limbs per object
-			
+
 			List<Long> stims_lin2 = new ArrayList<Long>();
 
-			for (int m=0;m<3;m++) {
-				// plain unchanged stimulus
-				long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-				stimObjIds.add(whichStim_lin2);
-				stims_lin2.add(whichStim_lin2);
-				System.out.println("Lineage 1: Generating and saving stimulus " + n + ", conserved stimulus");
-				stimNum ++;
-			}
+			// plain unchanged stimulus
+			long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+			stimObjIds.add(whichStim_lin2);
+			stims_lin2.add(whichStim_lin2);
+			System.out.println("Lineage 1: Generating and saving stimulus " + n + ", conserved stimulus");
+			stimNum ++;
 
-			// include a copy for animation and two copies for still
+			trialSubGroup.add(whichStim_lin2);
+			trialSubGroup.add(whichStim_lin2);
+			trialSubGroup.add(whichStim_lin2);
+			trialGroups.add(trialSubGroup);
+			
+			trialSubGroup = new ArrayList<Long>();
+			
+			// include a copy for animation and a copy for still
 			for (int m=0;m<numPHanimations;m++) {
 
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin2);
-					stims_lin2.add(whichStim_lin2);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", still");
+					long whichStim_lin2_still = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+					stimObjIds.add(whichStim_lin2_still);
+					stims_lin2.add(whichStim_lin2_still);
+					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
+					stimNum ++;
+
+					long whichStim_lin2_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY");
+					stimObjIds.add(whichStim_lin2_anim);
+					stims_lin2.add(whichStim_lin2_anim);
+					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
 					stimNum ++;
 					
-					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY");
-					stimObjIds.add(whichStim_lin2);
-					stims_lin2.add(whichStim_lin2);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", animated");
-					stimNum ++;
+					trialSubGroup.add(whichStim_lin2_still);
+					trialSubGroup.add(whichStim_lin2_anim);
+					trialSubGroup.add(whichStim_lin2_still);
+					trialGroups.add(trialSubGroup);
 					
-					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin2);
-					stims_lin2.add(whichStim_lin2);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", still");
-					stimNum ++;
+					trialSubGroup = new ArrayList<Long>();
 				}
 
 				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
+
+					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+					stimObjIds.add(whichStim_lin2);
+					stims_lin2.add(whichStim_lin2);
+					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", stiff still");
+					stimNum ++;
 					
-						for (int s=0;s<3;s++) {
-							long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-							stimObjIds.add(whichStim_lin2);
-							stims_lin2.add(whichStim_lin2);
-							System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", still");
-							stimNum ++;
-						}
-					}
+					trialSubGroup.add(whichStim_lin2);
+					trialSubGroup.add(whichStim_lin2);
+					trialSubGroup.add(whichStim_lin2);
+					trialGroups.add(trialSubGroup);
+					
+					trialSubGroup = new ArrayList<Long>();
 				}
 			}
+		}
 
 		/* 
 		 * This python script is called within blender.
@@ -1384,21 +1460,40 @@ public class PngRandomGeneration {
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/animatePostHoc.py",placeholder,limbCounts);
 		blenderRunnerAnimate.run();
 		
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
-		createPHTrialsFromStimObjs(stimObjIds,1);
+		createAnimacyTrialsFromStimObjs(trialGroups);
 
 		// write updated global genId and number of trials in this generation to db:
-		int numStimsPerTrial = 1;
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
+		int numTasks = (int) Math.ceil(trialGroups.size()*PngGAParams.GA_numRepsPerStim);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
+	
 
 	void createPHstability() {
 
@@ -1472,6 +1567,19 @@ public class PngRandomGeneration {
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
 		blenderRunnerPHGeneric.run();
 
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
@@ -1484,6 +1592,12 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
@@ -1510,6 +1624,7 @@ public class PngRandomGeneration {
 		
 		return totalFact/(chooseFact*diffFact);
 	}
+	
 	
 	void createPHdensity() {
 
@@ -1680,6 +1795,19 @@ public class PngRandomGeneration {
 //		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/densityPostHoc.py" + constantAttributes);
 		blenderRunnerPHDensity.run();
 		
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
@@ -1692,9 +1820,16 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
+	
 
 	void createPHmass() {
 		
@@ -1828,16 +1963,18 @@ public class PngRandomGeneration {
 //			pngMaker.MakeFromIds(stimObjIds);
 //		}
 		
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		
         BlenderRunnable photoRunner = new BlenderRunnable();
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
         args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-        args.add(Integer.toString(stimObjIds.size()));
-        args.add(prefix + "_r-" + runNum + "_g-" + genNum);
-        photoRunner.setArgs(args);
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
-        photoRunner.runArgs();
+        photoRunner.run(args);
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
@@ -1851,9 +1988,16 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
+	
 	
 	ArrayList<List<Long>> chooseBestObjs(int fitnessMethod) {
 
@@ -2042,9 +2186,49 @@ public class PngRandomGeneration {
 			stimCounter = endIdx;
 		}
 	}
+	void createAnimacyTrialsFromStimObjs(List<List<Long>> trialGroups) {
+			
+		// -- create trial structure, populate stimspec, write task-to-do
 
-	// once you get past a certain point (number of generations), start building composites from best of env and obj
-	// choose ideal
+		// first, log stimobjids for each genid:
+		//		dbUtil.writeStimObjIdsForEachGenId(genId, stimObjIds);
+
+		// stim repetitions:
+		List<List<Long>> allStimTrialsInGen = new ArrayList<List<Long>>();
+		for (int n=0;n<PngGAParams.GA_numRepsPerStim;n++) {
+			allStimTrialsInGen.addAll(trialGroups);
+		}
+
+		// shuffle stimuli:
+		Collections.shuffle(allStimTrialsInGen);
+		
+		// create trials using shuffled stimuli:
+		long taskId;
+		int stimCounter = 0;
+		int filler = 0;
+
+		int numTasks = (int) Math.ceil(trialGroups.size()*PngGAParams.GA_numRepsPerStim);
+		System.out.println(numTasks);
+
+		for (int n=0;n<numTasks;n++) {
+			taskId = globalTimeUtil.currentTimeMicros();
+
+			// create trialspec using sublist and taskId
+			String spec = generator.generateGATrialSpec(allStimTrialsInGen.get(stimCounter));
+
+			if(n==0)
+				writeExptFirstTrial(taskId);
+			else if(n==numTasks-1)
+				writeExptLastTrial(taskId);
+
+			// save spec and tasktodo to db
+			dbUtil.writeStimSpec(taskId, spec);
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum);
+			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
+
+			stimCounter++;
+		}
+	}
 	
 	public void getSpikeResponses() {
 		
