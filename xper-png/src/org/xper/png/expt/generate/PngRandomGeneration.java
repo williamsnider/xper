@@ -1306,6 +1306,7 @@ public class PngRandomGeneration {
 		List<Integer> limbCounts = new ArrayList<Integer>();
 		limbCounts.add(PngGAParams.PH_animacy_numMaterials); // document the number of materials in use
 		limbCounts.add(fitnessMethod); // document the number of objects in use per lineage
+		limbCounts.add(PngGAParams.targetedColoration); // document whether targeted coloration
 		
 		//each stimulus has associated number of limbs, should be repeated that many times
 		// generatePHStimAnimacy in lieu of generatePHStim drops the face and vert spec save to the database--to save time, animatePostHoc.py references the parent stimulus mesh 
@@ -1339,49 +1340,80 @@ public class PngRandomGeneration {
 			trialSubGroup = new ArrayList<Long>();
 
 			// include a copy for animation and a copy for still
-			for (int m=0;m<numPHanimations;m++) {
-
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin1_still = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin1_still);
-					stims_lin1.add(whichStim_lin1_still);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
+			for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) {
+				
+				// SQUISH
+				if (PngGAParams.targetedColoration!=1) {
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+					stimObjIds.add(whichStim_lin1);
+					stims_lin1.add(whichStim_lin1);
+					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", all limbs squish still");
 					stimNum ++;
-
+				}
+				
+				for (int m=0;m<numPHanimations;m++) {
+				
+					if (PngGAParams.targetedColoration==1) {
+						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+						stimObjIds.add(whichStim_lin1);
+						stims_lin1.add(whichStim_lin1);
+						System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
+						stimNum ++;
+					}
+					
 					long whichStim_lin1_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY");
 					stimObjIds.add(whichStim_lin1_anim);
 					stims_lin1.add(whichStim_lin1_anim);
 					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
 					stimNum ++;
 					
-					trialSubGroup.add(whichStim_lin1_still);
+					trialSubGroup.add(whichStim_lin1);
 					trialSubGroup.add(whichStim_lin1_anim);
-					trialSubGroup.add(whichStim_lin1_still);
+					trialSubGroup.add(whichStim_lin1);
 					trialGroups.add(trialSubGroup);
-					
+
 					trialSubGroup = new ArrayList<Long>();
+
 				}
 
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
-
+				// STIFF
+				if (PngGAParams.targetedColoration!=1) {
 					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
 					stimObjIds.add(whichStim_lin1);
 					stims_lin1.add(whichStim_lin1);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", stiff still");
+					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", all limbs stiff still");
 					stimNum ++;
-					
+
 					trialSubGroup.add(whichStim_lin1);
 					trialSubGroup.add(whichStim_lin1);
 					trialSubGroup.add(whichStim_lin1);
 					trialGroups.add(trialSubGroup);
-					
+
 					trialSubGroup = new ArrayList<Long>();
+				}
+
+				else {
+
+					for (int m=0;m<numPHanimations;m++) {
+						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+						stimObjIds.add(whichStim_lin1);
+						stims_lin1.add(whichStim_lin1);
+						System.out.println("Lineage 0: Generating and saving stimulus " + n + ", all limbs stiff still");
+						stimNum ++;
+
+						trialSubGroup.add(whichStim_lin1);
+						trialSubGroup.add(whichStim_lin1);
+						trialSubGroup.add(whichStim_lin1);
+						trialGroups.add(trialSubGroup);
+
+						trialSubGroup = new ArrayList<Long>();
+					}
 				}
 			}
 		}
-
+		
 		stimNum = 0;
-
+		
 		for (int n=0;n<stimsToMorph_lin2.size();n++) {
 			long currentId = stimsToMorph_lin2.get(n);
 			int numPHanimations = stimObjId2numAnimations_lin2.get(currentId);
@@ -1396,52 +1428,83 @@ public class PngRandomGeneration {
 			stims_lin2.add(whichStim_lin2);
 			System.out.println("Lineage 1: Generating and saving stimulus " + n + ", conserved stimulus");
 			stimNum ++;
-
+			
 			trialSubGroup.add(whichStim_lin2);
 			trialSubGroup.add(whichStim_lin2);
 			trialSubGroup.add(whichStim_lin2);
 			trialGroups.add(trialSubGroup);
 			
 			trialSubGroup = new ArrayList<Long>();
-			
+
 			// include a copy for animation and a copy for still
-			for (int m=0;m<numPHanimations;m++) {
-
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin2_still = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin2_still);
-					stims_lin2.add(whichStim_lin2_still);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
+			for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) {
+				
+				// SQUISH
+				if (PngGAParams.targetedColoration!=1) {
+					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+					stimObjIds.add(whichStim_lin2);
+					stims_lin2.add(whichStim_lin2);
+					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", all limbs squish still");
 					stimNum ++;
-
+				}
+				
+				for (int m=0;m<numPHanimations;m++) {
+				
+					if (PngGAParams.targetedColoration==1) {
+						whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+						stimObjIds.add(whichStim_lin2);
+						stims_lin2.add(whichStim_lin2);
+						System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
+						stimNum ++;
+					}
+					
 					long whichStim_lin2_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY");
 					stimObjIds.add(whichStim_lin2_anim);
 					stims_lin2.add(whichStim_lin2_anim);
 					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
 					stimNum ++;
 					
-					trialSubGroup.add(whichStim_lin2_still);
+					trialSubGroup.add(whichStim_lin2);
 					trialSubGroup.add(whichStim_lin2_anim);
-					trialSubGroup.add(whichStim_lin2_still);
+					trialSubGroup.add(whichStim_lin2);
 					trialGroups.add(trialSubGroup);
-					
+
 					trialSubGroup = new ArrayList<Long>();
+
 				}
 
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
-
+				// STIFF
+				if (PngGAParams.targetedColoration!=1) {
 					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
 					stimObjIds.add(whichStim_lin2);
 					stims_lin2.add(whichStim_lin2);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", stiff still");
+					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", all limbs stiff still");
 					stimNum ++;
-					
+
 					trialSubGroup.add(whichStim_lin2);
 					trialSubGroup.add(whichStim_lin2);
 					trialSubGroup.add(whichStim_lin2);
 					trialGroups.add(trialSubGroup);
-					
+
 					trialSubGroup = new ArrayList<Long>();
+				}
+
+				else {
+
+					for (int m=0;m<numPHanimations;m++) {
+						whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
+						stimObjIds.add(whichStim_lin2);
+						stims_lin2.add(whichStim_lin2);
+						System.out.println("Lineage 1: Generating and saving stimulus " + n + ", all limbs stiff still");
+						stimNum ++;
+
+						trialSubGroup.add(whichStim_lin2);
+						trialSubGroup.add(whichStim_lin2);
+						trialSubGroup.add(whichStim_lin2);
+						trialGroups.add(trialSubGroup);
+
+						trialSubGroup = new ArrayList<Long>();
+					}
 				}
 			}
 		}
@@ -1463,15 +1526,15 @@ public class PngRandomGeneration {
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
 		
-        BlenderRunnable photoRunner = new BlenderRunnable();
-        List<String> args = new ArrayList<String>();
-        args.add("ssh");
-        args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-        args.add(Integer.toString(numJobs));
-        args.add(prefixRunGen);
-        photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+//        BlenderRunnable photoRunner = new BlenderRunnable();
+//        List<String> args = new ArrayList<String>();
+//        args.add("ssh");
+//        args.add("alexandriya@172.30.9.11");
+//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+//        args.add(Integer.toString(numJobs));
+//        args.add(prefixRunGen);
+//        photoRunner.setDoWaitFor(false);
+//        photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
