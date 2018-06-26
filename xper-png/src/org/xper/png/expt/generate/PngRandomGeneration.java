@@ -58,6 +58,7 @@ public class PngRandomGeneration {
 	String prefix = "";
 	long runNum = 1;
 	long genNum = 1;
+	long linNum = 0;
 	
 	static public enum TrialType { GA };
 	TrialType trialType;
@@ -73,6 +74,7 @@ public class PngRandomGeneration {
 		genNum = getGenNum();
 		runNum = getRunNum();
 		prefix = getPrefix();
+		linNum = getLinNum(); //#####!
 		
 		// start by asking if there is a previous ga run to be continued
 		// if so, run createNextGen for that prefix and ga run
@@ -85,44 +87,65 @@ public class PngRandomGeneration {
 			if (c==0) {
 				genNum = 1;
 				runNum = runNum + 1;
+				linNum = 0;
+				
 				DateFormat df = new SimpleDateFormat("yyMMdd");
 				prefix = df.format(new Date()); 
-				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum);
+				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); //#####!
 				createFirstGen();
 			} else {
 				runNum = c;
-				genNum = getGenId(runNum) + 1;
+				linNum = getLinId(runNum);
+				// if current linNum is 1, genNum increments and linNum is set to 0
+				
+				if (linNum == 1) {
+					linNum = 0;
+					genNum = getGenId(runNum) + 1;
+				}
+				else {
+					linNum = 1;
+					genNum = getGenId(runNum);
+				}
+				
 				prefix = getPrefix(runNum);
-				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum);
+				System.out.println(genNum);
+				System.out.println(linNum);
+
+				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); //#####!
 				
 				System.out.println("To continue GA, enter 'n'.");
 				String progressType = PngIOUtil.promptString("To proceed with post-hoc, enter 'c' (composite), 's' (stability), 'a' (joint animacy), 'd' (density), or 'm' (mass distribution)");
 				String postHoc;
 
-				if (progressType == "n") {
-					createNextGen();
+				switch (progressType) {
+				case "n":
+					if ((genNum == 1) && (linNum == 1)) {
+						createFirstGen();
+					}
+					else {
+						createNextGen();
+					}
 					break;
-				} else if (progressType == "c") {
+				case "c":
 					postHoc = "COMPOSITE";
 					createPHcomposite();
 					break;
-				} else if (progressType == "s") {
+				case "s":
 					postHoc = "STABILITY";
 					createPHstability();
 					break;
-				} else if (progressType == "a") {
+				case "a":
 					postHoc = "ANIMACY";
 					createPHanimacy();
 					break;
-				} else if (progressType == "d") {
+				case "d":
 					postHoc = "DENSITY";
 					createPHdensity();
 					break;
-				} else if (progressType == "m") {
+				case "m":
 					postHoc = "MASS";
 					createPHmass();
 					break;
-					
 				}
 			}
 
@@ -141,17 +164,13 @@ public class PngRandomGeneration {
 		List<Long> stimObjIds = new ArrayList<Long>();	// track stimObjIds for all stimuli created
 
 		// make blank stims: (create one blank stimulus for each lineage, if just to have a better baseline measure)
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));	
-		}
-		System.out.println("Blank stimuli added.");
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));	//#####!
+		System.out.println("Blank stimulus added."); //#####!
 
 		// make random stims:		
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			for (int k=0;k<PngGAParams.GA_numNonBlankStimsPerLin;k++) {
-				stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, n, k));
-				System.out.println("Lineage " + n + ": Generating and saving stimulus " + k);
-			}
+		for (int k=0;k<PngGAParams.GA_numNonBlankStimsPerLin;k++) { //#####!
+			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); //#####!
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + k); //#####!
 		}
 
 		// create PNG thumbnails (not for blanks)
@@ -160,23 +179,12 @@ public class PngRandomGeneration {
 			pngMaker.MakeFromIds(stimObjIds);
 		}
 
-		/* 
-		 * This python script is called within blender.
-		 * It reads the latest descriptive ID from the DB
-		 * and makes a list of stimuli to create. It then does
-		 * a parallel blenderrender call to save all the blenderspec
-		 * to stimobjdata. Finally, it does a cluster call
-		 * to render png images. When done, it rsyncs all pngs
-		 * to the rig and to ecpc31.
-		 */
-
-// JK		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/randomSpec.py");
-		BlenderRunnable blenderRunner = new BlenderRunnable("/home/alexandriya/blendRend/ProgressionClasses/randomSpec.py");
+		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/randomSpec.py");
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py");
 		blenderRunner.run();
 
-		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage n;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum; //#####! CHANGEPYTHON
 		
         BlenderRunnable photoRunner = new BlenderRunnable();
         List<String> args = new ArrayList<String>();
@@ -192,20 +200,20 @@ public class PngRandomGeneration {
 		stimObjIds.addAll(blankStimObjIds);
 
 		// create trial structure, populate stimspec, write task-to-do
-		System.out.println("Creating trial spec for this generation.");
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createGATrialsFromStimObjs(stimObjIds);
 
 		// write updated global genId and number of trials in this generation to db:
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, PngGAParams.GA_numTasks);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks); //#####! NEEDS WORK NEEDS WORK NEEDS WORK
 
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
 		}
 		
 		// get acq info and put into db:
-		getSpikeResponses();
+		getSpikeResponses(); //#####!
 	}
 
 	void createNextGen() {
@@ -213,29 +221,15 @@ public class PngRandomGeneration {
 		List<Long> stimObjIds = new ArrayList<Long>();
 
 		// make blank stims:		
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));
-		}
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum)); //#####!
 		System.out.println("Blank stimuli added.");
 
 		// make random stims:		
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			for (int k=0;k<PngGAParams.GA_morph_numNewStimPerLin;k++) {
-				stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, n, k));
-				System.out.println("Lineage " + n + ": Generating and saving random stimulus " + k);
-			}
+		for (int k=0;k<PngGAParams.GA_morph_numNewStimPerLin;k++) { //#####!
+			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); //#####!
+			System.out.println("Lineage " + linNum + ": Generating and saving random stimulus " + k); //#####!
 		}
-
-		/* 
-		 * This python script is called within blender.
-		 * It reads the latest descriptive ID from the DB
-		 * and makes a list of stimuli to create. It then does
-		 * a parallel blenderrender call to save all the blenderspec
-		 * to stimobjdata. Finally, it does a cluster call
-		 * to render png images. When done, it rsyncs all pngs
-		 * to the rig and to ecpc31.
-		 */
-
+		
 		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/randomSpec.py",stimObjIds);
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py",stimObjIds);
 		blenderRunner.run();
@@ -248,11 +242,9 @@ public class PngRandomGeneration {
 
 		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
 		Map<Long, Double> stimObjId2FRZ_lin1_obj = new HashMap<Long, Double>();
-		Map<Long, Double> stimObjId2FRZ_lin2_obj = new HashMap<Long, Double>();
 		Map<Long, Double> stimObjId2FRZ_lin1_env = new HashMap<Long, Double>();
-		Map<Long, Double> stimObjId2FRZ_lin2_env = new HashMap<Long, Double>();
 
-		for (int gen=1;gen<genNum;gen++) {
+		for (int gen=1;gen<genNum;gen++) { //#####!
 			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
 
 			DataObject data;
@@ -265,8 +257,8 @@ public class PngRandomGeneration {
 
 				if (pngSpecTemp.getStimType().equals("OBJECT") || pngSpecTemp.getStimType().equals("ENVT")) {
 					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
-
-					if (data.getLineage() == 0) {
+					
+					if (data.getLineage() == linNum) { //#####!
 						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
 						
 						if (pngSpecTemp.getStimType().equals("OBJECT")) {
@@ -274,17 +266,6 @@ public class PngRandomGeneration {
 						}
 						else {
 							stimObjId2FRZ_lin1_env.put(stimObjId, zScore);
-						}
-					}
-
-					else {
-						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
-						
-						if (pngSpecTemp.getStimType().equals("OBJECT")) {
-							stimObjId2FRZ_lin2_obj.put(stimObjId, zScore);
-						}
-						else {
-							stimObjId2FRZ_lin2_env.put(stimObjId, zScore);
 						}
 					}
 				}
@@ -297,23 +278,16 @@ public class PngRandomGeneration {
 		int fitnessMethod = 1;
 
 		List<Long> stimsToMorph_lin1_obj = GAMaths.chooseStimsToMorph(stimObjId2FRZ_lin1_obj,numDescendantObjType,fitnessMethod); 
-		List<Long> stimsToMorph_lin2_obj = GAMaths.chooseStimsToMorph(stimObjId2FRZ_lin2_obj,numDescendantObjType,fitnessMethod);
 		List<Long> stimsToMorph_lin1_env = GAMaths.chooseStimsToMorph(stimObjId2FRZ_lin1_env,numDescendantEnvType,fitnessMethod); 
-		List<Long> stimsToMorph_lin2_env = GAMaths.chooseStimsToMorph(stimObjId2FRZ_lin2_env,numDescendantEnvType,fitnessMethod);
 
 		List<Long> stimsToMorph_lin1 = new ArrayList<Long>(stimsToMorph_lin1_obj);
 		stimsToMorph_lin1.addAll(stimsToMorph_lin1_env);
 		
-		List<Long> stimsToMorph_lin2 = new ArrayList<Long>(stimsToMorph_lin2_obj);
-		stimsToMorph_lin2.addAll(stimsToMorph_lin2_env);
-		
-		System.out.println("lin1: " + stimsToMorph_lin1);
-		System.out.println("lin2: " + stimsToMorph_lin2);
+		System.out.println("lin " + linNum + " stims to morph: " + stimsToMorph_lin1); //#####!
 
 		//		// check generation designations of stimuli chosen to morph
 		//		for (int n=0;n<stimsToMorph_lin1.size();n++) {
-		//			System.out.println("LIN1 "+stimsToMorph_lin1.get(n)+" "+dbUtil.readDescriptiveIdFromStimObjId(stimsToMorph_lin1.get(n)));
-		//			System.out.println("LIN2 "+stimsToMorph_lin2.get(n)+" "+dbUtil.readDescriptiveIdFromStimObjId(stimsToMorph_lin2.get(n)));
+		//			System.out.println("LIN STIM DESIGNATIONS "+stimsToMorph_lin1.get(n)+" "+dbUtil.readDescriptiveIdFromStimObjId(stimsToMorph_lin1.get(n)));
 		//		}
 
 		List<Long> stimsToMorph = new ArrayList<Long>();
@@ -324,19 +298,8 @@ public class PngRandomGeneration {
 		// create morphed stimuli:
 		for (int n=0;n<numDescendantObjs;n++) {
 
-			tempArray = generator.generateMorphStim(prefix, runNum, genNum, 0,stimsToMorph_lin1.get(n),n+PngGAParams.GA_morph_numNewStimPerLin);
-			System.out.println("Lineage 0: Generating and saving morphed stimulus " + n);
-			whichStim = Long.parseLong(tempArray.get(0));
-			stimObjIds.add(whichStim);
-
-			if (tempArray.get(1) == "NewBSpec")
-				stimsToMorph.add(whichStim);
-
-			else 
-				stimsToRestore.add(whichStim);
-
-			tempArray = generator.generateMorphStim(prefix, runNum, genNum, 1,stimsToMorph_lin2.get(n),n+PngGAParams.GA_morph_numNewStimPerLin);
-			System.out.println("Lineage 1: Generating and saving morphed stimulus " + n);
+			tempArray = generator.generateMorphStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(n),n+PngGAParams.GA_morph_numNewStimPerLin); //#####!
+			System.out.println("Lineage " + linNum + ": Generating and saving morphed stimulus " + n); //#####!
 			whichStim = Long.parseLong(tempArray.get(0));
 			stimObjIds.add(whichStim);
 
@@ -346,16 +309,6 @@ public class PngRandomGeneration {
 			else 
 				stimsToRestore.add(whichStim);
 		}
-
-		/* 
-		 * This python script is called within blender.
-		 * It reads the latest descriptive ID from the DB
-		 * and makes a list of stimuli to create. It then does
-		 * a parallel blenderrender call to save all the blenderspec
-		 * to stimobjdata. Finally, it does a cluster call
-		 * to render png images. When done, it rsyncs all pngs
-		 * to the rig and to ecpc31.
-		 */
 
 		System.out.println(stimsToMorph+" MORPH");
 		System.out.println(stimsToRestore+" RESTORE");
@@ -373,8 +326,8 @@ public class PngRandomGeneration {
 //			pngMaker.MakeFromIds(stimObjIds);
 //		}
 		
-		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum; //#####!
 		
         BlenderRunnable photoRunner = new BlenderRunnable();
         List<String> args = new ArrayList<String>();
@@ -390,13 +343,13 @@ public class PngRandomGeneration {
 		stimObjIds.addAll(blankStimObjIds);	
 
 		// create trial structure, populate stimspec, write task-to-do
-		System.out.println("Creating trial spec for this generation.");
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation."); //#####!
 		createGATrialsFromStimObjs(stimObjIds);
 
 		// write updated global genId and number of trials in this generation to db:
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, PngGAParams.GA_numTasks);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks); //#####!
 
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
@@ -426,24 +379,10 @@ public class PngRandomGeneration {
 		Map<Integer, List<Double>> wallB_maxFinder_lin1 = new HashMap<Integer, List<Double>>();
 		Map<Point3d, List<Double>> sun_maxFinder_lin1 = new HashMap<Point3d, List<Double>>();
 
-		Map<Double, List<Double>> horizonTilt_maxFinder_lin2 = new HashMap<Double, List<Double>>();
-		Map<Double, List<Double>> horizonSlant_maxFinder_lin2 = new HashMap<Double, List<Double>>();
-		Map<String, List<Double>> horizonMaterial_maxFinder_lin2 = new HashMap<String, List<Double>>();
-		Map<Double, List<Double>> distance_maxFinder_lin2 = new HashMap<Double, List<Double>>();
-		Map<String, List<Double>> structureMaterial_maxFinder_lin2 = new HashMap<String, List<Double>>();
-		Map<Integer, List<Double>> floor_maxFinder_lin2 = new HashMap<Integer, List<Double>>();
-		Map<Integer, List<Double>> ceiling_maxFinder_lin2 = new HashMap<Integer, List<Double>>();
-		Map<Integer, List<Double>> wallL_maxFinder_lin2 = new HashMap<Integer, List<Double>>();
-		Map<Integer, List<Double>> wallR_maxFinder_lin2 = new HashMap<Integer, List<Double>>();
-		Map<Integer, List<Double>> wallB_maxFinder_lin2 = new HashMap<Integer, List<Double>>();
-		Map<Point3d, List<Double>> sun_maxFinder_lin2 = new HashMap<Point3d, List<Double>>();
-
 		Map<String, List<Double>> aldenMaterial_maxFinder_lin1 = new HashMap<String, List<Double>>();
-		Map<String, List<Double>> aldenMaterial_maxFinder_lin2 = new HashMap<String, List<Double>>();
 
 		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
 		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
-		Map<Long, Double> stimObjId2FRZ_lin2 = new HashMap<Long, Double>();
 
 		for (int gen=1;gen<genNum;gen++) {
 			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
@@ -467,7 +406,7 @@ public class PngRandomGeneration {
 					EnviroSpec_class enviroSpec = blendObject.getEnviroSpec();
 
 					//horizonTilt
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Double> currentKeysTilt = new ArrayList<Double>(horizonTilt_maxFinder_lin1.keySet());
 						double thisHorizonTilt = enviroSpec.getHorizonTilt();
 
@@ -482,24 +421,9 @@ public class PngRandomGeneration {
 							horizonTilt_maxFinder_lin1.put(thisHorizonTilt,zList);
 						}
 					}
-					else {
-						List<Double> currentKeysTilt = new ArrayList<Double>(horizonTilt_maxFinder_lin2.keySet());
-						double thisHorizonTilt = enviroSpec.getHorizonTilt();
-
-						if (currentKeysTilt.contains(thisHorizonTilt)) {
-							List<Double> zList = horizonTilt_maxFinder_lin2.get(thisHorizonTilt);
-							zList.add(zScore);
-							horizonTilt_maxFinder_lin2.put(thisHorizonTilt,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							horizonTilt_maxFinder_lin2.put(thisHorizonTilt,zList);
-						}
-					}
 
 					//horizonSlant
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Double> currentKeysSlant = new ArrayList<Double>(horizonSlant_maxFinder_lin1.keySet());
 						double thisHorizonSlant = enviroSpec.getHorizonSlant();
 
@@ -514,24 +438,9 @@ public class PngRandomGeneration {
 							horizonSlant_maxFinder_lin1.put(thisHorizonSlant,zList);
 						}
 					}
-					else {
-						List<Double> currentKeysSlant = new ArrayList<Double>(horizonSlant_maxFinder_lin2.keySet());
-						double thisHorizonSlant = enviroSpec.getHorizonSlant();
-
-						if (currentKeysSlant.contains(thisHorizonSlant)) {
-							List<Double> zList = horizonSlant_maxFinder_lin2.get(thisHorizonSlant);
-							zList.add(zScore);
-							horizonSlant_maxFinder_lin2.put(thisHorizonSlant,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							horizonSlant_maxFinder_lin2.put(thisHorizonSlant,zList);
-						}
-					}
 
 					//horizonMaterial
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<String> currentKeysHorizMat = new ArrayList<String>(horizonMaterial_maxFinder_lin1.keySet());
 						String thisHorizonMat = enviroSpec.getHorizonMaterial();
 
@@ -546,24 +455,9 @@ public class PngRandomGeneration {
 							horizonMaterial_maxFinder_lin1.put(thisHorizonMat,zList);
 						}
 					}
-					else {
-						List<String> currentKeysHorizMat = new ArrayList<String>(horizonMaterial_maxFinder_lin2.keySet());
-						String thisHorizonMat = enviroSpec.getHorizonMaterial();
-
-						if (currentKeysHorizMat.contains(thisHorizonMat)) {
-							List<Double> zList = horizonMaterial_maxFinder_lin2.get(thisHorizonMat);
-							zList.add(zScore);
-							horizonMaterial_maxFinder_lin2.put(thisHorizonMat,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							horizonMaterial_maxFinder_lin2.put(thisHorizonMat,zList);
-						}
-					}
 
 					//sun
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						AldenSpec_class aldenSpec = blendObject.getAldenSpec();
 						List<Point3d> currentKeysSun = new ArrayList<Point3d>(sun_maxFinder_lin1.keySet());
 						Point3d thisSun = aldenSpec.getSun();
@@ -579,25 +473,9 @@ public class PngRandomGeneration {
 							sun_maxFinder_lin1.put(thisSun,zList);
 						}
 					}
-					else {
-						AldenSpec_class aldenSpec = blendObject.getAldenSpec();
-						List<Point3d> currentKeysSun = new ArrayList<Point3d>(sun_maxFinder_lin2.keySet());
-						Point3d thisSun = aldenSpec.getSun();
-
-						if (currentKeysSun.contains(thisSun)) {
-							List<Double> zList = sun_maxFinder_lin2.get(thisSun);
-							zList.add(zScore);
-							sun_maxFinder_lin2.put(thisSun,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							sun_maxFinder_lin2.put(thisSun,zList);
-						}
-					}
 
 					//distance
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Double> currentKeysDistance = new ArrayList<Double>(distance_maxFinder_lin1.keySet());
 						double thisDistance = enviroSpec.getDistance();
 
@@ -612,24 +490,9 @@ public class PngRandomGeneration {
 							distance_maxFinder_lin1.put(thisDistance,zList);
 						}
 					}
-					else {
-						List<Double> currentKeysDistance = new ArrayList<Double>(distance_maxFinder_lin2.keySet());
-						double thisDistance = enviroSpec.getDistance();
-
-						if (currentKeysDistance.contains(thisDistance)) {
-							List<Double> zList = distance_maxFinder_lin2.get(thisDistance);
-							zList.add(zScore);
-							distance_maxFinder_lin2.put(thisDistance,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							distance_maxFinder_lin2.put(thisDistance,zList);
-						}
-					}
 
 					//structureMaterial
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<String> currentKeysStructMat = new ArrayList<String>(structureMaterial_maxFinder_lin1.keySet());
 						String thisStructMat = enviroSpec.getStructureMaterial();
 
@@ -644,24 +507,9 @@ public class PngRandomGeneration {
 							structureMaterial_maxFinder_lin1.put(thisStructMat,zList);
 						}
 					}
-					else {
-						List<String> currentKeysStructMat = new ArrayList<String>(structureMaterial_maxFinder_lin2.keySet());
-						String thisStructMat = enviroSpec.getStructureMaterial();
-
-						if (currentKeysStructMat.contains(thisStructMat)) {
-							List<Double> zList = structureMaterial_maxFinder_lin2.get(thisStructMat);
-							zList.add(zScore);
-							structureMaterial_maxFinder_lin2.put(thisStructMat,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							structureMaterial_maxFinder_lin2.put(thisStructMat,zList);
-						}
-					}
 
 					//floor
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Integer> currentKeysFloor = new ArrayList<Integer>(floor_maxFinder_lin1.keySet());
 						int thisFloor = enviroSpec.getHasFloor();
 
@@ -676,24 +524,9 @@ public class PngRandomGeneration {
 							floor_maxFinder_lin1.put(thisFloor,zList);
 						}
 					}
-					else {
-						List<Integer> currentKeysFloor = new ArrayList<Integer>(floor_maxFinder_lin2.keySet());
-						int thisFloor = enviroSpec.getHasFloor();
-
-						if (currentKeysFloor.contains(thisFloor)) {
-							List<Double> zList = floor_maxFinder_lin2.get(thisFloor);
-							zList.add(zScore);
-							floor_maxFinder_lin2.put(thisFloor,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							floor_maxFinder_lin2.put(thisFloor,zList);
-						}
-					}
 
 					//ceiling
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Integer> currentKeysCeiling = new ArrayList<Integer>(ceiling_maxFinder_lin1.keySet());
 						int thisCeiling = enviroSpec.getHasCeiling();
 
@@ -708,24 +541,9 @@ public class PngRandomGeneration {
 							ceiling_maxFinder_lin1.put(thisCeiling,zList);
 						}
 					}
-					else {
-						List<Integer> currentKeysCeiling = new ArrayList<Integer>(ceiling_maxFinder_lin2.keySet());
-						int thisCeiling = enviroSpec.getHasCeiling();
-
-						if (currentKeysCeiling.contains(thisCeiling)) {
-							List<Double> zList = ceiling_maxFinder_lin2.get(thisCeiling);
-							zList.add(zScore);
-							ceiling_maxFinder_lin2.put(thisCeiling,zList); 
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							ceiling_maxFinder_lin2.put(thisCeiling,zList);
-						}
-					}
 
 					//wallL
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Integer> currentKeysWallL = new ArrayList<Integer>(wallL_maxFinder_lin1.keySet());
 						int thisWallL = enviroSpec.getHasWallL();
 
@@ -740,24 +558,9 @@ public class PngRandomGeneration {
 							wallL_maxFinder_lin1.put(thisWallL,zList);
 						}
 					}
-					else {
-						List<Integer> currentKeysWallL = new ArrayList<Integer>(wallL_maxFinder_lin2.keySet());
-						int thisWallL = enviroSpec.getHasWallL();
-
-						if (currentKeysWallL.contains(thisWallL)) {
-							List<Double> zList = wallL_maxFinder_lin2.get(thisWallL);
-							zList.add(zScore);
-							wallL_maxFinder_lin2.put(thisWallL,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							wallL_maxFinder_lin2.put(thisWallL,zList);
-						}
-					}
 
 					//wallR
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Integer> currentKeysWallR = new ArrayList<Integer>(wallR_maxFinder_lin1.keySet());
 						int thisWallR = enviroSpec.getHasWallR();
 
@@ -772,24 +575,9 @@ public class PngRandomGeneration {
 							wallR_maxFinder_lin1.put(thisWallR,zList);
 						}
 					}
-					else {
-						List<Integer> currentKeysWallR = new ArrayList<Integer>(wallR_maxFinder_lin2.keySet());
-						int thisWallR = enviroSpec.getHasWallR();
-
-						if (currentKeysWallR.contains(thisWallR)) {
-							List<Double> zList = wallR_maxFinder_lin2.get(thisWallR);
-							zList.add(zScore);
-							wallR_maxFinder_lin2.put(thisWallR,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							wallR_maxFinder_lin2.put(thisWallR,zList);
-						}
-					}
 
 					//wallB
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						List<Integer> currentKeysWallB = new ArrayList<Integer>(wallB_maxFinder_lin1.keySet());
 						int thisWallB = enviroSpec.getHasWallB();
 
@@ -804,21 +592,6 @@ public class PngRandomGeneration {
 							wallB_maxFinder_lin1.put(thisWallB,zList);
 						}
 					}
-					else {
-						List<Integer> currentKeysWallB = new ArrayList<Integer>(wallB_maxFinder_lin2.keySet());
-						int thisWallB = enviroSpec.getHasWallB();
-
-						if (currentKeysWallB.contains(thisWallB)) {
-							List<Double> zList = wallB_maxFinder_lin2.get(thisWallB);
-							zList.add(zScore);
-							wallB_maxFinder_lin2.put(thisWallB,zList);
-						}
-						else {
-							List<Double> zList = new ArrayList<Double>();
-							zList.add(zScore);
-							wallB_maxFinder_lin2.put(thisWallB,zList);
-						}
-					}
 				}
 
 				else if (pngSpecTemp.getStimType().equals("OBJECT")) {
@@ -827,7 +600,7 @@ public class PngRandomGeneration {
 					if (aldenSpec.getIsOptical() == 0) {
 						//aldenMaterial
 						
-						if (thisZ.getLineage() == 0) {
+						if (thisZ.getLineage() == linNum) { //#####!
 							// collect object ids and scores
 							stimObjId2FRZ_lin1.put(currentId, zScore);
 
@@ -846,98 +619,51 @@ public class PngRandomGeneration {
 								aldenMaterial_maxFinder_lin1.put(thisAldenMat,zList);
 							}
 						}
-						else {
-							// collect object ids and scores
-							stimObjId2FRZ_lin2.put(currentId, zScore);
-
-							// aldenMaterial
-							List<String> currentKeysAldenMat = new ArrayList<String>(aldenMaterial_maxFinder_lin2.keySet());
-							String thisAldenMat = aldenSpec.getAldenMaterial();
-
-							if (currentKeysAldenMat.contains(thisAldenMat)) {
-								List<Double> zList = aldenMaterial_maxFinder_lin2.get(thisAldenMat);
-								zList.add(zScore);
-								aldenMaterial_maxFinder_lin2.put(thisAldenMat,zList);
-							}
-							else {
-								List<Double> zList = new ArrayList<Double>();
-								zList.add(zScore);
-								aldenMaterial_maxFinder_lin2.put(thisAldenMat,zList);
-							}
-						}
 					}			
 				}
 			}
 		}
 
 		List<String> constantAttributes_lin1 = new ArrayList<String>(); // tilt, slant, sun, distance, floor, ceiling, wallL, wallR, wallB, hMat, sMat, aMat
-		List<String> constantAttributes_lin2 = new ArrayList<String>(); // tilt, slant, sun, distance, floor, ceiling, wallL, wallR, wallB, hMat, sMat, aMat
 
 		Double horizonTilt_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Double(horizonTilt_maxFinder_lin1);
 		constantAttributes_lin1.add(Double.toString(horizonTilt_decision_lin1));
-		Double horizonTilt_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Double(horizonTilt_maxFinder_lin2);
-		constantAttributes_lin2.add(Double.toString(horizonTilt_decision_lin2));
 
 		Double horizonSlant_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Double(horizonSlant_maxFinder_lin1);
 		constantAttributes_lin1.add(Double.toString(horizonSlant_decision_lin1));
-		Double horizonSlant_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Double(horizonSlant_maxFinder_lin2);
-		constantAttributes_lin2.add(Double.toString(horizonSlant_decision_lin2));
 
 		Point3d sun_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Point3d(sun_maxFinder_lin1);
 		String strSun = sun_decision_lin1.x + "," + sun_decision_lin1.y + "," + sun_decision_lin1.z;
 		constantAttributes_lin1.add(strSun);
-		Point3d sun_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Point3d(sun_maxFinder_lin2);
-		strSun = sun_decision_lin2.x + "," + sun_decision_lin2.y + "," + sun_decision_lin2.z;
-		constantAttributes_lin2.add(strSun);
 
 		Double distance_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Double(distance_maxFinder_lin1);
 		constantAttributes_lin1.add(Double.toString(distance_decision_lin1));
-		Double distance_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Double(distance_maxFinder_lin2);
-		constantAttributes_lin2.add(Double.toString(distance_decision_lin2));
 
 		int floor_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(floor_maxFinder_lin1);
-
 		constantAttributes_lin1.add(Integer.toString(floor_decision_lin1));
-		int floor_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Integer(floor_maxFinder_lin2);
-		constantAttributes_lin2.add(Integer.toString(floor_decision_lin2));
 
 		int ceiling_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(ceiling_maxFinder_lin1);
 		constantAttributes_lin1.add(Integer.toString(ceiling_decision_lin1));
-		int ceiling_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Integer(ceiling_maxFinder_lin2);
-		constantAttributes_lin2.add(Integer.toString(ceiling_decision_lin2));
 
 		int wallL_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(wallL_maxFinder_lin1);
 		constantAttributes_lin1.add(Integer.toString(wallL_decision_lin1));
-		int wallL_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Integer(wallL_maxFinder_lin2);
-		constantAttributes_lin2.add(Integer.toString(wallL_decision_lin2));
 
 		int wallR_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(wallR_maxFinder_lin1);
 		constantAttributes_lin1.add(Integer.toString(wallR_decision_lin1));
-		int wallR_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Integer(wallR_maxFinder_lin2);
-		constantAttributes_lin2.add(Integer.toString(wallR_decision_lin2));
 
 		int wallB_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(wallB_maxFinder_lin1);
 		constantAttributes_lin1.add(Integer.toString(wallB_decision_lin1));
-		int wallB_decision_lin2 = GAMaths.chooseStimsToMorphComposite_Integer(wallB_maxFinder_lin2);
-		constantAttributes_lin2.add(Integer.toString(wallB_decision_lin2));
 
 		String horizonMaterial_decision_lin1 = GAMaths.chooseStimsToMorphComposite_String(horizonMaterial_maxFinder_lin1);
 		constantAttributes_lin1.add(horizonMaterial_decision_lin1);
-		String horizonMaterial_decision_lin2 = GAMaths.chooseStimsToMorphComposite_String(horizonMaterial_maxFinder_lin2);
-		constantAttributes_lin2.add(horizonMaterial_decision_lin2);
 
 		String structureMaterial_decision_lin1 = GAMaths.chooseStimsToMorphComposite_String(structureMaterial_maxFinder_lin1);
 		constantAttributes_lin1.add(structureMaterial_decision_lin1);
-		String structureMaterial_decision_lin2 = GAMaths.chooseStimsToMorphComposite_String(structureMaterial_maxFinder_lin2);
-		constantAttributes_lin2.add(structureMaterial_decision_lin2);
 
 		String aldenMaterial_decision_lin1 = GAMaths.chooseStimsToMorphComposite_String(aldenMaterial_maxFinder_lin1);
 		constantAttributes_lin1.add(aldenMaterial_decision_lin1);
-		String aldenMaterial_decision_lin2 = GAMaths.chooseStimsToMorphComposite_String(aldenMaterial_maxFinder_lin2);
-		constantAttributes_lin2.add(aldenMaterial_decision_lin2);
 
-		System.out.println("lin1: " + constantAttributes_lin1);
-		System.out.println("lin2: " + constantAttributes_lin2);
+		System.out.println("lin " + linNum + ": " + constantAttributes_lin1);
 
 		// choose stims to morph:
 		// which fitness method? 	1 = highest only
@@ -947,10 +673,8 @@ public class PngRandomGeneration {
 
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
-		List<Long> stimsToMorph_lin2 = GAMaths.choosePostHoc(stimObjId2FRZ_lin2, fitnessMethod);
 
-		System.out.println("lin1: " + stimsToMorph_lin1);
-		System.out.println("lin2: " + stimsToMorph_lin2);
+		System.out.println("lin " + linNum + ": " + stimsToMorph_lin1);
 
 		// lineage 1
 		List<Integer> possiblePositions1 = new ArrayList<Integer>();
@@ -958,15 +682,15 @@ public class PngRandomGeneration {
 		if (wallB_decision_lin1 + wallL_decision_lin1 + wallR_decision_lin1 + ceiling_decision_lin1 + floor_decision_lin1 != 0) {
 
 			// make blank stim:	
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, 0));
+			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum)); //#####!
 			System.out.println("Blank stimulus added.");
 
-			stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 0, stimsToMorph_lin1.get(0), 0, "COMPOSITE"));
-			System.out.println("Lineage 0: Generating and saving environment-only composite placeholder.");
+			stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(0), 0, "COMPOSITE")); //#####!
+			System.out.println("Lineage " + linNum + ": Generating and saving environment-only composite placeholder.");
 
 			for (int m=0;m<stimsToMorph_lin1.size();m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 0, stimsToMorph_lin1.get(m), m+1, "COMPOSITE"));
-				System.out.println("Lineage 0: Generating and saving object-only composite placeholders.");
+				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), m+1, "COMPOSITE")); //#####!
+				System.out.println("Lineage " + linNum + ": Generating and saving object-only composite placeholders.");
 			}
 
 			possiblePositions1.add(0);
@@ -1014,105 +738,20 @@ public class PngRandomGeneration {
 			for (int n=0;n<possiblePositions1.size();n++) {
 
 				for (int m=0;m<stimsToMorph_lin1.size();m++) {
-					stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 0, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE"));
-					System.out.println("Lineage 0: Generating and saving composite placeholder " + stimNum);
+					stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); //#####!
+					System.out.println("Lineage " + linNum + ": Generating and saving composite placeholder " + stimNum);
 					stimNum += 1;
 				}
 			}
 		}
 
 		else {
-			System.out.println("Lineage 0: Optimal architecture not suitable for composite post-hoc.");
+			System.out.println("Lineage " + linNum + ": Optimal architecture not suitable for composite post-hoc.");
 		}
-
-		// lineage 2
-		List<Integer> possiblePositions2 = new ArrayList<Integer>();
-
-		if (wallB_decision_lin2 + wallL_decision_lin2 + wallR_decision_lin2 + ceiling_decision_lin2 + floor_decision_lin2 != 0) {
-
-			// make blank stim:	
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, 1));
-			System.out.println("Blank stimulus added.");
-
-			stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 1, stimsToMorph_lin2.get(0), 0, "COMPOSITE"));
-			System.out.println("Lineage 1: Generating and saving environment-only composite placeholder.");
-
-			for (int m=0;m<stimsToMorph_lin2.size();m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 1, stimsToMorph_lin2.get(m), m+1, "COMPOSITE"));
-				System.out.println("Lineage 1: Generating and saving object-only composite placeholders.");
-			}
-
-			possiblePositions2.add(0);
-
-			if (wallB_decision_lin2 == 1) {
-				possiblePositions2.add(4);
-				possiblePositions2.add(9);
-			}
-
-			if (ceiling_decision_lin2 == 1) {
-				possiblePositions2.add(2);
-				possiblePositions2.add(11);
-
-				if (wallR_decision_lin2 == 1) {
-					possiblePositions2.add(6);
-					possiblePositions2.add(14);
-				}
-
-				if (wallL_decision_lin2 == 1) {
-					possiblePositions2.add(7);
-					possiblePositions2.add(15);
-				}
-			}
-
-			if (wallR_decision_lin2 == 1) {
-				possiblePositions2.add(1);
-				possiblePositions2.add(10);
-				possiblePositions2.add(5);
-				possiblePositions2.add(13);
-			}
-
-			if (wallL_decision_lin2 == 1) {
-				possiblePositions2.add(3);
-				possiblePositions2.add(8);
-				possiblePositions2.add(12);
-				possiblePositions2.add(16);
-			}
-
-			// ready database for composite spec generation
-			int stimNum = stimsToMorph_lin2.size()+1;
-
-			for (int n=0;n<possiblePositions2.size();n++) {
-
-				for (int m=0;m<stimsToMorph_lin2.size();m++) {
-					stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 1, stimsToMorph_lin2.get(m), stimNum, "COMPOSITE"));
-					System.out.println("Lineage 1: Generating and saving composite placeholder " + stimNum);
-					stimNum += 1;
-				}
-			}
-		}
-
-		else {
-			System.out.println("Lineage 1: Optimal architecture not suitable for composite post-hoc.");
-		}
-
-		if ((possiblePositions1.size() == 0) & (possiblePositions2.size() == 0)) {
-			System.out.println("Abort: Neither lineage suitable for composite post-hoc.");
-			return;
-		}
-
-		/* 
-		 * This python script is called within blender.
-		 * It reads the latest descriptive ID from the DB
-		 * and makes a list of stimuli to create. It then does
-		 * a parallel blenderrender call to save all the blenderspec
-		 * to stimobjdata. Finally, it does a cluster call
-		 * to render png images. When done, it rsyncs all pngs
-		 * to the rig and to ecpc31.
-		 */
 
 		if (possiblePositions1.size() != 0) {
-			System.out.println("Do lineage 0.");
-			possiblePositions1.add(0); // document lineage for python
+			System.out.println("Do lineage " + linNum + ".");
+			possiblePositions1.add((int) (long) linNum); // document lineage for python
 			System.out.println(constantAttributes_lin1);
 			System.out.println(possiblePositions1);
 			BlenderRunnable blenderRunnerComposite_lin1 = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/compositePostHoc.py",constantAttributes_lin1,possiblePositions1);
@@ -1120,18 +759,8 @@ public class PngRandomGeneration {
 			blenderRunnerComposite_lin1.run();
 		}
 
-		if (possiblePositions2.size() != 0) {
-			System.out.println("Do lineage 1.");
-			possiblePositions2.add(1); // document lineage for python
-			System.out.println(constantAttributes_lin2);
-			System.out.println(possiblePositions2);
-			BlenderRunnable blenderRunnerComposite_lin2 = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/compositePostHoc.py",constantAttributes_lin2,possiblePositions2);
-//			BlenderRunnable blenderRunnerComposite_lin2 = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/compositePostHoc.py",constantAttributes_lin2,possiblePositions2);
-			blenderRunnerComposite_lin2.run();
-		}
-
-		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
         BlenderRunnable photoRunner = new BlenderRunnable();
         List<String> args = new ArrayList<String>();
@@ -1152,9 +781,9 @@ public class PngRandomGeneration {
 
 		// write updated global genId and number of trials in this generation to db:
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
@@ -1172,17 +801,7 @@ public class PngRandomGeneration {
 		List<Long> trialSubGroup = new ArrayList<Long>();
 
 		// make blank stims. assuming two linages.		
-		long blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, 0);
-		blankStimObjIds.add(blankStimObjId);
-
-		trialSubGroup.add(blankStimObjId);
-		trialSubGroup.add(blankStimObjId);
-		trialSubGroup.add(blankStimObjId);
-		trialGroups.add(trialSubGroup);
-
-		trialSubGroup = new ArrayList<Long>();
-		
-		blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, 1);
+		long blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, linNum); //#####!
 		blankStimObjIds.add(blankStimObjId);
 
 		trialSubGroup.add(blankStimObjId);
@@ -1192,13 +811,11 @@ public class PngRandomGeneration {
 
 		trialSubGroup = new ArrayList<Long>();
 
-		System.out.println("Blank stimuli added.");
+		System.out.println("Blank stimulus added.");
 
 		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
 		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
-		Map<Long, Double> stimObjId2FRZ_lin2 = new HashMap<Long, Double>();
 		Map<Long, Integer> stimObjId2numAnimations_lin1 = new HashMap<Long, Integer>();
-		Map<Long, Integer> stimObjId2numAnimations_lin2 = new HashMap<Long, Integer>();
 
 		for (int gen=1;gen<genNum;gen++) {
 			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
@@ -1221,7 +838,7 @@ public class PngRandomGeneration {
 					AldenSpec_class aldenSpec = blendObject.getAldenSpec();
 					MStickSpec stickSpec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(currentId).getSpec());
 
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						// collect object ids and scores
 						stimObjId2FRZ_lin1.put(currentId, zScore);
 
@@ -1253,38 +870,6 @@ public class PngRandomGeneration {
 						stimObjId2numAnimations_lin1.put(currentId, numPHanimations);
 						System.out.println(numPHanimations+","+numEndPts+","+nDoubleEndPtComps+","+stabilityLegs);
 					}
-
-					else {
-						// collect object ids and scores
-						stimObjId2FRZ_lin2.put(currentId, zScore);
-
-						// find number of endpts
-						int numEndPts = stickSpec.getNEndPt();
-
-						// find number of comps with two endpts
-						int nDoubleEndPtComps = stickSpec.getNDoubleEndPtComps();
-
-						// determine whether low potential and without precariousness
-						int isLowPotential = aldenSpec.getLowPotentialEnergy();
-
-						Point3d precariousness = aldenSpec.getMakePrecarious();
-						double precariousnessContents = precariousness.x+precariousness.y+precariousness.z;
-						int isNotPrecarious = 0;
-
-						if (precariousnessContents == 0.0) {
-							isNotPrecarious = 1;
-						}
-
-						int stabilityLegs = 1;
-
-						if (isLowPotential + isNotPrecarious == 2) {
-							stabilityLegs = 0;
-						}
-
-						// record number of animations in post hoc
-						int numPHanimations = numEndPts - nDoubleEndPtComps - stabilityLegs;
-						stimObjId2numAnimations_lin2.put(currentId, numPHanimations);
-					}
 				}
 			}
 		}
@@ -1297,15 +882,14 @@ public class PngRandomGeneration {
 
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
-		List<Long> stimsToMorph_lin2 = GAMaths.choosePostHoc(stimObjId2FRZ_lin2, fitnessMethod);
 
-		System.out.println("lin1: " + stimsToMorph_lin1);
-		System.out.println("lin2: " + stimsToMorph_lin2);
+		System.out.println("lin " + linNum + ": " + stimsToMorph_lin1);
 
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> limbCounts = new ArrayList<Integer>();
 		limbCounts.add(PngGAParams.PH_animacy_numMaterials); // document the number of materials in use
 		limbCounts.add(fitnessMethod); // document the number of objects in use per lineage
+		limbCounts.add(PngGAParams.targetedColoration); // document whether targeted coloration
 		
 		//each stimulus has associated number of limbs, should be repeated that many times
 		// generatePHStimAnimacy in lieu of generatePHStim drops the face and vert spec save to the database--to save time, animatePostHoc.py references the parent stimulus mesh 
@@ -1325,10 +909,10 @@ public class PngRandomGeneration {
 			List<Long> stims_lin1 = new ArrayList<Long>();
 
 			// plain unchanged stimulus
-			long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+			long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
 			stimObjIds.add(whichStim_lin1);
 			stims_lin1.add(whichStim_lin1);
-			System.out.println("Lineage 0: Generating and saving stimulus " + n + ", conserved stimulus");
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", conserved stimulus");
 			stimNum ++;
 			
 			trialSubGroup.add(whichStim_lin1);
@@ -1339,152 +923,107 @@ public class PngRandomGeneration {
 			trialSubGroup = new ArrayList<Long>();
 
 			// include a copy for animation and a copy for still
-			for (int m=0;m<numPHanimations;m++) {
-
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin1_still = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin1_still);
-					stims_lin1.add(whichStim_lin1_still);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
-					stimNum ++;
-
-					long whichStim_lin1_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY");
-					stimObjIds.add(whichStim_lin1_anim);
-					stims_lin1.add(whichStim_lin1_anim);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
-					stimNum ++;
-					
-					trialSubGroup.add(whichStim_lin1_still);
-					trialSubGroup.add(whichStim_lin1_anim);
-					trialSubGroup.add(whichStim_lin1_still);
-					trialGroups.add(trialSubGroup);
-					
-					trialSubGroup = new ArrayList<Long>();
-				}
-
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
-
-					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 0, currentId, stimNum, "ANIMACY"); // object
+			for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) {
+				
+				// SQUISH
+				if (PngGAParams.targetedColoration!=1) {
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
 					stimObjIds.add(whichStim_lin1);
 					stims_lin1.add(whichStim_lin1);
-					System.out.println("Lineage 0: Generating and saving stimulus " + n + ", limb " + m + ", stiff still");
+					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs squish still");
+					stimNum ++;
+				}
+				
+				for (int m=0;m<numPHanimations;m++) {
+				
+					if (PngGAParams.targetedColoration==1) {
+						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+						stimObjIds.add(whichStim_lin1);
+						stims_lin1.add(whichStim_lin1);
+						System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", limb " + m + ", squish still");
+						stimNum ++;
+					}
+					
+					long whichStim_lin1_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY");
+					stimObjIds.add(whichStim_lin1_anim);
+					stims_lin1.add(whichStim_lin1_anim);
+					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
 					stimNum ++;
 					
+					trialSubGroup.add(whichStim_lin1);
+					trialSubGroup.add(whichStim_lin1_anim);
+					trialSubGroup.add(whichStim_lin1);
+					trialGroups.add(trialSubGroup);
+
+					trialSubGroup = new ArrayList<Long>();
+
+				}
+
+				// STIFF
+				if (PngGAParams.targetedColoration!=1) {
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+					stimObjIds.add(whichStim_lin1);
+					stims_lin1.add(whichStim_lin1);
+					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs stiff still");
+					stimNum ++;
+
 					trialSubGroup.add(whichStim_lin1);
 					trialSubGroup.add(whichStim_lin1);
 					trialSubGroup.add(whichStim_lin1);
 					trialGroups.add(trialSubGroup);
-					
+
 					trialSubGroup = new ArrayList<Long>();
+				}
+
+				else {
+
+					for (int m=0;m<numPHanimations;m++) {
+						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+						stimObjIds.add(whichStim_lin1);
+						stims_lin1.add(whichStim_lin1);
+						System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs stiff still");
+						stimNum ++;
+
+						trialSubGroup.add(whichStim_lin1);
+						trialSubGroup.add(whichStim_lin1);
+						trialSubGroup.add(whichStim_lin1);
+						trialGroups.add(trialSubGroup);
+
+						trialSubGroup = new ArrayList<Long>();
+					}
 				}
 			}
 		}
-
-		stimNum = 0;
-
-		for (int n=0;n<stimsToMorph_lin2.size();n++) {
-			long currentId = stimsToMorph_lin2.get(n);
-			int numPHanimations = stimObjId2numAnimations_lin2.get(currentId);
-			numPHanimations = Math.min(PngGAParams.PH_max_animacy_animations,numPHanimations);
-			limbCounts.add(numPHanimations); // document the number of limbs per object
-
-			List<Long> stims_lin2 = new ArrayList<Long>();
-
-			// plain unchanged stimulus
-			long whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-			stimObjIds.add(whichStim_lin2);
-			stims_lin2.add(whichStim_lin2);
-			System.out.println("Lineage 1: Generating and saving stimulus " + n + ", conserved stimulus");
-			stimNum ++;
-
-			trialSubGroup.add(whichStim_lin2);
-			trialSubGroup.add(whichStim_lin2);
-			trialSubGroup.add(whichStim_lin2);
-			trialGroups.add(trialSubGroup);
-			
-			trialSubGroup = new ArrayList<Long>();
-			
-			// include a copy for animation and a copy for still
-			for (int m=0;m<numPHanimations;m++) {
-
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the squishy placeholders
-					long whichStim_lin2_still = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin2_still);
-					stims_lin2.add(whichStim_lin2_still);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", squish still");
-					stimNum ++;
-
-					long whichStim_lin2_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY");
-					stimObjIds.add(whichStim_lin2_anim);
-					stims_lin2.add(whichStim_lin2_anim);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
-					stimNum ++;
-					
-					trialSubGroup.add(whichStim_lin2_still);
-					trialSubGroup.add(whichStim_lin2_anim);
-					trialSubGroup.add(whichStim_lin2_still);
-					trialGroups.add(trialSubGroup);
-					
-					trialSubGroup = new ArrayList<Long>();
-				}
-
-				for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) { // add the stiff placeholders
-
-					whichStim_lin2 = generator.generatePHStimAnimacy(prefix, runNum, genNum, 1, currentId, stimNum, "ANIMACY"); // object
-					stimObjIds.add(whichStim_lin2);
-					stims_lin2.add(whichStim_lin2);
-					System.out.println("Lineage 1: Generating and saving stimulus " + n + ", limb " + m + ", stiff still");
-					stimNum ++;
-					
-					trialSubGroup.add(whichStim_lin2);
-					trialSubGroup.add(whichStim_lin2);
-					trialSubGroup.add(whichStim_lin2);
-					trialGroups.add(trialSubGroup);
-					
-					trialSubGroup = new ArrayList<Long>();
-				}
-			}
-		}
-
-		/* 
-		 * This python script is called within blender.
-		 * It reads the latest descriptive ID from the DB
-		 * and makes a list of stimuli to create. It then does
-		 * a parallel blenderrender call to save all the blenderspec
-		 * to stimobjdata. Finally, it does a cluster call
-		 * to render png images. When done, it rsyncs all pngs
-		 * to the rig and to ecpc31.
-		 */
 
 		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/animatePostHoc.py",placeholder,limbCounts);
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/animatePostHoc.py",placeholder,limbCounts);
 		blenderRunnerAnimate.run();
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-        BlenderRunnable photoRunner = new BlenderRunnable();
-        List<String> args = new ArrayList<String>();
-        args.add("ssh");
-        args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-        args.add(Integer.toString(numJobs));
-        args.add(prefixRunGen);
-        photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+//        BlenderRunnable photoRunner = new BlenderRunnable();
+//        List<String> args = new ArrayList<String>();
+//        args.add("ssh");
+//        args.add("alexandriya@172.30.9.11");
+//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+//        args.add(Integer.toString(numJobs));
+//        args.add(prefixRunGen);
+//        photoRunner.setDoWaitFor(false);
+//        photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
 		// create trial structure, populate stimspec, write task-to-do
-		System.out.println("Creating trial spec for this generation.");
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createAnimacyTrialsFromStimObjs(trialGroups);
 
 		// write updated global genId and number of trials in this generation to db:
 		int numTasks = (int) Math.ceil(trialGroups.size()*PngGAParams.GA_numRepsPerStim);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
@@ -1494,7 +1033,6 @@ public class PngRandomGeneration {
 		getSpikeResponses();
 	}
 	
-
 	void createPHstability() {
 
 		// choose best and worst raw obj stimulus?
@@ -1504,10 +1042,8 @@ public class PngRandomGeneration {
 		List<Long> stimObjIds = new ArrayList<Long>();
 
 		// make blank stims:		
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));
-		}
-		System.out.println("Blank stimuli added.");
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
 
 		// choose stims to morph:
 		// which fitness method? 	1 = highest only
@@ -1516,8 +1052,7 @@ public class PngRandomGeneration {
 		int fitnessMethod = 3;
 
 		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
-		List<Long> stimsToMorph_lin1 = stimsToMorph.get(0);
-		List<Long> stimsToMorph_lin2 = stimsToMorph.get(1);
+		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
 
 		int numMorphs = PngGAParams.PH_stability_numMorphs;
 		List<String> placeholder = new ArrayList<String>();
@@ -1532,43 +1067,20 @@ public class PngRandomGeneration {
 
 			// includes a copy that shall remain unchanged
 			for (int m=0;m<numMorphs*2;m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 0, currentId, stimNum, "STABILITY"));
-				System.out.println("Lineage 0: Generating and saving stimulus " + n + " number " + m);
+				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, stimNum, "STABILITY"));
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
 				stimNum ++;
-			}
-		}
-
-		stimNum = 0;
-
-		for (int n=0;n<stimsToMorph_lin2.size();n++) {
-			long currentId = stimsToMorph_lin2.get(n);
-
-			// includes a copy that shall remain unchanged
-			for (int m=0;m<numMorphs*2;m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 1, currentId, stimNum, "STABILITY"));
-				System.out.println("Lineage 1: Generating and saving stimulus " + n + " number " + m);
-				stimNum ++;			
 			}
 		}
 
 		// do low stim all morphs, med stim all morphs, high stim all morphs. first stim in each category is the plain one.
 		
-		/* 
-		 * This python script is called within blender.
-		 * It reads the latest descriptive ID from the DB
-		 * and makes a list of stimuli to create. It then does
-		 * a parallel blenderrender call to save all the blenderspec
-		 * to stimobjdata. Finally, it does a cluster call
-		 * to render png images. When done, it rsyncs all pngs
-		 * to the rig and to ecpc31.
-		 */
-
 		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
 		blenderRunnerPHGeneric.run();
 
-		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
         BlenderRunnable photoRunner = new BlenderRunnable();
         List<String> args = new ArrayList<String>();
@@ -1590,9 +1102,9 @@ public class PngRandomGeneration {
 		// write updated global genId and number of trials in this generation to db:
 		int numStimsPerTrial = PngGAParams.GA_numStimsPerTrial;
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
@@ -1625,7 +1137,6 @@ public class PngRandomGeneration {
 		return totalFact/(chooseFact*diffFact);
 	}
 	
-	
 	void createPHdensity() {
 
 		// choose best and worst raw obj stimulus?
@@ -1634,11 +1145,9 @@ public class PngRandomGeneration {
 		List<Long> blankStimObjIds = new ArrayList<Long>();	
 		List<Long> stimObjIds = new ArrayList<Long>();
 
-		// make blank stims:		
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));
-		}
-		System.out.println("Blank stimuli added.");
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
 
 		// choose stims to morph:
 		// which fitness method? 	1 = highest only
@@ -1647,11 +1156,9 @@ public class PngRandomGeneration {
 		int fitnessMethod = 1;
 
 		ArrayList<List<Long>> stimsToMorph = chooseBestObjsMat(fitnessMethod); // choose highest-performing non-optical-material objects
-		List<Long> stimsToMorph_lin1 = stimsToMorph.get(0);
-		List<Long> stimsToMorph_lin2 = stimsToMorph.get(1);
+		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
 
 		int numComps_lin1 = 0;
-		int numComps_lin2 = 0;
 		
 		int numMorphs_lin1 = 0;
 		int stimNum = 0;
@@ -1671,40 +1178,14 @@ public class PngRandomGeneration {
 
 			// include a copy that shall remain unchanged
 			for (int m=0;m<numMorphs_lin1+1;m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 0, currentId, stimNum, "DENSITY"));
-				System.out.println("Lineage 0: Generating and saving stimulus " + n + " number " + m);
+				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, stimNum, "DENSITY"));
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
 				stimNum ++;
 			}
 		}
 
-		int numMorphs_lin2 = 0;
-		stimNum = 0;
-
-		for (int n=0;n<stimsToMorph_lin2.size();n++) {
-			long currentId = stimsToMorph_lin2.get(n);
-
-			MStickSpec stickSpec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(currentId).getSpec());
-			numComps_lin2 = stickSpec.getNComponent();
-			
-			for (int choices=0;choices<=numComps_lin2;choices++) {
-				numMorphs_lin2 += combinations(numComps_lin2, choices);
-			}
-
-			System.out.println(numMorphs_lin2);
-			numMorphs_lin2 -= 1;
-
-			// include a copy that shall remain unchanged
-			for (int m=0;m<numMorphs_lin2+1;m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, 1, currentId, stimNum, "DENSITY"));
-				System.out.println("Lineage 1: Generating and saving stimulus " + n + " number " + m);
-				stimNum ++;			
-			}
-		}
-
 		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
-		Map<Long, Double> stimObjId2FRZ_lin2 = new HashMap<Long, Double>();
 		Map<String, List<Double>> aldenMaterial_maxFinder_lin1 = new HashMap<String, List<Double>>();
-		Map<String, List<Double>> aldenMaterial_maxFinder_lin2 = new HashMap<String, List<Double>>();
 
 		for (int gen=1;gen<genNum;gen++) {
 			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
@@ -1728,7 +1209,7 @@ public class PngRandomGeneration {
 					
 					if (aldenSpec.getIsOptical() == 0) {
 						//aldenMaterial
-						if (thisZ.getLineage() == 0) {
+						if (thisZ.getLineage() == linNum) { //#####!
 							// collect object ids and scores
 							stimObjId2FRZ_lin1.put(currentId, zScore);
 
@@ -1747,25 +1228,6 @@ public class PngRandomGeneration {
 								aldenMaterial_maxFinder_lin1.put(thisAldenMat,zList);
 							}
 						}
-						else {
-							// collect object ids and scores
-							stimObjId2FRZ_lin2.put(currentId, zScore);
-
-							// aldenMaterial
-							List<String> currentKeysAldenMat = new ArrayList<String>(aldenMaterial_maxFinder_lin2.keySet());
-							String thisAldenMat = aldenSpec.getAldenMaterial();
-
-							if (currentKeysAldenMat.contains(thisAldenMat)) {
-								List<Double> zList = aldenMaterial_maxFinder_lin2.get(thisAldenMat);
-								zList.add(zScore);
-								aldenMaterial_maxFinder_lin2.put(thisAldenMat,zList);
-							}
-							else {
-								List<Double> zList = new ArrayList<Double>();
-								zList.add(zScore);
-								aldenMaterial_maxFinder_lin2.put(thisAldenMat,zList);
-							}
-						}
 					}
 				}
 			}
@@ -1773,30 +1235,17 @@ public class PngRandomGeneration {
 
 		List<String> constantAttributes = new ArrayList<String>(); // aMats
 		constantAttributes.add(Integer.toString(numComps_lin1));
-		constantAttributes.add(Integer.toString(numComps_lin2));
 		
 		List<String> allMatAttrs_lin1 = GAMaths.chooseStimsToMorphComposite_String_OrderedChoice(aldenMaterial_maxFinder_lin1);
-		List<String> allMatAttrs_lin2 = GAMaths.chooseStimsToMorphComposite_String_OrderedChoice(aldenMaterial_maxFinder_lin2);
 		
 		constantAttributes.add(allMatAttrs_lin1.get(allMatAttrs_lin1.size()-2));
-		constantAttributes.add(allMatAttrs_lin2.get(allMatAttrs_lin2.size()-2));
 
-		/* 
-		 * This python script is called within blender.
-		 * It reads the latest descriptive ID from the DB
-		 * and makes a list of stimuli to create. It then does
-		 * a parallel blenderrender call to save all the blenderspec
-		 * to stimobjdata. Finally, it does a cluster call
-		 * to render png images. When done, it rsyncs all pngs
-		 * to the rig and to ecpc31.
-		 */
-		
 		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/densityPostHoc.py", constantAttributes, "both");
 //		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/densityPostHoc.py" + constantAttributes);
 		blenderRunnerPHDensity.run();
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
         BlenderRunnable photoRunner = new BlenderRunnable();
         List<String> args = new ArrayList<String>();
@@ -1818,9 +1267,9 @@ public class PngRandomGeneration {
 		// write updated global genId and number of trials in this generation to db:
 		int numStimsPerTrial = PngGAParams.GA_numStimsPerTrial;
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
@@ -1830,21 +1279,17 @@ public class PngRandomGeneration {
 		getSpikeResponses();
 	}
 	
-
 	void createPHmass() {
 		
 		List<Long> blankStimObjIds = new ArrayList<Long>();	
 		List<Long> stimObjIds = new ArrayList<Long>();
 
-		// make blank stims:		
-		for (int n=0;n<PngGAParams.GA_numLineages;n++) {
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, n));
-		}
-		System.out.println("Blank stimuli added.");
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
 
 		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
 		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
-		Map<Long, Double> stimObjId2FRZ_lin2 = new HashMap<Long, Double>();
 
 		for (int gen=1;gen<genNum;gen++) {
 			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
@@ -1864,14 +1309,9 @@ public class PngRandomGeneration {
 
 				if (pngSpecTemp.getStimType().equals("OBJECT")) {
 
-					if (thisZ.getLineage() == 0) {
+					if (thisZ.getLineage() == linNum) { //#####!
 						// collect object ids and scores
 						stimObjId2FRZ_lin1.put(currentId, zScore);
-					}
-
-					else {
-						// collect object ids and scores
-						stimObjId2FRZ_lin2.put(currentId, zScore);
 					}
 				}
 			}
@@ -1885,10 +1325,8 @@ public class PngRandomGeneration {
 
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
-		List<Long> stimsToMorph_lin2 = GAMaths.choosePostHoc(stimObjId2FRZ_lin2, fitnessMethod);
 
-		System.out.println("lin1: " + stimsToMorph_lin1);
-		System.out.println("lin2: " + stimsToMorph_lin2);
+		System.out.println("lin " + linNum + ": " + stimsToMorph_lin1);
 
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> objCounts = new ArrayList<Integer>();
@@ -1896,16 +1334,9 @@ public class PngRandomGeneration {
 
 		for (int n=0;n<stimsToMorph_lin1.size();n++) {
 			long currentId = stimsToMorph_lin1.get(n);
-			long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, 0, currentId, n, "MASS");
+			long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, n, "MASS");
 			stimObjIds.add(whichStim_lin1);
-			System.out.println("Lineage 0: Generating and saving stimulus 0: conserved stimulus");
-		}
-		
-		for (int n=0;n<stimsToMorph_lin2.size();n++) {
-			long currentId = stimsToMorph_lin2.get(n);
-			long whichStim_lin2 = generator.generatePHStim(prefix, runNum, genNum, 1, currentId, n, "MASS");
-			stimObjIds.add(whichStim_lin2);
-			System.out.println("Lineage 1: Generating and saving stimulus 0: conserved stimulus");
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus 0: conserved stimulus");
 		}
 		
 		// call python here to determine which is the limb of interest
@@ -1932,24 +1363,10 @@ public class PngRandomGeneration {
 
 			// unchanged copy already accounted for
 			for (int m=0;m<PngGAParams.PH_bulbousness_morphs.length;m++) {
-				long whichStim_lin1 = generator.generatePHControlledMorph(prefix, runNum, genNum, 0, currentId, stimNum, PngGAParams.PH_bulbousness_morphs[m], "MASS", fitnessMethod);
+				long whichStim_lin1 = generator.generatePHControlledMorph(prefix, runNum, genNum, linNum, currentId, stimNum, PngGAParams.PH_bulbousness_morphs[m], "MASS", fitnessMethod);
 				stimObjIds.add(whichStim_lin1);
-				System.out.println("Lineage 0: Generating and saving stimulus " + stimNum);
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + stimNum);
 				stimNum ++;
-			}
-		}
-
-		stimNum = stimsToMorph_lin2.size();
-
-		for (int n=0;n<stimsToMorph_lin2.size();n++) {
-			long currentId = stimsToMorph_lin2.get(n);
-
-			// unchanged copy already accounted for
-			for (int m=0;m<PngGAParams.PH_bulbousness_morphs.length;m++) {
-				long whichStim_lin2 = generator.generatePHControlledMorph(prefix, runNum, genNum, 1, currentId, stimNum, PngGAParams.PH_bulbousness_morphs[m], "MASS", fitnessMethod);
-				stimObjIds.add(whichStim_lin2);
-				System.out.println("Lineage 1: Generating and saving stimulus " + stimNum);
-				stimNum ++;			
 			}
 		}
 		
@@ -1964,7 +1381,7 @@ public class PngRandomGeneration {
 //		}
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
         BlenderRunnable photoRunner = new BlenderRunnable();
         List<String> args = new ArrayList<String>();
@@ -1981,14 +1398,14 @@ public class PngRandomGeneration {
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
-		createPHTrialsFromStimObjs(stimObjIds,1);
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); //#####!
 
 		// write updated global genId and number of trials in this generation to db:
 		int numStimsPerTrial = 1;
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, numTasks);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); //#####!
 
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum) == 0) {
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
@@ -1997,8 +1414,7 @@ public class PngRandomGeneration {
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
-	
-	
+		
 	ArrayList<List<Long>> chooseBestObjs(int fitnessMethod) {
 
 		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
@@ -2134,7 +1550,8 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum);
+			System.out.println(linNum);
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
 			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
@@ -2180,12 +1597,13 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum);
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
 			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
 		}
 	}
+	
 	void createAnimacyTrialsFromStimObjs(List<List<Long>> trialGroups) {
 			
 		// -- create trial structure, populate stimspec, write task-to-do
@@ -2223,7 +1641,7 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum);
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
 			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter++;
@@ -2275,9 +1693,9 @@ public class PngRandomGeneration {
 //			spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
 			
 			if (useFakeSpikes) {
-				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum);
+				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum,linNum); //#####!
 			} else {
-				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
+				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum,linNum,0); //#####!
 			}
 			
 			// for each trial done in a generation:
@@ -2380,6 +1798,16 @@ public class PngRandomGeneration {
 			return 1;
 		}
 	}
+	private long getLinNum() { //#####!
+		try {
+			linNum = dbUtil.readReadyGenerationInfo().getLinId();
+			return linNum;
+		} catch (VariableNotFoundException e) {
+			System.out.println("Could not find linId in database. Writing value of 0.");
+			dbUtil.writeReadyGenerationInfo(new GenerationInfo());
+			return 1;
+		}
+	}
 	
 	private String getPrefix(long runNum) {
 		try {
@@ -2397,6 +1825,16 @@ public class PngRandomGeneration {
 			return genNum;
 		} catch (VariableNotFoundException e) {
 			System.out.println("Could not find genId in database. Writing value of 0.");
+			dbUtil.writeReadyGenerationInfo(new GenerationInfo());
+			return 1;
+		}
+	}
+	private long getLinId(long runNum) { //#####! NEEDS WORK NEEDS WORK NEEDS WORK
+		try {
+			linNum = dbUtil.readLinIdForRunNum(runNum);
+			return linNum;
+		} catch (VariableNotFoundException e) {
+			System.out.println("Could not find linId in database. Writing value of 0.");
 			dbUtil.writeReadyGenerationInfo(new GenerationInfo());
 			return 1;
 		}

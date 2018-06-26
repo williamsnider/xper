@@ -14,7 +14,7 @@ public class DataObject {
 
 	// pre-run info:
 	String trialType;									// "BEH" or "GA"
-	int lineage = -1;									// for GA stim, the lineage in which it arose (prob 0 or 1)
+	long lineage = -1;									// for GA stim, the lineage in which it arose (prob 0 or 1) //#####!
 	long runNum = -1;
 	long birthGen = -1;									// for GA stim, the generation in which it first arose
 	long parentId = -1;									// for GA stim, the parent stimObjId from which it was derived (-1 if no parent)
@@ -76,10 +76,10 @@ public class DataObject {
 	public void setTrialType(String type) {
 		this.trialType = type;
 	}
-	public int getLineage() {
+	public long getLineage() { //#####!
 		return lineage;
 	}
-	public void setLineage(int lineage) {
+	public void setLineage(long lineage) { //#####!
 		this.lineage = lineage;
 	}
 	public long getBirthGen() {

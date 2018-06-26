@@ -24,8 +24,8 @@ public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpi
 		this.dbUtil = dbUtil;
 	}
 	
-	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpikeByGeneration(String prefix, long runNum, long genNum) {
-		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum);
+	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpikeByGeneration(String prefix, long runNum, long genNum, long linNum) { //#####!
+		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum, linNum); //#####!
 		return getFakeTaskSpike(taskDone.getDoneTasks());
 	}
 	
@@ -57,14 +57,14 @@ public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpi
 	}
 	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getTaskSpikeByGeneration(
-			String prefix, long runNum, long genNum, int dataChan) {
-		return getTaskSpikeByGeneration(prefix, runNum, genNum, dataChan, Integer.MAX_VALUE);
+			String prefix, long runNum, long genNum, long linNum, int dataChan) { //#####!
+		return getTaskSpikeByGeneration(prefix, runNum, genNum, linNum, dataChan, Integer.MAX_VALUE); //#####!
 	}
 	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getTaskSpikeByGeneration(
-			String prefix, long runNum, long genNum, int dataChan, int maxStages) {
+			String prefix, long runNum, long genNum, long linNum, int dataChan, int maxStages) { //#####!
 		
-		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum);
+		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum, linNum); //#####!
 		return getTaskSpike(taskDone.getDoneTasks(), dataChan, maxStages);
 	}
 	

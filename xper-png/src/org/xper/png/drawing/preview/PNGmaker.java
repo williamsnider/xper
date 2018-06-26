@@ -40,7 +40,7 @@ public class PNGmaker {
 	public void MakeFromIds(List<Long> stimObjIds) {
 		this.stimObjIds = stimObjIds;
 		List<Drawable> objs = spec2obj(id2spec(stimObjIds));
-		// JK System.out.println(objs);
+		System.out.println(objs);
 		createAndSavePNGsfromObjs(objs,this.stimObjIds);
 	}
 	
