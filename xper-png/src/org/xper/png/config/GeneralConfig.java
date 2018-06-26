@@ -173,6 +173,8 @@ public class GeneralConfig {
 	
 	@Bean
 	public TrialExperimentMessageHandler messageHandler() {
+//		System.out.println("JK general messageHandler ( )"); 
+
 		TrialExperimentMessageHandler messageHandler = new TrialExperimentMessageHandler();
 		HashMap<String, EyeDeviceReading> eyeDeviceReading = new HashMap<String, EyeDeviceReading>();
 		eyeDeviceReading.put(classicConfig.xperLeftIscanId(), classicConfig.zeroEyeDeviceReading());
@@ -180,6 +182,10 @@ public class GeneralConfig {
 		HashMap<String, Coordinates2D> eyeZero = new HashMap<String, Coordinates2D>();
 		eyeZero.put(classicConfig.xperLeftIscanId(), classicConfig.xperLeftIscanEyeZero());
 		eyeZero.put(classicConfig.xperRightIscanId(), classicConfig.xperRightIscanEyeZero());
+
+		// JK 26 June 2018  added this - it seems important ...
+		messageHandler.setEyeZero(eyeZero);
+
 		return messageHandler;
 	}
 	

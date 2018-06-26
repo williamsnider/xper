@@ -33,13 +33,20 @@
 		<copy todir="${build.home}">
 			<fileset dir="src" excludes="**/*.java" />
 		</copy>
+		
+		<!-- JK 26 June 2018 restore the properties files  after cleaning -->
+		<copy todir="${build.home}">
+			<fileset dir="${basedir}/app" includes="*.properties" />
+		</copy>
+		
+		
 	</target>
 
 	<target name="compile" depends="prepare">
-		<javac srcdir="src" destdir="${build.home}" target="1.6" source="1.6" bootclasspath='/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar' includeantruntime="false">
+		<javac srcdir="src" destdir="${build.home}" includeantruntime="false">
 			<classpath refid="classpath" />
 		</javac>
-		<javac srcdir="app" destdir="${build.home}" target="1.6" source="1.6" bootclasspath='/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar' includeantruntime="false">
+		<javac srcdir="app" destdir="${build.home}"  includeantruntime="false">
 			<classpath refid="classpath" />
 		</javac>
 	</target>
@@ -51,7 +58,7 @@
 		<copy todir="${dist.home}/lib">
 			<fileset dir="lib" />
 		</copy>
-		
+		<!-- JK 25 June 2018 
 		<copy todir="${dist.home}/native/windows" failonerror="false">
 			<fileset dir="${native.home}/windows" />
 		</copy>
@@ -61,6 +68,7 @@
 		<copy todir="${dist.home}/native/macos" failonerror="false">
 			<fileset dir="${native.home}/macos" />
 		</copy>
+		-->
 
 		<jar jarfile="${dist.home}/xper.jar" basedir="${build.home}">
 		</jar>
@@ -74,6 +82,7 @@
 				<attribute name="Class-Path" value=". ${manifest.classpath} xper.jar" />
 			</manifest>
 		</jar>
+<!--
 		<jar jarfile="${dist.home}/acq_client.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/app/acq/AcqClient.class" />
@@ -102,7 +111,7 @@
 				<attribute name="Class-Path" value=". ${manifest.classpath} xper.jar" />
 			</manifest>
 		</jar>
-
+-->
 		<jar jarfile="${dist.home}/fixcal.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/app/fixcal/FixCalExperiment.class" />
@@ -122,7 +131,7 @@
 				<attribute name="Class-Path" value=". ${manifest.classpath} xper.jar" />
 			</manifest>
 		</jar>
-		
+<!--
 		<jar jarfile="${dist.home}/rds_experiment.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/app/rds/RdsExperiment.class" />
@@ -142,7 +151,7 @@
 				<attribute name="Class-Path" value=". ${manifest.classpath} xper.jar" />
 			</manifest>
 		</jar>
-
+-->
 		<jar jarfile="${dist.home}/experiment.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/app/experiment/Experiment.class" />
@@ -172,7 +181,7 @@
 				<attribute name="Class-Path" value=". ${manifest.classpath} xper.jar" />
 			</manifest>
 		</jar>
-
+<!--
 		<jar jarfile="${dist.home}/mock_xper.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/app/mock/MockExperiment*.class" />
@@ -182,6 +191,6 @@
 				<attribute name="Class-Path" value=". ${manifest.classpath} xper.jar" />
 			</manifest>
 		</jar>
-
+-->
 	</target>
 </project>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry excluding="org/xper/acq/filterOld/" kind="src" path="src">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/ecpc32/Dropbox/Documents/Hopkins/NHP2PV4/projectXper/xper_train/dist/native/macos"/>
@@ -8,7 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="unit_test"/>
 	<classpathentry kind="src" path="app"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/xper-native"/>
 	<classpathentry kind="lib" path="lib/lwjgl/jinput.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl/lwjgl_test.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl/lwjgl_util_applet.jar"/>

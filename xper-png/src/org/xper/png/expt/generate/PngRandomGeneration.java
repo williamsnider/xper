@@ -99,27 +99,26 @@ public class PngRandomGeneration {
 				String progressType = PngIOUtil.promptString("To proceed with post-hoc, enter 'c' (composite), 's' (stability), 'a' (joint animacy), 'd' (density), or 'm' (mass distribution)");
 				String postHoc;
 
-				switch (progressType) {
-				case "n":
+				if (progressType == "n") {
 					createNextGen();
 					break;
-				case "c":
+				} else if (progressType == "c") {
 					postHoc = "COMPOSITE";
 					createPHcomposite();
 					break;
-				case "s":
+				} else if (progressType == "s") {
 					postHoc = "STABILITY";
 					createPHstability();
 					break;
-				case "a":
+				} else if (progressType == "a") {
 					postHoc = "ANIMACY";
 					createPHanimacy();
 					break;
-				case "d":
+				} else if (progressType == "d") {
 					postHoc = "DENSITY";
 					createPHdensity();
 					break;
-				case "m":
+				} else if (progressType == "m") {
 					postHoc = "MASS";
 					createPHmass();
 					break;
@@ -171,7 +170,8 @@ public class PngRandomGeneration {
 		 * to the rig and to ecpc31.
 		 */
 
-		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/randomSpec.py");
+// JK		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/randomSpec.py");
+		BlenderRunnable blenderRunner = new BlenderRunnable("/home/alexandriya/blendRend/ProgressionClasses/randomSpec.py");
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py");
 		blenderRunner.run();
 

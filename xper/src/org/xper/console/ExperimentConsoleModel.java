@@ -148,7 +148,12 @@ public class ExperimentConsoleModel implements AcqSamplingDevice {
 	}
 
 	public void setMessageHandler(TrialExperimentMessageHandler messageHandler) {
+//		System.out.println("JK experimentConsoleModel:: setMessageHandler()");
+
 		this.messageHandler = messageHandler;
+//		System.out.println("JK experimentConsoleModel:: setMessageHandler() : " + messageHandler.toString());
+
+		
 	}
 	
 	public ExperimentMessageReceiver getMessageReceiver() {

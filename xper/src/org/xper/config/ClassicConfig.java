@@ -189,7 +189,12 @@ public class ClassicConfig {
 		
 		model.setExperimentRunnerClient(experimentRunnerClient());
 		model.setChannelMap(iscanChannelMap());
+		
+//		System.out.println("JK ClassicConfig experimentConsoleModel() : contructed and ready to set message handler.");
+		
 		model.setMessageHandler(messageHandler());
+//		System.out.println("JK  ClassicConfig experimentConsoleModel() : message handler set .");
+
 		
 		if (consoleEyeSimulation || acqConfig.acqDriverName.equalsIgnoreCase(acqConfig.DAQ_NONE)) {
 			// socket sampling server for eye simulation
@@ -426,6 +431,10 @@ public class ClassicConfig {
 	
 	@Bean
 	public TrialExperimentMessageHandler  messageHandler() {
+		
+		System.out.println("JK classic messageHandler ( )"); 
+
+		
 		TrialExperimentMessageHandler messageHandler = new TrialExperimentMessageHandler();
 		HashMap<String, EyeDeviceReading> eyeDeviceReading = new HashMap<String, EyeDeviceReading>();
 		eyeDeviceReading.put(xperLeftIscanId(), zeroEyeDeviceReading());
