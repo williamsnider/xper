@@ -6,6 +6,7 @@ public class GenerationInfo {
 	String prefix = "";
 	long runNum = 0;
 	long genId = 0;
+	long linId = 0;
 	int taskCount = 0;
 	
 	transient static XStream s;
@@ -52,6 +53,14 @@ public class GenerationInfo {
 		this.prefix = prefix;
 	}
 
+	public long getLinId() {
+		return linId;
+	}
+
+	public void setLinId(long linId) {
+		this.linId = linId;
+	}
+	
 	public int getTaskCount() {
 		return taskCount;
 	}

@@ -36,7 +36,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 	// ---- GA stimulus generation ----
 	// --------------------------------
 	
-	public long generateBlankStim(String prefix, long runNum, long gen, int lineage) {
+	public long generateBlankStim(String prefix, long runNum, long gen, long lineage) { //#####!
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
 
@@ -67,7 +67,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		return stimObjId;
 	}
 
-	public long generateRandStim(String prefix, long runNum, long gen, int lineage, int stimNum) {
+	public long generateRandStim(String prefix, long runNum, long gen, long lineage, int stimNum) { //#####!
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
 
@@ -137,7 +137,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 
 	}
 	
-	public List<String> generateMorphStim(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum) {
+	public List<String> generateMorphStim(String prefix, long runNum, long gen, long lineage, long parentId, int stimNum) {
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
 		
@@ -210,7 +210,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		return returnDetails;
 	}
 	
-	public long generatePHControlledMorph(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum, int profile, String postHoc, int fitnessMethod) {
+	public long generatePHControlledMorph(String prefix, long runNum, long gen, long lineage, long parentId, int stimNum, int profile, String postHoc, int fitnessMethod) {
 		
 		// load blenderspec back in order to extract id of limb of interest
 
@@ -280,7 +280,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 	}
 
 
-	public long generatePHStim(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum, String postHoc) {
+	public long generatePHStim(String prefix, long runNum, long gen, long lineage, long parentId, int stimNum, String postHoc) {
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
 
@@ -327,7 +327,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		return stimObjId;
 	}
 	
-	public long generatePHStimAnimacy(String prefix, long runNum, long gen, int lineage, long parentId, int stimNum, String postHoc) {
+	public long generatePHStimAnimacy(String prefix, long runNum, long gen, long lineage, long parentId, int stimNum, String postHoc) {
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
 

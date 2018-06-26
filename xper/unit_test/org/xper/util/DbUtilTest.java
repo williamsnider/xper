@@ -316,7 +316,7 @@ public class DbUtilTest extends TestCase {
 		assertEquals(maxId, xfmId);
 
 		// task to do
-		dbUtil.writeTaskToDo(taskId, stimId, xfmId, genInfo.getGenId());
+		dbUtil.writeTaskToDo(taskId, stimId, xfmId, genInfo.getGenId(), genInfo.getLinId());
 
 		// read
 		GenerationTaskToDoList result7 = dbUtil

@@ -148,10 +148,10 @@ public class PngDbUtil extends DbUtil {
 		return jt.queryForObject("SELECT descId from stimobjdata where id = ?",String.class, stimObjId);
 	}
 	
-	public int readRenderStatus(String prefix, long runNum, long genNum) {
+	public int readRenderStatus(String prefix, long runNum, long genNum, long linNum) { //#####!
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		int renderStatus = jt.queryForInt("SELECT rendersFinished FROM descriptiveinfo WHERE prefix = ? "
-				+ "AND gaRun = ? AND genNum = ?", new Object[] { prefix, runNum, genNum });
+				+ "AND gaRun = ? AND genNum = ? AND linNum = ?", new Object[] { prefix, runNum, genNum, linNum }); //#####!
 		return renderStatus;
 	}
 	
@@ -174,17 +174,17 @@ public class PngDbUtil extends DbUtil {
 		return new String(cEI.toString() + "_r-" + gaRun + "_g-" + genNum);
 	}
 	
-	public void writeCurrentDescriptivePrefixAndGen(long tstamp, String prefix, long gaRun, long genNum) {
+	public void writeCurrentDescriptivePrefixAndGen(long tstamp, String prefix, long gaRun, long genNum, long linNum) { //#####!
         JdbcTemplate jt = new JdbcTemplate(dataSource);
          
-        jt.update("insert into DescriptiveInfo (tstamp, prefix, gaRun, genNum) values (?, ?, ?, ?)", 
-				new Object[] { tstamp, prefix, gaRun, genNum });
+        jt.update("insert into DescriptiveInfo (tstamp, prefix, gaRun, genNum, linNum) values (?, ?, ?, ?, ?)", 
+				new Object[] { tstamp, prefix, gaRun, genNum, linNum });
     }
 	
-	public void writeCurrentDescriptivePrefixAndGen(long tstamp, String prefix, long gaRun, long genNum, long firstTrial, long lastTrial) {
+	public void writeCurrentDescriptivePrefixAndGen(long tstamp, String prefix, long gaRun, long genNum, long linNum, long firstTrial, long lastTrial) { //#####!
         JdbcTemplate jt = new JdbcTemplate(dataSource);
          
-        jt.update("insert into DescriptiveInfo (tstamp, prefix, gaRun, genNum, firstTrial, lastTrial) values (?, ?, ?, ?, ?, ?)", 
+        jt.update("insert into DescriptiveInfo (tstamp, prefix, gaRun, genNum, linNum, firstTrial, lastTrial) values (?, ?, ?, ?, ?, ?, ?)", 
 				new Object[] { tstamp, prefix, gaRun, genNum, firstTrial, lastTrial });
     }
 	
@@ -231,17 +231,17 @@ public class PngDbUtil extends DbUtil {
 	 *         for the generation in database.
 	 */
 
-	public GenerationTaskDoneList readTaskDoneByFullGen(String prefix, long runNum, long genNum) {
+	public GenerationTaskDoneList readTaskDoneByFullGen(String prefix, long runNum, long genNum, long linNum) { //#####!
 		final GenerationTaskDoneList taskDone = new GenerationTaskDoneList();
 		taskDone.setGenId(genNum);
 		taskDone.setDoneTasks(new ArrayList<TaskDoneEntry>());
 		
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		long firstTrial = jt.queryForLong("SELECT firstTrial FROM descriptiveinfo WHERE prefix = ? "
-				+ "AND gaRun = ? AND genNum = ?", new Object[] { prefix, runNum, genNum });
+				+ "AND gaRun = ? AND genNum = ? AND linNum = ?", new Object[] { prefix, runNum, genNum, linNum }); //#####!
 		
 		long lastTrial = jt.queryForLong("SELECT lastTrial FROM descriptiveinfo WHERE prefix = ? "
-				+ "AND gaRun = ? AND genNum = ?", new Object[] { prefix, runNum, genNum });
+				+ "AND gaRun = ? AND genNum = ? AND linNum = ?", new Object[] { prefix, runNum, genNum, linNum }); //#####!
 		
 		jt.query(
 			" select tstamp, task_id, part_done" + 
@@ -267,6 +267,11 @@ public class PngDbUtil extends DbUtil {
 	public long readGenIdForRunNum(long runNum) {
 		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);		
 		return jt.queryForLong("SELECT max(genNum) FROM descriptiveinfo WHERE gaRun = ? ", runNum);
+	}
+	
+	public long readLinIdForRunNum(long runNum) {
+		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);		
+		return jt.queryForLong("SELECT max(linNum) FROM descriptiveinfo WHERE gaRun = ? AND genNum = (SELECT max(genNum) FROM descriptiveinfo WHERE gaRun = ?)", new Object[] { runNum, runNum });
 	}
 	
 	public List<Long> readAllStimIdsForRun(String prefix, long runNum, long genNum) {

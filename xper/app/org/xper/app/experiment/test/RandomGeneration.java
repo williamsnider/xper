@@ -27,12 +27,21 @@ public class RandomGeneration {
 	
 	public void generate() {
 		System.out.print("Generating ");
+		
 		long genId = 1;
 		try {
 			genId = dbUtil.readReadyGenerationInfo().getGenId() + 1;
 		} catch (VariableNotFoundException e) {
 			dbUtil.writeReadyGenerationInfo(new GenerationInfo());
 		}
+		
+		long linId = 0;
+		try {
+			linId = dbUtil.readReadyGenerationInfo().getLinId() + 1;
+		} catch (VariableNotFoundException e) {
+			dbUtil.writeReadyGenerationInfo(new GenerationInfo());
+		}
+		
 		for (int i = 0; i < taskCount; i++) {
 			if (i % 10 == 0) {
 				System.out.print(".");
@@ -40,9 +49,9 @@ public class RandomGeneration {
 			String spec = generator.generateStimSpec();
 			long taskId = globalTimeUtil.currentTimeMicros();
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genId);
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genId, linId);
 		}
-		dbUtil.updateReadyGenerationInfo("",1,genId, taskCount);
+		dbUtil.updateReadyGenerationInfo("",1,genId,linId,taskCount);
 		System.out.println("done.");
 	}
 
