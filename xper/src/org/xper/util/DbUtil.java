@@ -271,11 +271,12 @@ public class DbUtil {
 	 * Get done tasks for the generation.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @return {@link GenerationTaskDoneList} empty if there is no done tasks
 	 *         for the generation in database.
 	 */
 
-	public GenerationTaskDoneList readTaskDoneByGeneration(long genId) {
+	public GenerationTaskDoneList readTaskDoneByGeneration(long genId, long linId) { //#####! ADDRESSED
 		final GenerationTaskDoneList taskDone = new GenerationTaskDoneList();
 		taskDone.setGenId(genId);
 		taskDone.setDoneTasks(new ArrayList<TaskDoneEntry>());
@@ -284,9 +285,9 @@ public class DbUtil {
 		jt.query(
 			" select d.tstamp as tstamp, d.task_id as task_id, d.part_done as part_done" + 
 			" from TaskDone d, TaskToDo t "	+ 
-			" where d.task_id = t.task_id and t.gen_id = ? " + 
+			" where d.task_id = t.task_id and t.gen_id = ? and t.lin_id = ?" + 
 			" order by d.tstamp ", 
-			new Object[] { genId },
+			new Object[] { genId, linId },
 			new RowCallbackHandler() {
 				public void processRow(ResultSet rs) throws SQLException {
 					TaskDoneEntry ent = new TaskDoneEntry();
@@ -302,22 +303,24 @@ public class DbUtil {
 	 * Get the TaskToDo list for generation genId.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @return {@link GenerationTaskToDoList} empty if there is no tasks defined
 	 *         for the generation in database.
 	 */
 
-	public GenerationTaskToDoList readTaskToDoByGeneration(long genId) {
+	public GenerationTaskToDoList readTaskToDoByGeneration(long genId, long linId) { //#####! ADDRESSED
 		final GenerationTaskToDoList genTask = new GenerationTaskToDoList();
 		genTask.setTasks(new ArrayList<TaskToDoEntry>());
 		genTask.setGenId(genId);
 
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		jt.query(
-				" select task_id, stim_id, xfm_id, gen_id " +
+				" select task_id, stim_id, xfm_id, gen_id, lin_id " +
 				" from TaskToDo " +
 				" where gen_id = ? " +
+				" and lin_id = ? " +
 				" order by task_id", 
-				new Object[] { genId },
+				new Object[] { genId, linId },
 				new RowCallbackHandler() {
 					public void processRow(ResultSet rs) throws SQLException {
 						TaskToDoEntry task = new TaskToDoEntry();
@@ -325,6 +328,7 @@ public class DbUtil {
 						task.setStimId(rs.getLong("stim_id")); 
 						task.setXfmId(rs.getLong("xfm_id")); 
 						task.setGenId(rs.getLong("gen_id")); 
+						task.setLinId(rs.getLong("lin_id"));
 						genTask.getTasks().add(task);
 					}});
 		return genTask;
@@ -335,25 +339,27 @@ public class DbUtil {
 	 * greater than lastDoneTaskId
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @param lastDoneTaskId
 	 * @return
 	 */
-	public LinkedList<ExperimentTask> readExperimentTasks(long genId,
-			long lastDoneTaskId) {
+	public LinkedList<ExperimentTask> readExperimentTasks(long genId, //#####! ADDRESSED
+			long linId, long lastDoneTaskId) {
 		final LinkedList<ExperimentTask> taskToDo = new LinkedList<ExperimentTask>();
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		jt.query(
-				" select t.task_id, t.stim_id, t.xfm_id, t.gen_id, " +
+				" select t.task_id, t.stim_id, t.xfm_id, t.gen_id, t.lin_id, " +
 						" (select spec from StimSpec s where s.id = t.stim_id ) as stim_spec, " +
 						" (select spec from XfmSpec x where x.id = t.xfm_id) as xfm_spec " +
 				" from TaskToDo t " +
-				" where t.gen_id = ? and t.task_id > ? " +
+				" where t.gen_id = ? and t.lin_id = ? and t.task_id > ? " +
 				" order by t.task_id", 
-				new Object[] { genId, lastDoneTaskId },
+				new Object[] { genId, linId, lastDoneTaskId },
 				new RowCallbackHandler() {
 					public void processRow(ResultSet rs) throws SQLException {
 						ExperimentTask task = new ExperimentTask();
 						task.setGenId(rs.getLong("gen_id"));
+						task.setLinId(rs.getLong("lin_id"));
 						task.setStimId(rs.getLong("stim_id"));
 						task.setStimSpec(rs.getString("stim_spec"));
 						task.setTaskId(rs.getLong("task_id"));
@@ -368,25 +374,28 @@ public class DbUtil {
 	 * Get all TaskTodo in task_id order as Map for generation genId.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @return Map from task id to TaskTodoEntry.
 	 */
-	public Map<Long, TaskToDoEntry> readTaskToDoByGenerationAsMap(long genId) {
+	public Map<Long, TaskToDoEntry> readTaskToDoByGenerationAsMap(long genId, long linId) { //#####! ADDRESSED
 		final Map<Long, TaskToDoEntry> genTask = new TreeMap<Long, TaskToDoEntry>();
 
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		jt.query(
-			" select task_id, stim_id, xfm_id, gen_id " +
+			" select task_id, stim_id, xfm_id, gen_id, lin_id " +
 			" from TaskToDo " +
 			" where gen_id = ? " +
+			" and lin_id = ? " +
 			" order by task_id", 
-			new Object[] { genId },
+			new Object[] { genId, linId },
 			new RowCallbackHandler() {
 				public void processRow(ResultSet rs) throws SQLException {
 					TaskToDoEntry task = new TaskToDoEntry();
 					task.setTaskId(rs.getLong("task_id")); 
 					task.setStimId(rs.getLong("stim_id")); 
 					task.setXfmId(rs.getLong("xfm_id")); 
-					task.setGenId(rs.getLong("gen_id")); 
+					task.setGenId(rs.getLong("gen_id"));
+					task.setLinId(rs.getLong("lin_id")); 
 					genTask.put(task.getTaskId(), task);
 				}});
 		return genTask;
@@ -498,14 +507,15 @@ public class DbUtil {
 	 * value.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @param count
 	 */
-	public void updateReadyGenerationInfo(String prefix, long runNum, long genId, long linId, int taskCount) { //#####!
+	public void updateReadyGenerationInfo(String prefix, long runNum, long genId, long linId, int taskCount) { //#####!  ADDRESSED
 		GenerationInfo info = new GenerationInfo();
 		info.setPrefix(prefix);
 		info.setRunNum(runNum);
 		info.setGenId(genId);
-		info.setLinId(linId); //#####!
+		info.setLinId(linId);
 		info.setTaskCount(taskCount);
 
 		String xml = info.toXml();
@@ -571,16 +581,17 @@ public class DbUtil {
 	 * Read all StimSpec for the generation.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @return Map from stimulus id to {@link StimSpecEntry}
 	 */
-	public Map<Long, StimSpecEntry> readStimSpecByGeneration(long genId) {
+	public Map<Long, StimSpecEntry> readStimSpecByGeneration(long genId, long linId) { //#####!  ADDRESSED
 		final HashMap<Long, StimSpecEntry> result = new HashMap<Long, StimSpecEntry>();
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		jt.query(
 			" select s.id as id, s.spec as spec " + 
 			" from StimSpec s, TaskToDo d " +
-			" where d.stim_id = s.id and d.gen_id = ? ", 
-			new Object[] {genId },
+			" where d.stim_id = s.id and d.gen_id = ? and d.lin_id = ? ", 
+			new Object[] { genId, linId },
 			new RowCallbackHandler() {
 				public void processRow(ResultSet rs) throws SQLException {
 					StimSpecEntry ent = new StimSpecEntry();
@@ -781,7 +792,7 @@ public class DbUtil {
 	 * 
 	 * @return generation id as long
 	 */
-	public long readTaskDoneMaxGenerationId() {
+	public long readTaskDoneMaxGenerationId() { //#####! NO NEED
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		long maxId = jt.queryForLong(
 				" select max(t.gen_id) as max_gen_id " +
@@ -795,7 +806,7 @@ public class DbUtil {
 	 * 
 	 * @return
 	 */
-	public long readTaskDoneCompleteMaxGenerationId() {
+	public long readTaskDoneCompleteMaxGenerationId() { //#####! NO NEED
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		long maxId = jt.queryForLong(
 				" select max(t.gen_id) as max_gen_id " +
@@ -809,7 +820,7 @@ public class DbUtil {
 	 * 
 	 * @return generation id as long
 	 */
-	public long readTaskToDoMaxGenerationId() {
+	public long readTaskToDoMaxGenerationId() { //#####! NOT SURE IF EDIT NECESSARY YET
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		long maxId = jt.queryForLong("select max(gen_id) as max_gen_id from TaskToDo"); 
 		return maxId;
@@ -867,16 +878,17 @@ public class DbUtil {
 	 * Read all xfm spec for a generation.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @return Map from xfm id to {@link XfmSpecEntry}
 	 */
-	public Map<Long, XfmSpecEntry> readXfmSpecByGeneration(long genId) {
+	public Map<Long, XfmSpecEntry> readXfmSpecByGeneration(long genId, long linId) { //#####! ADDRESSED
 		final HashMap<Long, XfmSpecEntry> result = new HashMap<Long, XfmSpecEntry>();
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		jt.query(
 			" select s.id as id, s.spec as spec " + 
 			" from XfmSpec s, TaskToDo d " +
-			" where d.xfm_id = s.id and d.gen_id = ? ", 
-			new Object[] { genId },
+			" where d.xfm_id = s.id and d.gen_id = ? and d.lin_id = ? ", 
+			new Object[] { genId, linId },
 			new RowCallbackHandler() {
 				public void processRow(ResultSet rs) throws SQLException {
 					XfmSpecEntry ent = new XfmSpecEntry();
@@ -1287,10 +1299,10 @@ public class DbUtil {
 	 * @param linId
 	 */
 
-	public void writeTaskToDo(long taskId, long stimId, long xfmId, long genId, long linId) { //#####!
+	public void writeTaskToDo(long taskId, long stimId, long xfmId, long genId, long linId) { //#####!  ADDRESSED
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		jt.update("insert into TaskToDo(task_id, stim_id, xfm_id, gen_id, lin_id) values (?, ?, ?, ?, ?)",  //#####!
-						new Object[] { taskId, stimId, xfmId, genId, linId }); //#####!
+		jt.update("insert into TaskToDo(task_id, stim_id, xfm_id, gen_id, lin_id) values (?, ?, ?, ?, ?)",
+						new Object[] { taskId, stimId, xfmId, genId, linId });
 	}
 
 	/**

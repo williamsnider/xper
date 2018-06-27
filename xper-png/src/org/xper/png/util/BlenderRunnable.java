@@ -84,7 +84,8 @@ public class BlenderRunnable implements Runnable {
 		
 		
 		try {
-			System.out.println(args);
+//			System.out.println(args);
+			System.out.println("Editing blender specifications.");
 			ProcessBuilder builder = new ProcessBuilder(args);
 			Process process = builder.start();
 //			process.getOutputStream();
@@ -100,7 +101,8 @@ public class BlenderRunnable implements Runnable {
 	
 	public void run(List<String> args) {
 		try {
-			System.out.println(args);
+//			System.out.println(args);
+			System.out.println("Sending stimuli to cluster to render.");
 			ProcessBuilder builder = new ProcessBuilder(args);
 			Process process = builder.start();
 //			process.getOutputStream();

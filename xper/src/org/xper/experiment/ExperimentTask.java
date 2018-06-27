@@ -6,6 +6,7 @@ public class ExperimentTask {
 	long stimId;
 	long xfmId;
 	long genId;
+	long linId;
 	
 	String stimSpec;
 	String xfmSpec;
@@ -15,6 +16,12 @@ public class ExperimentTask {
 	}
 	public void setGenId(long genId) {
 		this.genId = genId;
+	}
+	public long getLinId() {
+		return linId;
+	}
+	public void setLinId(long linId) {
+		this.linId = linId;
 	}
 	public long getStimId() {
 		return stimId;

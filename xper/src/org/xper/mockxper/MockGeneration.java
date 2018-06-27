@@ -13,7 +13,7 @@ public class MockGeneration {
 	}
 	
 	public GenerationTaskToDoList getTaskToDoList (){
-		return dbUtil.readTaskToDoByGeneration(genInfo.getGenId());
+		return dbUtil.readTaskToDoByGeneration(genInfo.getGenId(),genInfo.getLinId());
 	}
 	
 	

@@ -25,21 +25,22 @@ public class MarkEveryStepExperimentSpikeCounter {
 	}
 	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getTaskSpikeByGeneration(
-			long genId, int dataChan) {
-		return getTaskSpikeByGeneration(genId, dataChan, Integer.MAX_VALUE);
+			long genId, long linId, int dataChan) {
+		return getTaskSpikeByGeneration(genId, linId, dataChan, Integer.MAX_VALUE);
 	}
 
 	/**
 	 * Only results for completed tasks are included.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @param dataChan
 	 * @return
 	 */
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getTaskSpikeByGeneration(
-			long genId, int dataChan, int maxStages) {
+			long genId, long linId, int dataChan, int maxStages) {
 		GenerationTaskDoneList taskDone = dbUtil
-				.readTaskDoneByGeneration(genId);
+				.readTaskDoneByGeneration(genId,linId);
 		return getTaskSpike(taskDone.getDoneTasks(), dataChan, maxStages);
 	}
 	

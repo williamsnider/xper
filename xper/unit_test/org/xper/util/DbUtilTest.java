@@ -320,8 +320,8 @@ public class DbUtilTest extends TestCase {
 
 		// read
 		GenerationTaskToDoList result7 = dbUtil
-				.readTaskToDoByGeneration(genInfo.getGenId());
-		assertEquals(result7.getGenId(), genInfo.getGenId());
+				.readTaskToDoByGeneration(genInfo.getGenId(),genInfo.getLinId());
+		assertEquals(result7.getGenId(), genInfo.getGenId(),genInfo.getLinId());
 		TaskToDoEntry ent7 = result7.getTask(0);
 		assertEquals(ent7.getTaskId(), taskId);
 		assertEquals(ent7.getStimId(), stimId);
@@ -337,14 +337,14 @@ public class DbUtilTest extends TestCase {
 
 		// read gen stim
 		Map<Long, StimSpecEntry> result3 = dbUtil
-				.readStimSpecByGeneration(genInfo.getGenId());
+				.readStimSpecByGeneration(genInfo.getGenId(),genInfo.getLinId());
 		StimSpecEntry ent3 = result3.get(new Long(stimId));
 		assertEquals(ent3.getSpec(), stimSpec);
 		assertEquals(ent3.getStimId(), stimId);
 
 		// read xfm stim
 		Map<Long, XfmSpecEntry> result6 = dbUtil
-				.readXfmSpecByGeneration(genInfo.getGenId());
+				.readXfmSpecByGeneration(genInfo.getGenId(),genInfo.getLinId());
 		XfmSpecEntry ent6 = result6.get(new Long(xfmId));
 		assertEquals(ent6.getSpec(), xfmSpec);
 		assertEquals(ent6.getXfmId(), xfmId);

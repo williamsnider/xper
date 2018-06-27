@@ -159,7 +159,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		s.setGaRunNum(runNum);
 		
 		String stickspec_str = "";
-		System.out.println(parent_pngSpec.getStimType());
+//		System.out.println(parent_pngSpec.getStimType());
 		
 		if (parent_pngSpec.getStimType().equals("ENVT"))
 			s.setDoBlenderMorph(true);
@@ -230,7 +230,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 
 		int refStim = Math.floorDiv(stimNum-fitnessMethod, PngGAParams.PH_bulbousness_morphs.length);
 		String referenceDescId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + refStim;
-		System.out.println(referenceDescId+' '+stimNum);
+//		System.out.println(referenceDescId+' '+stimNum);
 
 		// GENERATE STIM	
 		long stimObjId = globalTimeUtil.currentTimeMicros();
