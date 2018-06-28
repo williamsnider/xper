@@ -100,7 +100,7 @@ public class ExperimentConsole extends JFrame implements
 	}
                          
     private void initComponents() {
-    	setTitle("JK5 Experiment Console");
+    	setTitle("Experiment Console");
     	setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     	setResizable(true);
 		GuiUtil.makeDisposeOnEscapeKey(this);
@@ -467,18 +467,10 @@ public class ExperimentConsole extends JFrame implements
             }
         });
         
-     // JK 21 June 2018  THIS IS BROKEN :
 		for (String id : model.getEyeDeviceIds()) {
 			eyeDeviceSelect.addItem(id);
-		} 
-		// JK 26 June 2018 		
-//		eyeDeviceSelect.addItem("leftIscan");
-//		eyeDeviceSelect.addItem("rightIscan");
-		
-		// JK 21 June 2018  eyeDeviceSelect.setSelectedIndex(1);
-		eyeDeviceSelect.setSelectedIndex(0);
-		System.out.println(" eyeDeviceSelect has < " + eyeDeviceSelect.getItemCount() + " > items ");
-		
+		}
+		eyeDeviceSelect.setSelectedIndex(1);
 		changeCurrentDeviceId((String) eyeDeviceSelect.getSelectedItem());
 
 		pack();

@@ -500,11 +500,12 @@ public class DbUtil {
 	 * @param genId
 	 * @param count
 	 */
-	public void updateReadyGenerationInfo(String prefix, long runNum, long genId, int taskCount) {
+	public void updateReadyGenerationInfo(String prefix, long runNum, long genId, long linId, int taskCount) { //#####!
 		GenerationInfo info = new GenerationInfo();
 		info.setPrefix(prefix);
 		info.setRunNum(runNum);
 		info.setGenId(genId);
+		info.setLinId(linId); //#####!
 		info.setTaskCount(taskCount);
 
 		String xml = info.toXml();
@@ -1283,12 +1284,13 @@ public class DbUtil {
 	 * @param stimId
 	 * @param xfmId
 	 * @param genId
+	 * @param linId
 	 */
 
-	public void writeTaskToDo(long taskId, long stimId, long xfmId, long genId) {
+	public void writeTaskToDo(long taskId, long stimId, long xfmId, long genId, long linId) { //#####!
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		jt.update("insert into TaskToDo(task_id, stim_id, xfm_id, gen_id) values (?, ?, ?, ?)", 
-						new Object[] { taskId, stimId, xfmId, genId });
+		jt.update("insert into TaskToDo(task_id, stim_id, xfm_id, gen_id, lin_id) values (?, ?, ?, ?, ?)",  //#####!
+						new Object[] { taskId, stimId, xfmId, genId, linId }); //#####!
 	}
 
 	/**
