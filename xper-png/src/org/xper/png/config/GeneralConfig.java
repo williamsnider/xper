@@ -49,7 +49,7 @@ import org.xper.eye.listener.EyeSamplerEventListener;
 import org.xper.eye.strategy.AnyEyeInStategy;
 import org.xper.eye.strategy.EyeInStrategy;
 import org.xper.eye.vo.EyeDeviceReading;
-
+import org.xper.eye.vo.EyeWindow;
 import org.xper.juice.mock.NullDynamicJuice;
 
 import org.xper.png.util.PngDbUtil;
@@ -177,9 +177,18 @@ public class GeneralConfig {
 		HashMap<String, EyeDeviceReading> eyeDeviceReading = new HashMap<String, EyeDeviceReading>();
 		eyeDeviceReading.put(classicConfig.xperLeftIscanId(), classicConfig.zeroEyeDeviceReading());
 		eyeDeviceReading.put(classicConfig.xperRightIscanId(), classicConfig.zeroEyeDeviceReading());
+		
+		// 27 June 2018 copied these from ClassicConfig
+		messageHandler.setEyeDeviceReading(eyeDeviceReading);
+		messageHandler.setEyeWindow(new EyeWindow(classicConfig.xperEyeWindowCenter(), classicConfig.xperEyeWindowAlgorithmInitialWindowSize()));
+		
 		HashMap<String, Coordinates2D> eyeZero = new HashMap<String, Coordinates2D>();
 		eyeZero.put(classicConfig.xperLeftIscanId(), classicConfig.xperLeftIscanEyeZero());
 		eyeZero.put(classicConfig.xperRightIscanId(), classicConfig.xperRightIscanEyeZero());
+
+		// JK 26 June 2018  added this - it seems important ...
+		messageHandler.setEyeZero(eyeZero);
+
 		return messageHandler;
 	}
 	

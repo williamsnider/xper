@@ -22,6 +22,8 @@ public class BlenderRunnable implements Runnable {
 //	static String appPath = "/Applications/blender279/Blender.app/Contents/MacOS/blender";
 	static String blendFile = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/frameRate.blend";
 //	static String blendFile = "/Users/alexandriya/Dropbox/Blender/ProgressionClasses/frameRate.blend";
+//	static String appPath = "/home/alexandriya/blender/blender";
+//	static String blendFile = "/home/alexandriya/blendRend/ProgressionClasses/frameRate.blend";
 
 	public BlenderRunnable(String scriptPath) {
 		this.scriptPath = scriptPath;
