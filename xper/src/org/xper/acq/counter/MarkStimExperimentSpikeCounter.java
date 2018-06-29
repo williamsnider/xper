@@ -54,13 +54,14 @@ public class MarkStimExperimentSpikeCounter {
 	 * Get the task spike info for the generation genId.
 	 * 
 	 * @param genId
+	 * @param linId
 	 * @param data_chan
 	 * @param leftMove Move the left edge of the stimulus data frame in ms, can be negative or positive to account for response latency, stabalization time et al.
 	 * @param rightMove Move the right edge of the stimulus data frame in ms, can be negative or positive to account for response latency, stabalization time et al.
 	 * @return
 	 */
-	public SortedMap<Long, TaskSpikeDataEntry> getTaskSpikeByGeneration (long genId, int data_chan, double leftMove, double rightMove) {
-		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByGeneration(genId);
+	public SortedMap<Long, TaskSpikeDataEntry> getTaskSpikeByGeneration (long genId, long linId, int data_chan, double leftMove, double rightMove) {
+		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByGeneration(genId,linId);
 		return getTaskSpike(taskDone.getDoneTasks(), data_chan, leftMove, rightMove);
 	}
 	

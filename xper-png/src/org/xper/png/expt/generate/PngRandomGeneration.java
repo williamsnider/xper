@@ -286,7 +286,7 @@ public class PngRandomGeneration {
 		List<Long> stimsToMorph_lin1 = new ArrayList<Long>(stimsToMorph_lin1_obj);
 		stimsToMorph_lin1.addAll(stimsToMorph_lin1_env);
 		
-		System.out.println("lin " + linNum + " stims to morph: " + stimsToMorph_lin1); //#####!
+		System.out.println("Lineage " + linNum + " stimuli to morph: " + stimsToMorph_lin1); //#####!
 
 		//		// check generation designations of stimuli chosen to morph
 		//		for (int n=0;n<stimsToMorph_lin1.size();n++) {
@@ -351,7 +351,8 @@ public class PngRandomGeneration {
 
 		// write updated global genId and number of trials in this generation to db:
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks); //#####!
-
+		
+		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
 			try
 			{	Thread.sleep(10000);	}
@@ -644,7 +645,7 @@ public class PngRandomGeneration {
 
 		int floor_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(floor_maxFinder_lin1);
 		constantAttributes_lin1.add(Integer.toString(floor_decision_lin1));
-
+		
 		int ceiling_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(ceiling_maxFinder_lin1);
 		constantAttributes_lin1.add(Integer.toString(ceiling_decision_lin1));
 
@@ -666,7 +667,7 @@ public class PngRandomGeneration {
 		String aldenMaterial_decision_lin1 = GAMaths.chooseStimsToMorphComposite_String(aldenMaterial_maxFinder_lin1);
 		constantAttributes_lin1.add(aldenMaterial_decision_lin1);
 
-		System.out.println("lin " + linNum + ": " + constantAttributes_lin1);
+		System.out.println("Lineage " + linNum + ": " + constantAttributes_lin1);
 
 		// choose stims to morph:
 		// which fitness method? 	1 = highest only
@@ -677,7 +678,7 @@ public class PngRandomGeneration {
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
 
-		System.out.println("lin " + linNum + ": " + stimsToMorph_lin1);
+		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
 
 		// lineage 1
 		List<Integer> possiblePositions1 = new ArrayList<Integer>();
@@ -786,6 +787,7 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
+		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
@@ -886,7 +888,7 @@ public class PngRandomGeneration {
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
 
-		System.out.println("lin " + linNum + ": " + stimsToMorph_lin1);
+		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
 
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> limbCounts = new ArrayList<Integer>();
@@ -1005,15 +1007,15 @@ public class PngRandomGeneration {
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-//        BlenderRunnable photoRunner = new BlenderRunnable();
-//        List<String> args = new ArrayList<String>();
-//        args.add("ssh");
-//        args.add("alexandriya@172.30.9.11");
-//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-//        args.add(Integer.toString(numJobs));
-//        args.add(prefixRunGen);
-//        photoRunner.setDoWaitFor(false);
-//        photoRunner.run(args);
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
@@ -1026,6 +1028,7 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(trialGroups.size()*PngGAParams.GA_numRepsPerStim);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
+		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
@@ -1107,6 +1110,7 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
+		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
@@ -1272,6 +1276,7 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 
+		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
@@ -1329,7 +1334,7 @@ public class PngRandomGeneration {
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
 
-		System.out.println("lin " + linNum + ": " + stimsToMorph_lin1);
+		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
 
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> objCounts = new ArrayList<Integer>();
@@ -1408,6 +1413,7 @@ public class PngRandomGeneration {
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); //#####!
 
+		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
 			try
 			{	Thread.sleep(10000);	}
@@ -1553,7 +1559,6 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			System.out.println(linNum);
 			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
 			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 

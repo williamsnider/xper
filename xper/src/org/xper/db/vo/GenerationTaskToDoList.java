@@ -8,6 +8,7 @@ public class GenerationTaskToDoList {
 	 * Generation ID. Staring from 1 and increasing.
 	 */
 	long genId;
+	long linId;
 	List<TaskToDoEntry> tasks;
 	
 	/**
@@ -53,6 +54,14 @@ public class GenerationTaskToDoList {
 		this.genId = genId;
 	}
 
+	public long getLinId() {
+		return linId;
+	}
+
+	public void setLinId(long linId) {
+		this.linId = linId;
+	}
+	
 	public List<TaskToDoEntry> getTasks() {
 		return tasks;
 	}

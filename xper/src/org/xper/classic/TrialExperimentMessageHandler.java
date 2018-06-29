@@ -35,11 +35,6 @@ public class TrialExperimentMessageHandler implements ExperimentMessageHandler {
 	AtomicReference<TrialStatistics> trialStat = new AtomicReference<TrialStatistics>();
 	
 	public TrialExperimentMessageHandler() {
-		
-//		System.out.println("JK TrialExperimentMessageHandler()");
-
-		
-		
 		trialStat.set(new TrialStatistics());
 	}
 	
@@ -119,14 +114,10 @@ public class TrialExperimentMessageHandler implements ExperimentMessageHandler {
 	}
 
 	public Coordinates2D getEyeZeroByDeviceId(String id) {
-//		System.out.println("JK getEyeZeroByDeviceId()");
-
 		return eyeZero.get(id);
 	}
 
 	public void setEyeZero(HashMap<String, Coordinates2D> eyeZero) {
-//		System.out.println("JK setEyeZero()");
-
 		this.eyeZero.putAll(eyeZero);
 	}
 
@@ -140,8 +131,6 @@ public class TrialExperimentMessageHandler implements ExperimentMessageHandler {
 	}
 	
 	public Set<String> getEyeDeviceIds () {
-//		System.out.println("JK getEyeDeviceIds()");
-
 		return eyeZero.keySet();
 	}
 

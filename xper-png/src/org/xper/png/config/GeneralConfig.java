@@ -173,8 +173,6 @@ public class GeneralConfig {
 	
 	@Bean
 	public TrialExperimentMessageHandler messageHandler() {
-		System.out.println("JK general messageHandler ( )"); 
-
 		TrialExperimentMessageHandler messageHandler = new TrialExperimentMessageHandler();
 		HashMap<String, EyeDeviceReading> eyeDeviceReading = new HashMap<String, EyeDeviceReading>();
 		eyeDeviceReading.put(classicConfig.xperLeftIscanId(), classicConfig.zeroEyeDeviceReading());

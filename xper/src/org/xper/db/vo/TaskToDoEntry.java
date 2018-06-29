@@ -5,11 +5,18 @@ public class TaskToDoEntry {
 	long stimId;
 	long xfmId;
 	long genId;
+	long linId;
 	public long getGenId() {
 		return genId;
 	}
 	public void setGenId(long genId) {
 		this.genId = genId;
+	}
+	public long getLinId() {
+		return linId;
+	}
+	public void setLinId(long linId) {
+		this.linId = linId;
 	}
 	public long getStimId() {
 		return stimId;
