@@ -30,8 +30,8 @@ public class ImageStack implements Drawable {
     int frameNum = 0;
     
     // this probably should from the database 
-    String resourcePath = "/home/justin/jkcode/xper-alex/images/marked/"; //  res/marked/";  //"res/"; // 
-    String ext = "_m.png"; // ".png";  // 
+    String resourcePath = "/home/alexandriya/catch_cluster_images/"; //  res/marked/";  //"res/"; // 
+    String ext = "_L.png"; // ".png";  // 
  
     String imageName;
     String baseName;
@@ -121,7 +121,7 @@ public class ImageStack implements Drawable {
 		
 		for(int i = 0; i < numTrials; i++){
 			ImageStack s = new ImageStack();		
-			s.loadFrames("sizing3");
+			s.loadFrames("180705_r-198_g-1_l-0_s-0");
 			
 			List<ImageStack> images = new ArrayList<ImageStack>();
 			images.add(s);
@@ -150,7 +150,7 @@ public class ImageStack implements Drawable {
 			
 			// 24 Oct 2016  memleak tracking
 			if(!texturesLoaded){
-				loadFrames("sizing3");
+				loadFrames("180705_r-198_g-1_l-0_s-");
 				texturesLoaded = true;
 				System.out.println("loading frames");
 				frameNum = 0;

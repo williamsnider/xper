@@ -11,6 +11,24 @@ public class PngXmlUtil {
 		String y = n.selectSingleNode("y").getText();
 		return new Coordinates2D(Double.parseDouble(x), Double.parseDouble(y));
 	}
+
+	public static Coordinates2D getTargetPosition(Document doc) {
+		Node n = doc.selectSingleNode("/StimSpec/targetPosition");
+		return getCooridates2D(n);
+	}
+	
+	
+	public static double getTargetEyeWinSize (Document doc) {
+		Node n = doc.selectSingleNode("/StimSpec/targetEyeWinSize");
+		String s = n.getText();
+		return Double.parseDouble(s);
+	}
+	
+	public static long getTargetIndex (Document doc) {
+		Node n = doc.selectSingleNode("/StimSpec/targetIndex");
+		String s = n.getText();
+		return Long.parseLong(s);
+	}
 	
 	
 	public static long getReward(Document doc) {
@@ -18,4 +36,14 @@ public class PngXmlUtil {
 		String s = n.getText();
 		return Long.parseLong(s);
 	}
+	
+	// JK modify the reward for dynamic reward
+	public static void  setReward(Document doc,  long reward) {
+		Node n = doc.selectSingleNode("/StimSpec/reward");	
+		Long li = reward;		
+		n.setText(li.toString());
+				
+		return;
+	}
+	
 }

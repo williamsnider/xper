@@ -1168,6 +1168,21 @@ public class DbUtil {
 						new Object[] { val, name, arr_ind });
 	}
 
+	
+	
+	// JK use this to modify the reward size just before the trial actually runs
+	// 13 April 2016
+	public void updateStimSpec(long id, String spec) {
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		
+		jt.update("update StimSpec set spec = ?  where id = ?", 
+				new Object[] {spec , id });
+	}
+	
+	
+	
+	
+	
 	/**
 	 * Write RFStimSpec.spec, thumbnail.
 	 * 

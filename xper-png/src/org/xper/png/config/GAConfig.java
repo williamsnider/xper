@@ -16,6 +16,8 @@ import org.xper.drawing.object.BlankScreen;
 import org.xper.png.expt.PngExptScene;
 import org.xper.png.expt.PngExptSpecGenerator;
 import org.xper.png.expt.generate.PngRandomGeneration;
+import org.xper.png.vo.PngExperimentState;
+import org.xper.png.PngTrialExperiment;
 
 
 
@@ -29,13 +31,26 @@ public class GAConfig {
 	@Autowired AcqConfig acqConfig;
 	@Autowired BaseConfig baseConfig;
 	
+//	@Bean
+//	public SlideTrialExperiment experiment() {	// use standard experiment for GA *** this isn't working
+//		SlideTrialExperiment xper = new SlideTrialExperiment();
+//		xper.setStateObject(experimentState());
+//		return xper;
+//	}
+
+
 	@Bean
-	public SlideTrialExperiment experiment() {	// use standard experiment for GA *** this isn't working
-		SlideTrialExperiment xper = new SlideTrialExperiment();
+	public PngTrialExperiment experiment() {
+		PngTrialExperiment xper = new PngTrialExperiment();
 		xper.setStateObject(experimentState());
+		xper.setEyeMonitor(classicConfig.eyeMonitor());
+//		xper.setFirstSlideISI(alexConfig.xperFirstInterSlideInterval());		// these are no longer used -- see AlexTrialExperiment
+//		xper.setFirstSlideLength(alexConfig.xperFirstSlideLength());			// these are no longer used -- see AlexTrialExperiment
+//		xper.setBlankTargetScreenDisplayTime(alexConfig.xperBlankTargetScreenDisplayTime());
+		xper.setEarlyTargetFixationAllowableTime(0);	// do not allow eyemovements during last stimulus for GA
 		return xper;
 	}
-
+	
 	
 	@Bean
 	public PngExptScene taskScene() {
@@ -66,10 +81,12 @@ public class GAConfig {
 		gen.setGenerator(generator());
 		return gen;
 	}
-
+	
+	
+	// -shs: set slide length and ISI here (not via db):
 	@Bean
-	public SlideTrialExperimentState experimentState() {
-		SlideTrialExperimentState state = new SlideTrialExperimentState();
+	public PngExperimentState experimentState() {
+		PngExperimentState state = new PngExperimentState();
 		state.setLocalTimeUtil(baseConfig.localTimeUtil());
 		state.setTrialEventListeners(generalConfig.trialEventListeners());
 		state.setSlideEventListeners(classicConfig.slideEventListeners());
@@ -78,20 +95,64 @@ public class GAConfig {
 		state.setTaskDataSource(generalConfig.databaseTaskDataSource());
 		state.setTaskDoneCache(classicConfig.taskDoneCache());
 		state.setGlobalTimeClient(acqConfig.timeClient());
-		state.setDrawingController(generalConfig.drawingController());
+//	JK	state.setRequiredTargetSelectionHoldTime(pngConfig.xperRequiredTargetSelectionHoldTime());
+//	JK	state.setTargetSelectionStartDelay(pngConfig.xperTargetSelectionEyeMonitorStartDelay());
+//	JK	state.setTimeAllowedForInitialTargetSelection(pngConfig.xperTimeAllowedForInitialTargetSelection());
+//	JK	state.setTargetSelector(pngConfig.eyeTargetSelector());
+    	state.setDrawingController(generalConfig.drawingController());
 		state.setInterTrialInterval(classicConfig.xperInterTrialInterval());
 		state.setTimeBeforeFixationPointOn(classicConfig.xperTimeBeforeFixationPointOn());
 		state.setTimeAllowedForInitialEyeIn(classicConfig.xperTimeAllowedForInitialEyeIn());
 		state.setRequiredEyeInHoldTime(classicConfig.xperRequiredEyeInHoldTime());
 		state.setSlidePerTrial(classicConfig.xperSlidePerTrial());
-		state.setSlideLength(classicConfig.xperSlideLength());
-		state.setInterSlideInterval(classicConfig.xperInterSlideInterval());
+		state.setSlideLength(300);						// GA slide length -- 300
+		state.setInterSlideInterval(200);				// GA slide ISI    -- 200
 		state.setDoEmptyTask(classicConfig.xperDoEmptyTask());
 		state.setSleepWhileWait(true);
 		state.setPause(classicConfig.xperExperimentInitialPause());
 		state.setDelayAfterTrialComplete(classicConfig.xperDelayAfterTrialComplete());
-
+		state.setRepeatTrialIfEyeBreak(true);
+		
+		// JK 1 Aug 2016
+		//state.setTimeoutPenaltyDelay(xperTimeoutPenaltyDelay());
+		
 		return state;
 	}
+	
+	// JK 1 Aug 2016
+//	@Bean(scope = DefaultScopes.PROTOTYPE)
+//		public Integer xperTimeoutPenaltyDelay() {
+//			return Integer.parseInt(baseConfig.systemVariableContainer().get("xper_timeout_penalty_delay", 0));
+//		}
+//		
+	
+	
+
+//	@Bean
+//	public SlideTrialExperimentState experimentState() {
+//		SlideTrialExperimentState state = new SlideTrialExperimentState();
+//		state.setLocalTimeUtil(baseConfig.localTimeUtil());
+//		state.setTrialEventListeners(generalConfig.trialEventListeners());
+//		state.setSlideEventListeners(classicConfig.slideEventListeners());
+//		state.setEyeController(classicConfig.eyeController());
+//		state.setExperimentEventListeners(classicConfig.experimentEventListeners());
+//		state.setTaskDataSource(generalConfig.databaseTaskDataSource());
+//		state.setTaskDoneCache(classicConfig.taskDoneCache());
+//		state.setGlobalTimeClient(acqConfig.timeClient());
+//		state.setDrawingController(generalConfig.drawingController());
+//		state.setInterTrialInterval(classicConfig.xperInterTrialInterval());
+//		state.setTimeBeforeFixationPointOn(classicConfig.xperTimeBeforeFixationPointOn());
+//		state.setTimeAllowedForInitialEyeIn(classicConfig.xperTimeAllowedForInitialEyeIn());
+//		state.setRequiredEyeInHoldTime(classicConfig.xperRequiredEyeInHoldTime());
+//		state.setSlidePerTrial(classicConfig.xperSlidePerTrial());
+//		state.setSlideLength(classicConfig.xperSlideLength());
+//		state.setInterSlideInterval(classicConfig.xperInterSlideInterval());
+//		state.setDoEmptyTask(classicConfig.xperDoEmptyTask());
+//		state.setSleepWhileWait(true);
+//		state.setPause(classicConfig.xperExperimentInitialPause());
+//		state.setDelayAfterTrialComplete(classicConfig.xperDelayAfterTrialComplete());
+//
+//		return state;
+//	}
 	
 }
