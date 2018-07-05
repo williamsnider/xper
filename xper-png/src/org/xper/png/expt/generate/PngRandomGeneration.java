@@ -61,7 +61,7 @@ public class PngRandomGeneration {
 	long linNum = 0;
 	
 //	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
-	String basePath = "/home/alexandriya/blendRend/ProgressionClasses/";
+	String basePath = "/home/alexandriya/jkBlendRend/ProgressionClasses/";
 	
 	static public enum TrialType { GA };
 	TrialType trialType;
@@ -193,7 +193,8 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        // JK 3 July 2018  args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/jkBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
