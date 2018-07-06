@@ -37,10 +37,13 @@ public class DatabaseTaskDataSource implements TaskDataSource, Threadable {
 	public ExperimentTask getNextTask() {
 		try {
 			LinkedList<ExperimentTask> tasks = currentGeneration.get();
+			
 			if (tasks == null) {
 				return null;
 			}
 			ExperimentTask task = tasks.removeFirst();
+	
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("	Get -- Generation: " + task.genId + " task: "
 						+ task.taskId);
@@ -92,16 +95,18 @@ public class DatabaseTaskDataSource implements TaskDataSource, Threadable {
 				GenerationInfo info = dbUtil.readReadyGenerationInfo();
 				if (info.getGenId() > currentGenId) {
 					// new generation found
-					LinkedList<ExperimentTask> taskToDo = dbUtil
-							.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
+			
+					LinkedList<ExperimentTask> taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("Generation " + info.getGenId() + "Lineage " + info.getLinId() + " size: "
+						logger.debug("Generation " + info.getGenId() + " Lineage " + info.getLinId() + " size: "
 								+ taskToDo.size());
 					}
 					if (taskToDo.size() > 0) {
 						currentGeneration.set(taskToDo);
 						currentGenId = info.getGenId();
+						System.out.println("found  generation " + currentGenId);					
+						
 					}
 				}
 				try {

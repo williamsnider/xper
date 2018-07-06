@@ -43,11 +43,10 @@ public class GAConfig {
 	public PngTrialExperiment experiment() {
 		PngTrialExperiment xper = new PngTrialExperiment();
 		xper.setStateObject(experimentState());
-		xper.setEyeMonitor(classicConfig.eyeMonitor());
+//		xper.setEyeMonitor(classicConfig.eyeMonitor());
 //		xper.setFirstSlideISI(alexConfig.xperFirstInterSlideInterval());		// these are no longer used -- see AlexTrialExperiment
 //		xper.setFirstSlideLength(alexConfig.xperFirstSlideLength());			// these are no longer used -- see AlexTrialExperiment
-//		xper.setBlankTargetScreenDisplayTime(alexConfig.xperBlankTargetScreenDisplayTime());
-		xper.setEarlyTargetFixationAllowableTime(0);	// do not allow eyemovements during last stimulus for GA
+//		xper.setEarlyTargetFixationAllowableTime(0);	// do not allow eyemovements during last stimulus for GA
 		return xper;
 	}
 	
@@ -86,6 +85,8 @@ public class GAConfig {
 	// -shs: set slide length and ISI here (not via db):
 	@Bean
 	public PngExperimentState experimentState() {
+		System.out.println("JK GAConfig : experimentState()");
+
 		PngExperimentState state = new PngExperimentState();
 		state.setLocalTimeUtil(baseConfig.localTimeUtil());
 		state.setTrialEventListeners(generalConfig.trialEventListeners());
@@ -95,10 +96,10 @@ public class GAConfig {
 		state.setTaskDataSource(generalConfig.databaseTaskDataSource());
 		state.setTaskDoneCache(classicConfig.taskDoneCache());
 		state.setGlobalTimeClient(acqConfig.timeClient());
-//	JK	state.setRequiredTargetSelectionHoldTime(pngConfig.xperRequiredTargetSelectionHoldTime());
-//	JK	state.setTargetSelectionStartDelay(pngConfig.xperTargetSelectionEyeMonitorStartDelay());
-//	JK	state.setTimeAllowedForInitialTargetSelection(pngConfig.xperTimeAllowedForInitialTargetSelection());
-//	JK	state.setTargetSelector(pngConfig.eyeTargetSelector());
+        state.setRequiredTargetSelectionHoldTime(generalConfig.xperRequiredTargetSelectionHoldTime());
+    	state.setTargetSelectionStartDelay(generalConfig.xperTargetSelectionEyeMonitorStartDelay());
+    	state.setTimeAllowedForInitialTargetSelection(generalConfig.xperTimeAllowedForInitialTargetSelection());
+		state.setTargetSelector(generalConfig.eyeTargetSelector());
     	state.setDrawingController(generalConfig.drawingController());
 		state.setInterTrialInterval(classicConfig.xperInterTrialInterval());
 		state.setTimeBeforeFixationPointOn(classicConfig.xperTimeBeforeFixationPointOn());

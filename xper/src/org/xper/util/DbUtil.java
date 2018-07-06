@@ -499,6 +499,7 @@ public class DbUtil {
 	 */
 	public void writeReadyGenerationInfo(GenerationInfo info) {
 		String xml = info.toXml();
+		
 		writeInternalState("task_to_do_gen_ready", 0, xml);
 	}
 
@@ -519,7 +520,8 @@ public class DbUtil {
 		info.setTaskCount(taskCount);
 
 		String xml = info.toXml();
-
+		// JK 
+				System.out.println("DbUtil: " + xml);
 		updateInternalState("task_to_do_gen_ready", 0, xml);
 	}
 

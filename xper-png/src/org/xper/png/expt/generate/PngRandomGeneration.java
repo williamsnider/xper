@@ -198,6 +198,8 @@ public class PngRandomGeneration {
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
+		System.out.println("starting cluster render");
+
         photoRunner.run(args);
 
 		// now add blanks
@@ -1561,7 +1563,9 @@ public class PngRandomGeneration {
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
 			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
-			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
+
+			// JK 6 July don't do this for real
+//			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
 		}
@@ -1607,7 +1611,9 @@ public class PngRandomGeneration {
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
 			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
-			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
+			
+			// JK 6 July don't do this for real
+//			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
 		}
@@ -1651,7 +1657,9 @@ public class PngRandomGeneration {
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
 			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
-			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
+			 
+			// JK 6 July don't do this for real
+//			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter++;
 		}

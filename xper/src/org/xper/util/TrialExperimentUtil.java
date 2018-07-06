@@ -139,8 +139,7 @@ public class TrialExperimentUtil {
 		TaskDataSource taskDataSource = state.getTaskDataSource();
 		TaskDoneCache taskDoneCache = state.getTaskDoneCache();
 		TrialDrawingController drawingController = state.getDrawingController();
-		List<? extends TrialEventListener> trialEventListeners = state
-		.getTrialEventListeners();
+		List<? extends TrialEventListener> trialEventListeners = state.getTrialEventListeners();
 		
 		// unget failed task
 		if (currentTask != null) {

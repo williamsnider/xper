@@ -3,6 +3,7 @@ package org.xper.png.vo;
 import org.dom4j.Document;
 import org.xper.Dependency;
 import org.xper.classic.vo.SlideTrialExperimentState;
+import org.xper.experiment.TaskDataSource;
 import org.xper.eye.EyeTargetSelector;
 
 /**
@@ -40,6 +41,14 @@ public class PngExperimentState extends SlideTrialExperimentState {
 	
 	public PngExperimentState () {
 	}
+	
+	
+//	// JK 6 July 2018 debug
+//	public void setTaskDataSource(TaskDataSource taskDataSource) {
+//	//	taskDataSource = taskDataSource;
+//		taskDataSource.
+//		super.setTaskDataSource(taskDataSource);
+//	}
 
 	public int getCorrectTrialCount() {
 		return correctTrialCount;

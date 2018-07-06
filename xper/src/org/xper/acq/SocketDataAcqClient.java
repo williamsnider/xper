@@ -62,6 +62,7 @@ public class SocketDataAcqClient implements AcqDeviceController {
 	}
 
 	public void stop() {
+		logger.info("JK 23423x doCommand STOP");
 		doCommand(SocketDataAcqServer.STOP);
 		isRunning = false;
 	}

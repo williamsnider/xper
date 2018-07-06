@@ -22,16 +22,15 @@ import org.xper.png.drawing.preview.DrawingManager;
 public class ImageStack implements Drawable {
 
 	 private static final int BYTES_PER_PIXEL = 4;//3 for RGB, 4 for RGBA
-	// 10 Oct 2016 moving to texture list
-	int NumFrames = 26;
-//	ArrayList<Texture> textures = new ArrayList<Texture>();
-    IntBuffer textureIds = BufferUtils.createIntBuffer(NumFrames);
+
+	int numFrames = 1;
+    IntBuffer textureIds = BufferUtils.createIntBuffer(numFrames);
     boolean texturesLoaded = false;
     int frameNum = 0;
     
     // this probably should from the database 
-    String resourcePath = "/home/alexandriya/catch_cluster_images/"; //  res/marked/";  //"res/"; // 
-    String ext = "_L.png"; // ".png";  // 
+    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+    String ext = "_L.png";  
  
     String imageName;
     String baseName;
@@ -49,6 +48,10 @@ public class ImageStack implements Drawable {
 
 	}
 
+	public void setNumFrames(int numFrames) {
+		this.numFrames = numFrames;
+		textureIds = BufferUtils.createIntBuffer(numFrames);		
+	}
     
     public void loadFrames(String baseFilename){
         
@@ -56,12 +59,16 @@ public class ImageStack implements Drawable {
     	
     	GL11.glGenTextures(textureIds);
     	
-    	for(int n = 0; n < NumFrames; n++){
+    	for(int n = 0; n < numFrames; n++){
     		if(n <  10){
-    			imageName = resourcePath + baseFilename + "_000" + Integer.toString(n) + ext;
+    			//imageName = resourcePath + baseFilename + "_000" + Integer.toString(n) + ext;
+    			imageName = resourcePath + baseFilename + ext;
     		} else {
-    			imageName = resourcePath + baseFilename + "_00" + Integer.toString(n) + ext;
+    			imageName = resourcePath + baseFilename + ext;
     		}
+// JK 
+    		imageName = resourcePath + "sizing2_0000_m.png"    ;
+    		
     		loadTexture(imageName, n);    		
     	}   
     	
@@ -75,7 +82,6 @@ public class ImageStack implements Drawable {
     int loadTexture(String pathname, int textureIndex) {
 
     	try {
-//    		URL url = getClass().getResource(pathname);
     		File imageFile = new File(pathname);
     		BufferedImage img = ImageIO.read(imageFile);
 
@@ -92,7 +98,7 @@ public class ImageStack implements Drawable {
     		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
     		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
     		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
-   		
+System.out.println("ImageStack::loadTexture() : loaded " + pathname );   		
     		return textureIds.get(textureIndex);
 
     	} catch(IOException e) {
@@ -115,24 +121,6 @@ public class ImageStack implements Drawable {
     }
 
 	
-	public static void testImage(){
-	    int numTrials = 50;    
-		DrawingManager testWindow = new DrawingManager(1050, 1400);
-		
-		for(int i = 0; i < numTrials; i++){
-			ImageStack s = new ImageStack();		
-			s.loadFrames("180705_r-198_g-1_l-0_s-0");
-			
-			List<ImageStack> images = new ArrayList<ImageStack>();
-			images.add(s);
-			testWindow.setStimObjs(images);		// add object to be drawn
-		}
-		
-		testWindow.drawStimuli();
-		
-	}
-	
-	  
     
 		@Override
 		public void draw(Context context) {
@@ -140,42 +128,27 @@ public class ImageStack implements Drawable {
 			
 			int frameNum = c.getAnimationFrameIndex();
 			
-//			if(ndx >= textureIds.size()){
-//				return;
-//			}
-//		      
-			if(frameNum >= NumFrames){
+			if(frameNum >= numFrames){
 		       	return;
 		    }
 			
-			// 24 Oct 2016  memleak tracking
-			if(!texturesLoaded){
-				loadFrames("180705_r-198_g-1_l-0_s-");
-				texturesLoaded = true;
-				System.out.println("loading frames");
-				frameNum = 0;
-			}
+//			// 24 Oct 2016  memleak tracking
+//			if(!texturesLoaded){
+//				loadFrames("180705_r-198_g-1_l-0_s-");
+//				texturesLoaded = true;
+//				System.out.println("loading frames");
+//				frameNum = 0;
+//			}
 		      
 			float width = 1400; // texture.getImageWidth();
 			float height = 1050; // texture.getImageHeight();		
 			float yOffset = -525;
 			float xOffset = -width / 2; 
-			
-//	      GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          
-//	      GL11.glViewport(0,0, (int)width,(int)height);
-//	      GL11.glMatrixMode(GL11.GL_MODELVIEW); 
-//	      GL11.glMatrixMode(GL11.GL_PROJECTION);
-//	      GL11.glLoadIdentity();
-//	      GL11.glOrtho(0, (int)width,(int)height, 0, 1, -1);
-//	      GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		
+
 	      
-	      GL11.glEnable(GL11.GL_TEXTURE_2D);  	
+			GL11.glEnable(GL11.GL_TEXTURE_2D);  	
 		   	GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(frameNum));
 
-	        
-//	        GL13.glActiveTexture(GL13.GL_TEXTURE0 + frameNum);
-//	        GL11.glColor3d(1.0, 1.0, 1.0);
 	        GL11.glBegin(GL11.GL_QUADS);
 	            GL11.glTexCoord2f(0, 1);
 	            GL11.glVertex2f(xOffset, yOffset);
@@ -187,14 +160,12 @@ public class ImageStack implements Drawable {
 	            GL11.glVertex2f(xOffset, yOffset + height);
 	        GL11.glEnd();
 
-//	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-
 	        // delete the texture
 	        GL11.glDeleteTextures(textureIds.get(frameNum));
 	        
 	        GL11.glDisable(GL11.GL_TEXTURE_2D);
 	    
-	        if(frameNum < NumFrames){
+	        if(frameNum < numFrames){
 	        	frameNum += 1;
 	        }
 	        		
@@ -260,6 +231,26 @@ public class ImageStack implements Drawable {
 			}
 			return null;
 		}
+		
+
+		public static void testImage(){
+		    int numTrials = 50;    
+			DrawingManager testWindow = new DrawingManager(1050, 1400);
+			
+			for(int i = 0; i < numTrials; i++){
+				ImageStack s = new ImageStack();		
+				s.loadFrames("180705_r-198_g-1_l-0_s-0");
+				
+				List<ImageStack> images = new ArrayList<ImageStack>();
+				images.add(s);
+				testWindow.setStimObjs(images);		// add object to be drawn
+			}
+			
+			testWindow.drawStimuli();
+			
+		}
+		
+		  
 }
 		
 		
