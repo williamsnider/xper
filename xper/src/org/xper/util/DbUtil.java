@@ -780,15 +780,22 @@ public class DbUtil {
 		return maxId;
 	}
 
+//	public long readTaskDoneCompleteMaxId() {
+//		JdbcTemplate jt = new JdbcTemplate(dataSource);
+//		long maxId = jt.queryForLong(
+//				" select max(task_id) as max_task_id " +
+//				" from TaskDone " +
+//				" where part_done = 0"); 
+//		return maxId;
+//	}
+
 	public long readTaskDoneCompleteMaxId() {
-		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		long maxId = jt.queryForLong(
-				" select max(task_id) as max_task_id " +
-				" from TaskDone " +
-				" where part_done = 0"); 
+		long maxId = 1531155430250229L;
+		System.out.println("JK 9 July 2018 HACKED readTaskDoneCompleteMaxId() " );
 		return maxId;
 	}
 
+	
 	/**
 	 * Read max generation id in TaskDone table.
 	 * 

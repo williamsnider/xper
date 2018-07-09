@@ -76,6 +76,7 @@ public class MarkStimTrialDrawingController implements TrialDrawingController {
 	}
 
 	public void showSlide(ExperimentTask task, TrialContext context) {
+		System.out.println("JK923 MSTDrawCtrl:showSlide()");
 		window.swapBuffers();
 	}
 

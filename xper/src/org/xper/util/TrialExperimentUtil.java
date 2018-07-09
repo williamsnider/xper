@@ -65,7 +65,7 @@ public class TrialExperimentUtil {
 		List<? extends SlideEventListener> slideEventListeners = stateObject.getSlideEventListeners();
 		EyeController eyeController = stateObject.getEyeController();
 		TimeUtil timeUtil = stateObject.getLocalTimeUtil();
-		
+System.out.println("JK543 TrialExperUtil:doSlide()");		
 		// show current slide
 		drawingController.showSlide(currentTask, currentContext);
 		long slideOnLocalTime = timeUtil.currentTimeMicros();

@@ -56,7 +56,7 @@ public class PngTrialExperiment implements Experiment {
 		TrialExperimentUtil.run(stateObject, threadHelper, new TrialRunner() {
 			public TrialResult runTrial() {
 				try {
-					System.out.println("JK25 PngTrialExperiment : fetching next task");
+					System.out.println("\n\nJK25 PngTrialExperiment : fetching next task");
 
 					// get a task
 					TrialExperimentUtil.getNextTask(stateObject);
@@ -82,15 +82,14 @@ public class PngTrialExperiment implements Experiment {
 
 						public TrialResult runSlide() {
 							int slidePerTrial = stateObject.getSlidePerTrial();
-							System.out.println("JK28 PngTrialExperiment : run Slide : " + slidePerTrial);
+							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidePerTrial);
 							TrialDrawingController drawingController = stateObject.getDrawingController();
 							ExperimentTask currentTask = stateObject.getCurrentTask();
 							TrialContext currentContext = stateObject.getCurrentContext();	
 							TaskDoneCache taskDoneCache = stateObject.getTaskDoneCache();
 							TimeUtil globalTimeClient = stateObject.getGlobalTimeClient();
 							
-							// JK
-							drawingController.prepareNextSlide(currentTask, currentContext);
+							// JK don't do this	drawingController.prepareNextSlide(currentTask, currentContext);
 							
 							try {
 								for (int i = 0; i < slidePerTrial; i++) {

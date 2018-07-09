@@ -24,7 +24,8 @@ public class PngExptScene extends AbstractTaskScene {
 	PngDbUtil dbUtil;
 	
 //	List<PngObject> objects = new ArrayList<PngObject>();
-	List<ImageStack> objects = new ArrayList<ImageStack>();
+//	List<ImageStack> objects = new ArrayList<ImageStack>();
+	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
 	
 	public void initGL(int w, int h) {
@@ -40,20 +41,26 @@ public class PngExptScene extends AbstractTaskScene {
         GL11.glOrtho(0, w, h, 0, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
+        
+        
 	}
 
 	public void setTask(ExperimentTask task) {
-		objects.clear();
+		
+		if(task == null) {
+			System.out.println("PgnExptScene:setTask() : task is null ...");
+		}
+//		objects.clear();
 		spec = PngExptSpec.fromXml(task.getStimSpec());
-System.out.println("PngExptScene :: setTask() : spec = \n" + spec.toXml());
+//System.out.println("PngExptScene :: setTask() : spec = \n" + spec.toXml());
 		
-spec.setBaseFilename("180706_r-210_g-1_l-0_s-9");
-		System.out.println("PngExptScene : setTask ()  " + spec.getBaseFilename());
+//spec.setBaseFilename("180706_r-210_g-1_l-0_s-9");
+//		System.out.println("PngExptScene : setTask ()  " + spec.getBaseFilename() );
 		
-		ImageStack obj = new ImageStack();
+//		ImageStack obj = new ImageStack();
 //		obj.setNumFrames(spec.getNumFrames());
-		obj.loadFrames(spec.getBaseFilename()); // "sizing3");
-		objects.add(obj);
+//		obj.loadFrames(spec.getBaseFilename()); // "sizing3");
+//		objects.add(obj);
 //		
 //		for (int i = 0; i < spec.getStimObjIdCount(); i ++) {
 //			long id = spec.getStimObjId(i);
@@ -79,12 +86,12 @@ spec.setBaseFilename("180706_r-210_g-1_l-0_s-9");
 		TrialContext c = (TrialContext)context;
 		
 		int index = c.getSlideIndex();
-		int numObjs = objects.size();
+		images.draw(c);
+//		int numObjs = objects.size();
+//		System.out.println("JK 0239 PngExptScene:drawStimulus(): index = " + index);
 		
-		if ((index >= 0) && (index < numObjs)) {
-			ImageStack obj = objects.get(index);
-			obj.draw(c);
-		}
+//		objects.get(0).draw(c);
+			
 	}
 
 	public PngDbUtil getDbUtil() {
@@ -93,6 +100,33 @@ spec.setBaseFilename("180706_r-210_g-1_l-0_s-9");
 
 	public void setDbUtil(PngDbUtil dbUtil) {
 		this.dbUtil = dbUtil;
+	}
+	
+	
+	
+	// JK 9 July 2018
+	public void trialStart(TrialContext context) {
+		System.out.println("\nJK 0639 PngExptScene:trialStart "); //+ context.getCurrentTask().get);
+		spec = PngExptSpec.fromXml(context.getCurrentTask().getStimSpec());
+		//System.out.println("PngExptScene :: setTask() : spec = \n" + spec.toXml());
+				
+		//spec.setBaseFilename("180706_r-210_g-1_l-0_s-9");
+		System.out.println("PngExptScene : trialStart ()  " + spec.toXml() );
+		
+		images = new ImageStack();
+spec.setBaseFilename("180709_r-218_g-1_l-0_s-");		
+		images.setNumFrames(spec.getStimObjIdCount());
+		images.loadFrames(spec.getBaseFilename());
+				
+		
+
+	}
+
+	public void trialStop(TrialContext context) {
+		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
+		
+//		images.clear()  ?
+
 	}
 	
 }

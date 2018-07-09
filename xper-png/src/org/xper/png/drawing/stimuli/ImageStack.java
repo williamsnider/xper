@@ -30,7 +30,7 @@ public class ImageStack implements Drawable {
     
     // this probably should from the database 
     String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
-    String ext = "_L.png";  
+    String ext = "_R.png";  
  
     String imageName;
     String baseName;
@@ -50,7 +50,8 @@ public class ImageStack implements Drawable {
 
 	public void setNumFrames(int numFrames) {
 		this.numFrames = numFrames;
-		textureIds = BufferUtils.createIntBuffer(numFrames);		
+		textureIds = BufferUtils.createIntBuffer(numFrames);	
+		System.out.println("JK 3320 ImageStack:setNumFrames() : prepping for " + numFrames + " images ");
 	}
     
     public void loadFrames(String baseFilename){
@@ -60,14 +61,14 @@ public class ImageStack implements Drawable {
     	GL11.glGenTextures(textureIds);
     	
     	for(int n = 0; n < numFrames; n++){
-    		if(n <  10){
-    			//imageName = resourcePath + baseFilename + "_000" + Integer.toString(n) + ext;
-    			imageName = resourcePath + baseFilename + ext;
-    		} else {
-    			imageName = resourcePath + baseFilename + ext;
-    		}
+//    		if(n <  10){
+    			imageName = resourcePath + baseFilename + Integer.toString(n) + ext;
+//    			imageName = resourcePath + baseFilename + ext;
+//    		} else {
+//    			imageName = resourcePath + baseFilename + ext;
+//    		}
 // JK 
-    		imageName = resourcePath + "sizing2_0000_m.png"    ;
+//    		imageName = resourcePath + "sizing2_0000_m.png"    ;
     		
     		loadTexture(imageName, n);    		
     	}   
@@ -98,7 +99,7 @@ public class ImageStack implements Drawable {
     		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
     		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
     		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
-System.out.println("ImageStack::loadTexture() : loaded " + pathname );   		
+System.out.println("ImageStack::loadTexture() : loaded " + imageFile );   		
     		return textureIds.get(textureIndex);
 
     	} catch(IOException e) {
@@ -125,12 +126,16 @@ System.out.println("ImageStack::loadTexture() : loaded " + pathname );
 		@Override
 		public void draw(Context context) {
 			TrialContext c = (TrialContext)context;		
+
+			int frameNum = c.getSlideIndex();
+	
+//			System.out.println("JK 093 imageStack:draw() slideIndex = " + 
+//			c.getSlideIndex() + ", frameNum = " + frameNum);
+
 			
-			int frameNum = c.getAnimationFrameIndex();
-			
-			if(frameNum >= numFrames){
-		       	return;
-		    }
+//			if(frameNum >= numFrames){
+//		       	return;
+//		    }
 			
 //			// 24 Oct 2016  memleak tracking
 //			if(!texturesLoaded){
@@ -171,12 +176,13 @@ System.out.println("ImageStack::loadTexture() : loaded " + pathname );
 	        		
 		}
 
+		
+	
+		
 
 		public void setBaseName(String baseFilename){
 			baseName  = baseFilename;
 		}
-
-
 
 
 
@@ -238,15 +244,17 @@ System.out.println("ImageStack::loadTexture() : loaded " + pathname );
 			DrawingManager testWindow = new DrawingManager(1050, 1400);
 			
 			for(int i = 0; i < numTrials; i++){
-				ImageStack s = new ImageStack();		
-				s.loadFrames("180705_r-198_g-1_l-0_s-0");
-				
-				List<ImageStack> images = new ArrayList<ImageStack>();
-				images.add(s);
-				testWindow.setStimObjs(images);		// add object to be drawn
+				ImageStack s = new ImageStack();	
+
+       			s.setNumFrames(10);
+     			s.loadFrames("180709_r-219_g-1_l-0_s-");
+//				
+//				List<ImageStack> images = new ArrayList<ImageStack>();
+//				images.add(s);
+//				testWindow.setStimObjs(images);		// add object to be drawn
 			}
 			
-			testWindow.drawStimuli();
+//			testWindow.drawStimuli();
 			
 		}
 		

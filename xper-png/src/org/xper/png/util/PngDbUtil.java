@@ -33,6 +33,10 @@ public class PngDbUtil extends DbUtil {
 		this.dataSource = dataSource;
 	}
 	
+
+	
+	
+	
 	public long getStimIdByTaskId(long paramLong) {
 		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);
 		Map<String, Object> localMap = jt.queryForMap(" select t.stim_id as id from TaskToDo t where t.task_id = ?", new Object[] { new Long(paramLong) });
@@ -290,4 +294,34 @@ public class PngDbUtil extends DbUtil {
 					}});
 		return allIds;
 	}
+	
+//	
+//	//  JK 9 July 2018
+//	//  Get all filenames for a specifi trial
+//	
+//	public List<Long> readAllStimIdsForRun(String prefix, long runNum, long genNum) {
+//		
+//		String descId = "^" + prefix + "_r-" + runNum + "_g-" + genNum;
+//		JdbcTemplate jt = new JdbcTemplate(dataSource);
+//		
+//		final List<Long> allIds = new ArrayList<Long>();
+//		
+//		jt.query(
+//				"SELECT id from StimObjData where descId REGEXP ?", 
+//				new Object[] { descId },
+//				new RowCallbackHandler() {
+//					public void processRow(ResultSet rs) throws SQLException {
+//						allIds.add(rs.getLong("id"));
+//					}});
+//		return allIds;
+//	}
+//	
+//	
+//	
+//	SELECT extractvalue(spec, '/StimSpec/object')  from alexandriya_180218_test.StimSpec
+//	#from_unixtime(id / 1e6), id, spec 
+//	where id = '1531145060278634'
+//	
+	
+	
 }
