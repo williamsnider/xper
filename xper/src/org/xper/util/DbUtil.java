@@ -790,8 +790,8 @@ public class DbUtil {
 //	}
 
 	public long readTaskDoneCompleteMaxId() {
-		long maxId = 1531155430250229L;
-		System.out.println("JK 9 July 2018 HACKED readTaskDoneCompleteMaxId() " );
+		long maxId = 1531409469690923L; //1531155430250229L;
+//		System.out.println("JK 9 July 2018 HACKED readTaskDoneCompleteMaxId() " );
 		return maxId;
 	}
 

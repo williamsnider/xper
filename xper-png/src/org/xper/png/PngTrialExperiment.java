@@ -60,7 +60,7 @@ public class PngTrialExperiment implements Experiment {
 
 					// get a task
 					TrialExperimentUtil.getNextTask(stateObject);
-
+					System.out.println("slideLength == " + stateObject.getSlideLength());
 					if (stateObject.getCurrentTask() == null && !stateObject.isDoEmptyTask()) {
 						try {
 							System.out.println("JK26 PngTrialExperiment : null task");
@@ -82,7 +82,8 @@ public class PngTrialExperiment implements Experiment {
 
 						public TrialResult runSlide() {
 							int slidePerTrial = stateObject.getSlidePerTrial();
-							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidePerTrial);
+							
+//							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidePerTrial);
 							TrialDrawingController drawingController = stateObject.getDrawingController();
 							ExperimentTask currentTask = stateObject.getCurrentTask();
 							TrialContext currentContext = stateObject.getCurrentContext();	
@@ -93,7 +94,7 @@ public class PngTrialExperiment implements Experiment {
 							
 							try {
 								for (int i = 0; i < slidePerTrial; i++) {
-									System.out.println("PngTrialExper() runTrial() slide " + i );
+//									System.out.println("PngTrialExper() runTrial() slide " + i );
 									// draw the slide
 									TrialResult result = TrialExperimentUtil.doSlide(i, stateObject);
 									if (result != TrialResult.SLIDE_OK) {

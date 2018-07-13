@@ -28,30 +28,29 @@ public class PngExptScene extends AbstractTaskScene {
 	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
 	
+ 
 	public void initGL(int w, int h) {
 		super.setUseStencil(false);
 		super.initGL(w, h);	
 		
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          
-		  
-        GL11.glViewport(0,0,w,h);
+		GL11.glViewport(0,0,w,h);
         GL11.glMatrixMode(GL11.GL_MODELVIEW); 
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GL11.glOrtho(0, w, h, 0, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
-        
-        
 	}
 
+	
 	public void setTask(ExperimentTask task) {
 		
 		if(task == null) {
 			System.out.println("PgnExptScene:setTask() : task is null ...");
 		}
 //		objects.clear();
-		spec = PngExptSpec.fromXml(task.getStimSpec());
+// now done in trialStart()		spec = PngExptSpec.fromXml(task.getStimSpec());
 //System.out.println("PngExptScene :: setTask() : spec = \n" + spec.toXml());
 		
 //spec.setBaseFilename("180706_r-210_g-1_l-0_s-9");
@@ -88,7 +87,8 @@ public class PngExptScene extends AbstractTaskScene {
 		int index = c.getSlideIndex();
 		images.draw(c);
 //		int numObjs = objects.size();
-//		System.out.println("JK 0239 PngExptScene:drawStimulus(): index = " + index);
+//		
+//		System.out.println("JK 0239 PngExptScene:drawStimulus(): slide index = " + index);
 		
 //		objects.get(0).draw(c);
 			
@@ -107,18 +107,30 @@ public class PngExptScene extends AbstractTaskScene {
 	// JK 9 July 2018
 	public void trialStart(TrialContext context) {
 		System.out.println("\nJK 0639 PngExptScene:trialStart "); //+ context.getCurrentTask().get);
+		
 		spec = PngExptSpec.fromXml(context.getCurrentTask().getStimSpec());
-		//System.out.println("PngExptScene :: setTask() : spec = \n" + spec.toXml());
+		int numImages = spec.getStimObjIdCount();
+		List<String> filenames = new ArrayList<String>();
+		
+		
+		for(int i = 0; i < numImages; i++) {
+			filenames.add(i, dbUtil.readDescriptiveIdFromStimObjId(spec.getStimObjId(i)));
+			
+//			System.out.println("PngExptScene:trialStart() : " + filenames.get(i) + " : " + spec.getStimObjId(i));
+			
+		}
+		//		System.out.println("PngExptScene :: setTask() : spec = \n" + spec.toXml());
 				
-		//spec.setBaseFilename("180706_r-210_g-1_l-0_s-9");
-		System.out.println("PngExptScene : trialStart ()  " + spec.toXml() );
+		//		System.out.println("PngExptScene : trialStart ()  " + spec.toXml() );
 		
 		images = new ImageStack();
-spec.setBaseFilename("180709_r-218_g-1_l-0_s-");		
-		images.setNumFrames(spec.getStimObjIdCount());
-		images.loadFrames(spec.getBaseFilename());
-				
+		images.setNumFrames(numImages);
+		images.loadImages(filenames);
 		
+//		spec.setBaseFilename("180709_r-218_g-1_l-0_s-");		
+//		images.setNumFrames(spec.getStimObjIdCount());
+//		images.loadFrames(spec.getBaseFilename());
+			
 
 	}
 

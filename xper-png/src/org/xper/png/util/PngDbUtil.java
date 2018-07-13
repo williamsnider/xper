@@ -295,11 +295,11 @@ public class PngDbUtil extends DbUtil {
 		return allIds;
 	}
 	
-//	
+	
 //	//  JK 9 July 2018
-//	//  Get all filenames for a specifi trial
+//	//  Get all filenames for a specific stimSpec i.e. trial
 //	
-//	public List<Long> readAllStimIdsForRun(String prefix, long runNum, long genNum) {
+//	public List<String> readAllFilenamesForTrial(long stimSpecId) {
 //		
 //		String descId = "^" + prefix + "_r-" + runNum + "_g-" + genNum;
 //		JdbcTemplate jt = new JdbcTemplate(dataSource);
@@ -314,6 +314,10 @@ public class PngDbUtil extends DbUtil {
 //						allIds.add(rs.getLong("id"));
 //					}});
 //		return allIds;
+//		
+//		
+//		
+////		readDescriptiveIdFromStimObjId(stimObjId)
 //	}
 //	
 //	

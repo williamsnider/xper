@@ -30,7 +30,7 @@ public class Image implements Drawable {
 	
 	boolean texturesLoaded = false;
 	int frameNum = 0;
-	String resourcePath = "/home/justin/jkcode/workspace/JKOpenGL/res/marked/"; //  res/marked/";  //"res/"; // 
+	String resourcePath = "/home/alexandriya/catch_cluster_images/"; //  res/marked/";  //"res/"; // 
 	String ext = "_m.png"; // ".png";  // 
 	String baseFilename = "sizing2";
 	
@@ -59,9 +59,10 @@ public class Image implements Drawable {
 			BufferedImage img = ImageIO.read(imageFile);
 			imgWidth = img.getWidth();
 			imgHeight = img.getHeight();
+			System.out.println("loaded image : " + imgWidth + ", " + imgHeight);
 			byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
 	
-			bgr2rgb(src);
+//			bgr2rgb(src);
 	
 			pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
 			
@@ -87,12 +88,12 @@ public class Image implements Drawable {
 	
 	
 	public static void testImage(){
-		String resourcePath = "/home/justin/jkcode/workspace/JKOpenGL/res/marked/"; 
-		String ext = "_m.png"; // ".png";  // 
-		String baseFilename = "sizing3";
+		String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+		String ext = ".jpg"; //  ".png"; // ".png";  // 
+		String baseFilename = "test"; //  "earth_PNG36"; // "180709_r-219_g-1_l-0_s-9_R"; // "earth_PNG36"; //
 		
-		String testImageName = resourcePath + baseFilename + "_000" + Integer.toString(0) + ext;
-		int numTrials = 5;    
+		String testImageName = resourcePath + baseFilename + ext;
+		int numTrials = 1;    
 		DrawingManager testWindow = new DrawingManager(1050, 1400);
 		
 		for(int i = 0; i < numTrials; i++){
