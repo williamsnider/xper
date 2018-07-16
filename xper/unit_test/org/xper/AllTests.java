@@ -171,15 +171,15 @@ public class AllTests {
 		try {
 			Class<?> claz = Class.forName(name);
 			boolean isManualTest = claz.isAnnotationPresent(ManualTest.class);
-			boolean isNiTest = claz.isAnnotationPresent(NiTest.class);
-			boolean isComediTest = claz.isAnnotationPresent(ComediTest.class);
+//			boolean isNiTest = claz.isAnnotationPresent(NiTest.class);
+//			boolean isComediTest = claz.isAnnotationPresent(ComediTest.class);
 			boolean isValid = name.endsWith(SUFFIX)
 					&& ((claz.getModifiers() & Modifier.ABSTRACT) == 0)
 					&& ((claz.getPackage().getName()
 							.contains(PACKAGE_NAME)))
 					&& (!claz.isAnnotation())
-					&& (!isNiTest || System.getProperty("ni_device") != null )
-					&& (!isComediTest || System.getProperty("comedi_device") != null )
+//					&& (!isNiTest || System.getProperty("ni_device") != null )
+//					&& (!isComediTest || System.getProperty("comedi_device") != null )
 					&& (!isManualTest);
 			
 			if (isValid) {
@@ -188,8 +188,8 @@ public class AllTests {
 				if (!claz.isAnnotation()) {
 					logger.info(" =============> Skip " +
 						(isManualTest ? "Manual" : "") +
-						(isNiTest ? "NI" : "") + 
-						(isComediTest ? "Comedi" : "") +
+//						(isNiTest ? "NI" : "") + 
+//						(isComediTest ? "Comedi" : "") +
 						" Test: " + name + " <============= ");
 				}
 			}
