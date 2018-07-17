@@ -107,7 +107,7 @@ public class DatabaseTaskDataSource implements TaskDataSource, Threadable {
 					if (taskToDo.size() > 0) {
 						currentGeneration.set(taskToDo);
 						currentGenId = info.getGenId();
-						System.out.println("found  generation " + currentGenId);					
+						System.out.println("found  generation : " + currentGenId + " with " + taskToDo.size() + " tasks ");					
 						
 					}
 				}

@@ -91,6 +91,10 @@ public class TrialExperimentUtil {
 		} while (timeUtil.currentTimeMicros() < slideOnLocalTime
 				+ stateObject.getSlideLength() * 1000);
 
+		long dt = (timeUtil.currentTimeMicros() - slideOnLocalTime) / 1000;
+		System.out.format("JK 0999 TrialExperUtil:doSlide() : dt = %d%n ",	dt);
+		
+		
 		// finish current slide
 		drawingController.slideFinish(currentTask, currentContext);
 		long slideOffLocalTime = timeUtil.currentTimeMicros();

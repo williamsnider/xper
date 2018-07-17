@@ -207,7 +207,6 @@ public abstract class AbstractRenderer implements Renderer {
 		vpHeight = heightInPixel;
 		vpWidthmm = width;
 		vpHeightmm = height;
-		System.out.println("JK 0954 AbstractRenderer:calculateCoord() " + vpWidth + ", " + vpHeight);
 	}
 
 	public double getDepth() {

@@ -49,7 +49,7 @@ public class ImageStack implements Drawable {
 	public void setNumFrames(int numImgs) {
 		this.numFrames = numImgs * 2;
 		textureIds = BufferUtils.createIntBuffer(numFrames);	
-//		System.out.println("JK 3320 ImageStack:setNumFrames() : prepping for " + numFrames + " images ");
+		System.out.println("JK 3320 ImageStack:setNumFrames() : prepping for " + numFrames + " images ");
 	}
 	
 	
@@ -75,9 +75,9 @@ public class ImageStack implements Drawable {
     		// check for BLANK and load a standard png
     		if(imageName.contains("BLANK")) {
     			imageName = resourcePath + "fakeBlank.png";
-//    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
+    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
     		}
-    		imageName = resourcePath + "180712_r-226_g-1_l-0_s-7_R.png";
+//    		imageName = resourcePath + "180712_r-226_g-1_l-0_s-7_R.png";
 //    		System.out.println("-----------");
     		loadTexture(imageName, n);    		
     	}   
@@ -117,6 +117,7 @@ public class ImageStack implements Drawable {
 
     		byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
 
+    		// reorder the 4 bytes per pixel data  
     		abgr2rgba(src);
 
     		ByteBuffer pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
@@ -127,7 +128,11 @@ public class ImageStack implements Drawable {
     		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
     		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
     		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
-//    		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+    		
+    		// only for RGB
+    		// GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+    		
+    		// RGBA
     		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
     		
     		return textureIds.get(textureIndex);
@@ -141,7 +146,7 @@ public class ImageStack implements Drawable {
     
     
 
-    
+    // use this to reorder the RGB bytes 
     void bgr2rgb(byte[] target) {
     	byte tmp;
 
@@ -180,7 +185,7 @@ public class ImageStack implements Drawable {
 			int vpNum = c.getViewportIndex();
 			int ndx = 2 * frameNum + vpNum;
 //			System.out.println("JK 0838 viewPort == " + vpNum);
-//			System.out.println("JK 093 imageStack:draw() ndx = " + ndx );
+			System.out.println("JK 093 imageStack:draw() ndx = " + ndx + ", animation ndx = " + c.getAnimationFrameIndex());
 		      
 			float width = 1400; // texture.getImageWidth();
 			float height = 1050; // texture.getImageHeight();		

@@ -520,8 +520,7 @@ public class DbUtil {
 		info.setTaskCount(taskCount);
 
 		String xml = info.toXml();
-		// JK 
-				System.out.println("DbUtil: " + xml);
+		// JK 	System.out.println("DbUtil: " + xml);
 		updateInternalState("task_to_do_gen_ready", 0, xml);
 	}
 
@@ -780,20 +779,23 @@ public class DbUtil {
 		return maxId;
 	}
 
-//	public long readTaskDoneCompleteMaxId() {
-//		JdbcTemplate jt = new JdbcTemplate(dataSource);
-//		long maxId = jt.queryForLong(
-//				" select max(task_id) as max_task_id " +
-//				" from TaskDone " +
-//				" where part_done = 0"); 
-//		return maxId;
-//	}
-
 	public long readTaskDoneCompleteMaxId() {
-		long maxId = 1531409469690923L; //1531155430250229L;
-//		System.out.println("JK 9 July 2018 HACKED readTaskDoneCompleteMaxId() " );
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		long maxId = jt.queryForLong(
+				" select max(task_id) as max_task_id " +
+				" from TaskDone " +
+				" where part_done = 0"); 
 		return maxId;
 	}
+
+
+//	JK 9 July 2018
+//     useful to avoid actually rendering
+//	public long readTaskDoneCompleteMaxId() {
+//		long maxId = 1531409469690923L; //1531155430250229L;
+//		System.out.println(" JK 07362 HACKED readTaskDoneCompleteMaxId() " );
+//		return maxId;
+//	}
 
 	
 	/**

@@ -83,9 +83,9 @@ public class PngExptScene extends AbstractTaskScene {
 
 	public void drawStimulus(Context context) {
 		TrialContext c = (TrialContext)context;
-		
-		int index = c.getSlideIndex();
 		images.draw(c);
+//		int index = c.getSlideIndex();
+		
 //		int numObjs = objects.size();
 //		
 //		System.out.println("JK 0239 PngExptScene:drawStimulus(): slide index = " + index);
@@ -116,7 +116,7 @@ public class PngExptScene extends AbstractTaskScene {
 		for(int i = 0; i < numImages; i++) {
 			filenames.add(i, dbUtil.readDescriptiveIdFromStimObjId(spec.getStimObjId(i)));
 			
-//			System.out.println("PngExptScene:trialStart() : " + filenames.get(i) + " : " + spec.getStimObjId(i));
+			System.out.println("PngExptScene:trialStart() : " + filenames.get(i) + " : " + spec.getStimObjId(i));
 			
 		}
 		//		System.out.println("PngExptScene :: setTask() : spec = \n" + spec.toXml());

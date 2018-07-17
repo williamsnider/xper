@@ -56,17 +56,18 @@ public class PngTrialExperiment implements Experiment {
 		TrialExperimentUtil.run(stateObject, threadHelper, new TrialRunner() {
 			public TrialResult runTrial() {
 				try {
-					System.out.println("\n\nJK25 PngTrialExperiment : fetching next task");
+					System.out.println("\n\n JK 04225 PngTrialExperiment : fetching next task");
 
 					// get a task
 					TrialExperimentUtil.getNextTask(stateObject);
-					System.out.println("slideLength == " + stateObject.getSlideLength());
+//					System.out.println("slideLength == " + stateObject.getSlideLength());
 					if (stateObject.getCurrentTask() == null && !stateObject.isDoEmptyTask()) {
 						try {
-							System.out.println("JK26 PngTrialExperiment : null task");
+//							System.out.println("JK 01126 PngTrialExperiment : null task");
 							Thread.sleep(SlideTrialExperimentState.NO_TASK_SLEEP_INTERVAL);
 						} catch (InterruptedException e) {
 						}
+						System.out.println("JK 04126 PngTrialExperiment : TrialResult.NO_MORE_TASKS");
 						return TrialResult.NO_MORE_TASKS;
 					}
 
@@ -94,10 +95,11 @@ public class PngTrialExperiment implements Experiment {
 							
 							try {
 								for (int i = 0; i < slidePerTrial; i++) {
-//									System.out.println("PngTrialExper() runTrial() slide " + i );
+									System.out.println("PngTrialExper() runTrial() slide " + i + " of " + slidePerTrial);
 									// draw the slide
 									TrialResult result = TrialExperimentUtil.doSlide(i, stateObject);
 									if (result != TrialResult.SLIDE_OK) {
+										System.out.println("PngTrialExper() runTrial() !OK : " + result.toString() );
 										return result;
 									}
 
