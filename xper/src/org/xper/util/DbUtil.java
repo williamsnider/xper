@@ -789,6 +789,20 @@ public class DbUtil {
 	}
 
 
+//	public long readTaskDoneCompleteMaxId() {
+//
+//			System.out.println(" JK 07362 HACKED readTaskDoneCompleteMaxId() " );
+//
+//			JdbcTemplate jt = new JdbcTemplate(dataSource);
+//			long maxId = jt.queryForLong(
+//					" select min(task_id)  " +
+//					" from " +
+//					" (select task_id from TaskDone " +
+//					" order by tstamp desc" +
+//					" limit 14) as list"); 
+//			return maxId;
+//			
+//		}
 //	JK 9 July 2018
 //     useful to avoid actually rendering
 //	public long readTaskDoneCompleteMaxId() {
@@ -796,6 +810,7 @@ public class DbUtil {
 //		System.out.println(" JK 07362 HACKED readTaskDoneCompleteMaxId() " );
 //		return maxId;
 //	}
+
 
 	
 	/**

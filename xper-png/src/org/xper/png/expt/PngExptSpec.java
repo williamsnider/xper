@@ -69,15 +69,5 @@ public class PngExptSpec {
 	public void setTrialType(String trialType) {
 		this.trialType = trialType;
 	}
-
-	// JK
-	public void setBaseFilename(String baseFilename){
-		this.baseFilename = baseFilename;
-	}
-	
-	
-	public String getBaseFilename(){
-		return this.baseFilename;
-	}
 		
 }

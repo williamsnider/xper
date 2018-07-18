@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
@@ -75,16 +74,16 @@ public class ImageStack implements Drawable {
     		// check for BLANK and load a standard png
     		if(imageName.contains("BLANK")) {
     			imageName = resourcePath + "fakeBlank.png";
-    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
+//    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
     		}
-//    		imageName = resourcePath + "180712_r-226_g-1_l-0_s-7_R.png";
-//    		System.out.println("-----------");
+
     		loadTexture(imageName, n);    		
     	}   
     	
     	// assume success?!
     	texturesLoaded = true;
    	
+    	System.out.format("JK 3340 ImageStack:loadImages() : loaded %d images %n", numFrames);
     }
     
     
@@ -185,13 +184,15 @@ public class ImageStack implements Drawable {
 			int vpNum = c.getViewportIndex();
 			int ndx = 2 * frameNum + vpNum;
 //			System.out.println("JK 0838 viewPort == " + vpNum);
-			System.out.println("JK 093 imageStack:draw() ndx = " + ndx + ", animation ndx = " + c.getAnimationFrameIndex());
+//			System.out.println("JK 093 ***** ImageStack:draw() ***** ndx = " + ndx + ", animation ndx = " + c.getAnimationFrameIndex());
 		      
-			float width = 1400; // texture.getImageWidth();
-			float height = 1050; // texture.getImageHeight();		
-			float yOffset = -525;
+			// JK 2981  18 July 2018 
+			float width = 1400  / 4; //  2    // texture.getImageWidth();
+			float height = 1050 / 4; //  2    // texture.getImageHeight();		
+			float yOffset = -height / 2;
 			float xOffset = -width / 2; 
 
+		
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 			
 			GL11.glEnable(GL11.GL_TEXTURE_2D);  	
@@ -220,8 +221,6 @@ public class ImageStack implements Drawable {
 		}
 	
 	
-		
-
 		public void setBaseName(String baseFilename){
 			baseName  = baseFilename;
 		}
@@ -245,7 +244,7 @@ public class ImageStack implements Drawable {
 				}
 			}
 
-			buffer.flip(); //FOR THE LOVE OF GOD DO NOT FORGET THIS
+			buffer.flip(); // DO NOT FORGET THIS
 
 			// You now have a ByteBuffer filled with the color data of each pixel.
 			// Now just create a texture ID and bind it. Then you can load it using 
@@ -263,7 +262,7 @@ public class ImageStack implements Drawable {
 			GL11.glTexParameteri( GL11.GL_TEXTURE_2D,  GL11.GL_TEXTURE_MAG_FILTER,  GL11.GL_NEAREST);
 
 			//Send texel data to OpenGL
-// JK 10 July 2018 			
+			// JK 10 July 2018 	RGBA vs RGB		
 			GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, image.getWidth(), image.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, buffer);
 //    		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, image.getWidth(), image.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
 

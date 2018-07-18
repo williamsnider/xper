@@ -59,6 +59,8 @@ public class TrialExperimentUtil {
 	 * @return
 	 */
 	public static TrialResult doSlide (int i, SlideTrialExperimentState stateObject) {
+//		System.out.format("JK 0939 TrialExperUtil:doSlide() : i = %d%n ",	i);
+
 		TrialDrawingController drawingController = stateObject.getDrawingController();
 		ExperimentTask currentTask = stateObject.getCurrentTask();
 		TrialContext currentContext = stateObject.getCurrentContext();
@@ -91,10 +93,6 @@ public class TrialExperimentUtil {
 		} while (timeUtil.currentTimeMicros() < slideOnLocalTime
 				+ stateObject.getSlideLength() * 1000);
 
-		long dt = (timeUtil.currentTimeMicros() - slideOnLocalTime) / 1000;
-		System.out.format("JK 0999 TrialExperUtil:doSlide() : dt = %d%n ",	dt);
-		
-		
 		// finish current slide
 		drawingController.slideFinish(currentTask, currentContext);
 		long slideOffLocalTime = timeUtil.currentTimeMicros();
@@ -122,6 +120,9 @@ public class TrialExperimentUtil {
 		}
 
 		result = runner.runSlide();
+		
+//		System.out.format("JK 2399 TrialExperUtil:runTrial() : result = " + result.toString());
+
 		if (result != TrialResult.TRIAL_COMPLETE) {
 			return result;
 		}

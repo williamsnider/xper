@@ -98,8 +98,8 @@ public class DatabaseTaskDataSource implements TaskDataSource, Threadable {
 			
 					LinkedList<ExperimentTask> taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
 					
-					System.out.println(" JK 0393 Generation " + info.getGenId() + " Lineage " + info.getLinId() + " size: "
-							+ taskToDo.size());
+System.out.println(" JK 0393 Generation " + info.getGenId() + " Lineage " + info.getLinId() + " size: "	+ taskToDo.size());
+					
 					if (logger.isDebugEnabled()) {
 						logger.debug("Generation " + info.getGenId() + " Lineage " + info.getLinId() + " size: "
 								+ taskToDo.size());

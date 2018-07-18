@@ -56,18 +56,17 @@ public class PngTrialExperiment implements Experiment {
 		TrialExperimentUtil.run(stateObject, threadHelper, new TrialRunner() {
 			public TrialResult runTrial() {
 				try {
-					System.out.println("\n\n JK 04225 PngTrialExperiment : fetching next task");
-
+//					System.out.println("\n\n JK 04225 PngTrialExperiment : fetching next task");
 					// get a task
 					TrialExperimentUtil.getNextTask(stateObject);
-//					System.out.println("slideLength == " + stateObject.getSlideLength());
+
 					if (stateObject.getCurrentTask() == null && !stateObject.isDoEmptyTask()) {
 						try {
 //							System.out.println("JK 01126 PngTrialExperiment : null task");
 							Thread.sleep(SlideTrialExperimentState.NO_TASK_SLEEP_INTERVAL);
 						} catch (InterruptedException e) {
 						}
-						System.out.println("JK 04126 PngTrialExperiment : TrialResult.NO_MORE_TASKS");
+//						System.out.println("JK 04126 PngTrialExperiment : TrialResult.NO_MORE_TASKS");
 						return TrialResult.NO_MORE_TASKS;
 					}
 
@@ -84,27 +83,25 @@ public class PngTrialExperiment implements Experiment {
 						public TrialResult runSlide() {
 							int slidePerTrial = stateObject.getSlidePerTrial();
 							
-//							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidePerTrial);
+							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidePerTrial);
 							TrialDrawingController drawingController = stateObject.getDrawingController();
 							ExperimentTask currentTask = stateObject.getCurrentTask();
 							TrialContext currentContext = stateObject.getCurrentContext();	
 							TaskDoneCache taskDoneCache = stateObject.getTaskDoneCache();
 							TimeUtil globalTimeClient = stateObject.getGlobalTimeClient();
 							
-							// JK don't do this	drawingController.prepareNextSlide(currentTask, currentContext);
-							
 							try {
 								for (int i = 0; i < slidePerTrial; i++) {
-									System.out.println("PngTrialExper() runTrial() slide " + i + " of " + slidePerTrial);
+//									System.out.println("PngTrialExper() runTrial() slide " + (i+1) + " of " + slidePerTrial);
 									// draw the slide
 									TrialResult result = TrialExperimentUtil.doSlide(i, stateObject);
 									if (result != TrialResult.SLIDE_OK) {
-										System.out.println("PngTrialExper() runTrial() !OK : " + result.toString() );
+//										System.out.println("JK 7263 PngTrialExper() runTrial() !OK : " + result.toString() );
 										return result;
 									}
-
 									// slide done successfully
-									if (currentTask != null) {
+									if (currentTask != null && i == slidePerTrial - 1) {
+//										System.out.println("JK 2225 PngTrialExper() runTrial() taskDone! " );
 										taskDoneCache.put(currentTask, globalTimeClient
 												.currentTimeMicros(), false);
 										currentTask = null;
@@ -113,19 +110,21 @@ public class PngTrialExperiment implements Experiment {
 
 									// prepare next task
 									if (i < slidePerTrial - 1) {
-										TrialExperimentUtil.getNextTask(stateObject);
-										currentTask = stateObject.getCurrentTask();
-										if (currentTask == null && !stateObject.isDoEmptyTask()) {
-											try {
-												Thread.sleep(SlideTrialExperimentState.NO_TASK_SLEEP_INTERVAL);
-											} catch (InterruptedException e) {
-											}
-											//return TrialResult.NO_MORE_TASKS;
-											//deliver juice after complete.
-											return TrialResult.TRIAL_COMPLETE;
-										}
+//										TrialExperimentUtil.getNextTask(stateObject);
+//										currentTask = stateObject.getCurrentTask();
+//										if (currentTask == null && !stateObject.isDoEmptyTask()) {
+//											try {
+//												Thread.sleep(SlideTrialExperimentState.NO_TASK_SLEEP_INTERVAL);
+//											} catch (InterruptedException e) {
+//											}
+//											//return TrialResult.NO_MORE_TASKS;
+//											//deliver juice after complete.
+//											System.out.println("JK 3232 PngTrialExper() runTrial() : returning TRIAL_COMPLETE early");
+//
+//											return TrialResult.TRIAL_COMPLETE;
+//										}
 										// JK stateObject.setAnimation(XmlUtil.slideIsAnimation(currentTask));
-										stateObject.setAnimation(false);
+//										stateObject.setAnimation(false);
 										
 										currentContext.setSlideIndex(i + 1);
 										currentContext.setCurrentTask(currentTask);
@@ -138,10 +137,12 @@ public class PngTrialExperiment implements Experiment {
 										return result;
 									}
 								}
+//								System.out.println("JK 5232 PngTrialExper() runTrial() : returning TRIAL_COMPLETE");
 								return TrialResult.TRIAL_COMPLETE;
 								// end of SlideRunner.runSlide
 							} finally {
 								try {
+//									System.out.println("JK 5632 PngTrialExper() runTrial() : cleanupTask ");
 									TrialExperimentUtil.cleanupTask(stateObject);
 								} catch (Exception e) {
 									logger.warn(e.getMessage());
