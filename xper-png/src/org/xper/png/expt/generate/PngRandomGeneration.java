@@ -77,7 +77,7 @@ public class PngRandomGeneration {
 		genNum = getGenNum();
 		runNum = getRunNum();
 		prefix = getPrefix();
-		linNum = getLinNum(); //#####!
+		linNum = getLinNum(); 
 		
 		// start by asking if there is a previous ga run to be continued
 		// if so, run createNextGen for that prefix and ga run
@@ -94,9 +94,18 @@ public class PngRandomGeneration {
 				
 				DateFormat df = new SimpleDateFormat("yyMMdd");
 				prefix = df.format(new Date()); 
-				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); //#####!
+				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); 
 				createFirstGen();
 			} else {
+				
+				String progressType = "";
+				String postHoc;
+				
+				while (!Arrays.asList("n","c","s","a","d","m").contains(progressType)) {
+					System.out.println("To continue GA, enter 'n'.");
+					progressType = PngIOUtil.promptString("To proceed with post-hoc, enter 'c' (composite), 's' (stability), 'a' (joint animacy), 'd' (density), or 'm' (mass distribution)");
+				}
+				
 				runNum = c;
 				linNum = getLinId(runNum);
 				// if current linNum is 1, genNum increments and linNum is set to 0
@@ -114,12 +123,8 @@ public class PngRandomGeneration {
 				System.out.println(genNum);
 				System.out.println(linNum);
 
-				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); //#####!
+				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); 
 				
-				System.out.println("To continue GA, enter 'n'.");
-				String progressType = PngIOUtil.promptString("To proceed with post-hoc, enter 'c' (composite), 's' (stability), 'a' (joint animacy), 'd' (density), or 'm' (mass distribution)");
-				String postHoc;
-
 				switch (progressType) {
 				case "n":
 					if ((genNum == 1) && (linNum == 1)) {
@@ -167,13 +172,13 @@ public class PngRandomGeneration {
 		List<Long> stimObjIds = new ArrayList<Long>();	// track stimObjIds for all stimuli created
 
 		// make blank stims: (create one blank stimulus for each lineage, if just to have a better baseline measure)
-		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));	//#####!
-		System.out.println("Blank stimulus added."); //#####!
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));	
+		System.out.println("Blank stimulus added."); 
 
 		// make random stims:		
-		for (int k=0;k<PngGAParams.GA_numNonBlankStimsPerLin;k++) { //#####!
-			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); //#####!
-			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + k); //#####!
+		for (int k=0;k<PngGAParams.GA_numNonBlankStimsPerLin;k++) { 
+			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); 
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + k); 
 		}
 
 		// create PNG thumbnails (not for blanks)
@@ -187,7 +192,7 @@ public class PngRandomGeneration {
 		blenderRunner.run();
 
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage n;
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum; //#####! CHANGEPYTHON
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
 //        BlenderRunnable photoRunner = new BlenderRunnable();
 //        List<String> args = new ArrayList<String>();
@@ -207,17 +212,17 @@ public class PngRandomGeneration {
 		createGATrialsFromStimObjs(stimObjIds);
 
 		// write updated global genId and number of trials in this generation to db:
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks); //#####! NEEDS WORK NEEDS WORK NEEDS WORK
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks);
 
 		System.out.println("Waiting for render completion...");
-//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
 //			try
 //			{	Thread.sleep(10000);	}
 //			catch (Exception e) {System.out.println(e);}
 //		}
 		
 		// get acq info and put into db:
-		getSpikeResponses(); //#####!
+		getSpikeResponses(); 
 	}
 
 	void createNextGen() {
@@ -225,13 +230,13 @@ public class PngRandomGeneration {
 		List<Long> stimObjIds = new ArrayList<Long>();
 
 		// make blank stims:		
-		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum)); //#####!
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum)); 
 		System.out.println("Blank stimuli added.");
 
 		// make random stims:		
-		for (int k=0;k<PngGAParams.GA_morph_numNewStimPerLin;k++) { //#####!
-			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); //#####!
-			System.out.println("Lineage " + linNum + ": Generating and saving random stimulus " + k); //#####!
+		for (int k=0;k<PngGAParams.GA_morph_numNewStimPerLin;k++) { 
+			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); 
+			System.out.println("Lineage " + linNum + ": Generating and saving random stimulus " + k); 
 		}
 		
 		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "randomSpec.py",stimObjIds);
@@ -248,7 +253,7 @@ public class PngRandomGeneration {
 		Map<Long, Double> stimObjId2FRZ_lin1_obj = new HashMap<Long, Double>();
 		Map<Long, Double> stimObjId2FRZ_lin1_env = new HashMap<Long, Double>();
 
-		for (int gen=1;gen<genNum;gen++) { //#####!
+		for (int gen=1;gen<genNum;gen++) { 
 			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
 
 			DataObject data;
@@ -262,7 +267,7 @@ public class PngRandomGeneration {
 				if (pngSpecTemp.getStimType().equals("OBJECT") || pngSpecTemp.getStimType().equals("ENVT")) {
 					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
 					
-					if (data.getLineage() == linNum) { //#####!
+					if (data.getLineage() == linNum) { 
 						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
 						
 						if (pngSpecTemp.getStimType().equals("OBJECT")) {
@@ -287,7 +292,7 @@ public class PngRandomGeneration {
 		List<Long> stimsToMorph_lin1 = new ArrayList<Long>(stimsToMorph_lin1_obj);
 		stimsToMorph_lin1.addAll(stimsToMorph_lin1_env);
 		
-		System.out.println("Lineage " + linNum + " stimuli to morph: " + stimsToMorph_lin1); //#####!
+		System.out.println("Lineage " + linNum + " stimuli to morph: " + stimsToMorph_lin1); 
 
 		//		// check generation designations of stimuli chosen to morph
 		//		for (int n=0;n<stimsToMorph_lin1.size();n++) {
@@ -302,8 +307,8 @@ public class PngRandomGeneration {
 		// create morphed stimuli:
 		for (int n=0;n<numDescendantObjs;n++) {
 
-			tempArray = generator.generateMorphStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(n),n+PngGAParams.GA_morph_numNewStimPerLin); //#####!
-			System.out.println("Lineage " + linNum + ": Generating and saving morphed stimulus " + n); //#####!
+			tempArray = generator.generateMorphStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(n),n+PngGAParams.GA_morph_numNewStimPerLin); 
+			System.out.println("Lineage " + linNum + ": Generating and saving morphed stimulus " + n); 
 			whichStim = Long.parseLong(tempArray.get(0));
 			stimObjIds.add(whichStim);
 
@@ -331,34 +336,34 @@ public class PngRandomGeneration {
 //		}
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage
-		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum; //#####!
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum; 
 		
-//        BlenderRunnable photoRunner = new BlenderRunnable();
-//        List<String> args = new ArrayList<String>();
-//        args.add("ssh");
-//        args.add("alexandriya@172.30.9.11");
-//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-//        args.add(Integer.toString(numJobs));
-//        args.add(prefixRunGen);
-//        photoRunner.setDoWaitFor(false);
-//        photoRunner.run(args);
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
 		// create trial structure, populate stimspec, write task-to-do
-		System.out.println("Creating trial spec for lineage " + linNum + " of this generation."); //#####!
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation."); 
 		createGATrialsFromStimObjs(stimObjIds);
 
 		// write updated global genId and number of trials in this generation to db:
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks); //#####!
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks); 
 		
 		System.out.println("Waiting for render completion...");
-//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
-//			try
-//			{	Thread.sleep(10000);	}
-//			catch (Exception e) {System.out.println(e);}
-//		}
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -411,7 +416,7 @@ public class PngRandomGeneration {
 					EnviroSpec_class enviroSpec = blendObject.getEnviroSpec();
 
 					//horizonTilt
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Double> currentKeysTilt = new ArrayList<Double>(horizonTilt_maxFinder_lin1.keySet());
 						double thisHorizonTilt = enviroSpec.getHorizonTilt();
 
@@ -428,7 +433,7 @@ public class PngRandomGeneration {
 					}
 
 					//horizonSlant
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Double> currentKeysSlant = new ArrayList<Double>(horizonSlant_maxFinder_lin1.keySet());
 						double thisHorizonSlant = enviroSpec.getHorizonSlant();
 
@@ -445,7 +450,7 @@ public class PngRandomGeneration {
 					}
 
 					//horizonMaterial
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<String> currentKeysHorizMat = new ArrayList<String>(horizonMaterial_maxFinder_lin1.keySet());
 						String thisHorizonMat = enviroSpec.getHorizonMaterial();
 
@@ -462,7 +467,7 @@ public class PngRandomGeneration {
 					}
 
 					//sun
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						AldenSpec_class aldenSpec = blendObject.getAldenSpec();
 						List<Point3d> currentKeysSun = new ArrayList<Point3d>(sun_maxFinder_lin1.keySet());
 						Point3d thisSun = aldenSpec.getSun();
@@ -480,7 +485,7 @@ public class PngRandomGeneration {
 					}
 
 					//distance
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Double> currentKeysDistance = new ArrayList<Double>(distance_maxFinder_lin1.keySet());
 						double thisDistance = enviroSpec.getDistance();
 
@@ -497,7 +502,7 @@ public class PngRandomGeneration {
 					}
 
 					//structureMaterial
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<String> currentKeysStructMat = new ArrayList<String>(structureMaterial_maxFinder_lin1.keySet());
 						String thisStructMat = enviroSpec.getStructureMaterial();
 
@@ -514,7 +519,7 @@ public class PngRandomGeneration {
 					}
 
 					//floor
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Integer> currentKeysFloor = new ArrayList<Integer>(floor_maxFinder_lin1.keySet());
 						int thisFloor = enviroSpec.getHasFloor();
 
@@ -531,7 +536,7 @@ public class PngRandomGeneration {
 					}
 
 					//ceiling
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Integer> currentKeysCeiling = new ArrayList<Integer>(ceiling_maxFinder_lin1.keySet());
 						int thisCeiling = enviroSpec.getHasCeiling();
 
@@ -548,7 +553,7 @@ public class PngRandomGeneration {
 					}
 
 					//wallL
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Integer> currentKeysWallL = new ArrayList<Integer>(wallL_maxFinder_lin1.keySet());
 						int thisWallL = enviroSpec.getHasWallL();
 
@@ -565,7 +570,7 @@ public class PngRandomGeneration {
 					}
 
 					//wallR
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Integer> currentKeysWallR = new ArrayList<Integer>(wallR_maxFinder_lin1.keySet());
 						int thisWallR = enviroSpec.getHasWallR();
 
@@ -582,7 +587,7 @@ public class PngRandomGeneration {
 					}
 
 					//wallB
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						List<Integer> currentKeysWallB = new ArrayList<Integer>(wallB_maxFinder_lin1.keySet());
 						int thisWallB = enviroSpec.getHasWallB();
 
@@ -605,7 +610,7 @@ public class PngRandomGeneration {
 					if (aldenSpec.getIsOptical() == 0) {
 						//aldenMaterial
 						
-						if (thisZ.getLineage() == linNum) { //#####!
+						if (thisZ.getLineage() == linNum) { 
 							// collect object ids and scores
 							stimObjId2FRZ_lin1.put(currentId, zScore);
 
@@ -687,14 +692,14 @@ public class PngRandomGeneration {
 		if (wallB_decision_lin1 + wallL_decision_lin1 + wallR_decision_lin1 + ceiling_decision_lin1 + floor_decision_lin1 != 0) {
 
 			// make blank stim:	
-			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum)); //#####!
+			blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum)); 
 			System.out.println("Blank stimulus added.");
 
-			stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(0), 0, "COMPOSITE")); //#####!
+			stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(0), 0, "COMPOSITE")); 
 			System.out.println("Lineage " + linNum + ": Generating and saving environment-only composite placeholder.");
 
 			for (int m=0;m<stimsToMorph_lin1.size();m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), m+1, "COMPOSITE")); //#####!
+				stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), m+1, "COMPOSITE")); 
 				System.out.println("Lineage " + linNum + ": Generating and saving object-only composite placeholders.");
 			}
 
@@ -740,18 +745,27 @@ public class PngRandomGeneration {
 //			System.out.println(stimsToMorph_lin1.size());
 //			System.out.println(possiblePositions1.size());
 
+			System.out.println("Num possible positions: " + possiblePositions1.size());
+			int placeholderNum = 0;
+			
 			for (int n=0;n<possiblePositions1.size();n++) {
 
 				for (int m=0;m<stimsToMorph_lin1.size();m++) {
-					stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); //#####!
-					System.out.println("Lineage " + linNum + ": Generating and saving composite placeholder " + stimNum);
+					stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); 
+					System.out.println("Lineage " + linNum + ": Generating and saving composite location " + possiblePositions1.get(n) + ", stimulus " + m + ", placeholder " + placeholderNum);
 					stimNum += 1;
+					
+					stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); 
+					System.out.println("Lineage " + linNum + ": Generating and saving architecture perspective location " + possiblePositions1.get(n) + ", stimulus " + m + ", placeholder " + placeholderNum);
+					stimNum += 1;
+					placeholderNum += 1;
 				}
 			}
 		}
 
 		else {
 			System.out.println("Lineage " + linNum + ": Optimal architecture not suitable for composite post-hoc.");
+			return;
 		}
 
 		if (possiblePositions1.size() != 0) {
@@ -807,7 +821,7 @@ public class PngRandomGeneration {
 		List<Long> trialSubGroup = new ArrayList<Long>();
 
 		// make blank stims. assuming two linages.		
-		long blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, linNum); //#####!
+		long blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, linNum); 
 		blankStimObjIds.add(blankStimObjId);
 
 		trialSubGroup.add(blankStimObjId);
@@ -844,7 +858,7 @@ public class PngRandomGeneration {
 					AldenSpec_class aldenSpec = blendObject.getAldenSpec();
 					MStickSpec stickSpec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(currentId).getSpec());
 
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						// collect object ids and scores
 						stimObjId2FRZ_lin1.put(currentId, zScore);
 
@@ -1217,7 +1231,7 @@ public class PngRandomGeneration {
 					
 					if (aldenSpec.getIsOptical() == 0) {
 						//aldenMaterial
-						if (thisZ.getLineage() == linNum) { //#####!
+						if (thisZ.getLineage() == linNum) { 
 							// collect object ids and scores
 							stimObjId2FRZ_lin1.put(currentId, zScore);
 
@@ -1318,7 +1332,7 @@ public class PngRandomGeneration {
 
 				if (pngSpecTemp.getStimType().equals("OBJECT")) {
 
-					if (thisZ.getLineage() == linNum) { //#####!
+					if (thisZ.getLineage() == linNum) { 
 						// collect object ids and scores
 						stimObjId2FRZ_lin1.put(currentId, zScore);
 					}
@@ -1407,15 +1421,15 @@ public class PngRandomGeneration {
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
-		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); //#####!
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
 		int numStimsPerTrial = 1;
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); //#####!
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
 
 		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { //#####!
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
@@ -1560,7 +1574,7 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); 
 			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
@@ -1606,7 +1620,7 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); 
 			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
@@ -1650,7 +1664,7 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); 
 			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter++;
@@ -1702,9 +1716,9 @@ public class PngRandomGeneration {
 //			spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
 			
 			if (useFakeSpikes) {
-				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum,linNum); //#####!
+				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum,linNum); 
 			} else {
-				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum,linNum,0); //#####!
+				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum,linNum,0); 
 			}
 			
 			// for each trial done in a generation:
@@ -1807,7 +1821,7 @@ public class PngRandomGeneration {
 			return 1;
 		}
 	}
-	private long getLinNum() { //#####!
+	private long getLinNum() { 
 		try {
 			linNum = dbUtil.readReadyGenerationInfo().getLinId();
 			return linNum;
@@ -1838,7 +1852,7 @@ public class PngRandomGeneration {
 			return 1;
 		}
 	}
-	private long getLinId(long runNum) { //#####! NEEDS WORK NEEDS WORK NEEDS WORK
+	private long getLinId(long runNum) { 
 		try {
 			linNum = dbUtil.readLinIdForRunNum(runNum);
 			return linNum;

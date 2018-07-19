@@ -11,6 +11,7 @@ public class EnviroSpec_class {
 	String horizonMaterial;
 	int gravity;
 	String context;
+	int compositeKeepAlden;
 	int architecture;
 	int floor;
 	int ceiling;
@@ -19,6 +20,7 @@ public class EnviroSpec_class {
 	int wallB;
 	double architectureThickness;
 	double distance;
+	double fixationPointDepth;
 	String structureMaterial;
 	int aperture;
 	
@@ -32,6 +34,7 @@ public class EnviroSpec_class {
 		
 		this.gravity = d.getGravity();
 		this.context = d.getContext();
+		this.compositeKeepAlden = d.getCompositeKeepAlden();
 		
 		this.architecture = d.getHasArchitecture();
 		this.floor = d.getHasFloor();
@@ -42,6 +45,7 @@ public class EnviroSpec_class {
         this.architectureThickness = d.getArchitectureThickness();
 
         this.distance = d.getDistance();
+        this.fixationPointDepth = d.getFixationPointDepth();
         this.structureMaterial = d.getStructureMaterial();
         this.aperture = d.getAperture();
         
@@ -80,6 +84,13 @@ public class EnviroSpec_class {
 	}
 	public String getContext() {
 		return context;
+	}
+	
+	public void setCompositeKeepAlden(int compositeKeepAlden){
+		this.compositeKeepAlden =  compositeKeepAlden;
+	}
+	public int getCompositeKeepAlden() {
+		return compositeKeepAlden;
 	}
 	
 	public void setHasArchitecture(int architecture){
@@ -147,6 +158,13 @@ public class EnviroSpec_class {
 	}
 	public double getDistance() {
 		return distance;
+	}
+	
+	public void setFixationPointDepth(double fixationPointDepth){
+		this.fixationPointDepth =  fixationPointDepth;
+	}
+	public double getFixationPointDepth() {
+		return fixationPointDepth;
 	}
 	
 	public void setStructureMaterial(String structureMaterial){
