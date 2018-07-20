@@ -404,7 +404,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -847,7 +847,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -929,7 +929,7 @@ public class PngRandomGeneration {
 			List<Long> stims_lin1 = new ArrayList<Long>();
 
 			// plain unchanged stimulus
-			long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+			long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
 			stimObjIds.add(whichStim_lin1);
 			stims_lin1.add(whichStim_lin1);
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", conserved stimulus");
@@ -947,7 +947,7 @@ public class PngRandomGeneration {
 				
 				// SQUISH
 				if (PngGAParams.targetedColoration!=1) {
-					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
 					stimObjIds.add(whichStim_lin1);
 					stims_lin1.add(whichStim_lin1);
 					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs squish still");
@@ -957,14 +957,14 @@ public class PngRandomGeneration {
 				for (int m=0;m<numPHanimations;m++) {
 				
 					if (PngGAParams.targetedColoration==1) {
-						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
 						stimObjIds.add(whichStim_lin1);
 						stims_lin1.add(whichStim_lin1);
 						System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", limb " + m + ", squish still");
 						stimNum ++;
 					}
 					
-					long whichStim_lin1_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY");
+					long whichStim_lin1_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_ANIMATE");
 					stimObjIds.add(whichStim_lin1_anim);
 					stims_lin1.add(whichStim_lin1_anim);
 					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
@@ -981,7 +981,7 @@ public class PngRandomGeneration {
 
 				// STIFF
 				if (PngGAParams.targetedColoration!=1) {
-					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
 					stimObjIds.add(whichStim_lin1);
 					stims_lin1.add(whichStim_lin1);
 					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs stiff still");
@@ -998,7 +998,7 @@ public class PngRandomGeneration {
 				else {
 
 					for (int m=0;m<numPHanimations;m++) {
-						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY"); // object
+						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
 						stimObjIds.add(whichStim_lin1);
 						stims_lin1.add(whichStim_lin1);
 						System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs stiff still");
@@ -1022,16 +1022,16 @@ public class PngRandomGeneration {
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-        BlenderRunnable photoRunner = new BlenderRunnable();
-        List<String> args = new ArrayList<String>();
-        args.add("ssh");
-        args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-        args.add(Integer.toString(numJobs));
-        args.add(prefixRunGen);
-        photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
-		
+//        BlenderRunnable photoRunner = new BlenderRunnable();
+//        List<String> args = new ArrayList<String>();
+//        args.add("ssh");
+//        args.add("alexandriya@172.30.9.11");
+//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+//        args.add(Integer.toString(numJobs));
+//        args.add(prefixRunGen);
+//        photoRunner.setDoWaitFor(false);
+//        photoRunner.run(args);
+//		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
@@ -1219,7 +1219,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -1324,7 +1324,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				thisZ = DataObject.fromXml(dbUtil.readStimSpec_data(currentId).getSpec());
@@ -1454,7 +1454,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
+				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
 					continue;
 				}
 
@@ -1502,7 +1502,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());

@@ -26,7 +26,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 	@Dependency
 	AbstractRenderer renderer;
 	
-	static public enum StimType { OBJECT, ENVT, COMPOSITE, STABILITY, ANIMACY, DENSITY, MASS, BLANK };
+	static public enum StimType { OBJECT, ENVT, COMPOSITE, STABILITY, ANIMACY_ANIMATE, ANIMACY_STILL, DENSITY, MASS, BLANK };
 
 	TrialType trialType;	
 	long taskId;	

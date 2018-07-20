@@ -241,13 +241,9 @@ public class PngDbUtil extends DbUtil {
 		taskDone.setDoneTasks(new ArrayList<TaskDoneEntry>());
 		
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
-		long firstTrial = jt.queryForLong("SELECT firstTrial FROM descriptiveinfo WHERE prefix = ? "
-				+ "AND gaRun = ? AND genNum = ? AND linNum = ?", new Object[] { prefix, runNum, genNum, linNum }); //#####!
 		long firstTrial = jt.queryForLong("SELECT firstTrial FROM DescriptiveInfo WHERE prefix = ? "
 				+ "AND gaRun = ? AND genNum = ? AND linNum = ?", new Object[] { prefix, runNum, genNum, linNum }); //#####!
-		
-		long lastTrial = jt.queryForLong("SELECT lastTrial FROM descriptiveinfo WHERE prefix = ? "
-				+ "AND gaRun = ? AND genNum = ? AND linNum = ?", new Object[] { prefix, runNum, genNum, linNum }); //#####!
+
 		long lastTrial = jt.queryForLong("SELECT lastTrial FROM DescriptiveInfo WHERE prefix = ? "
 				+ "AND gaRun = ? AND genNum = ? AND linNum = ?", new Object[] { prefix, runNum, genNum, linNum }); //#####!
 		
@@ -276,12 +272,7 @@ public class PngDbUtil extends DbUtil {
 		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);		
 		return jt.queryForLong("SELECT max(genNum) FROM DescriptiveInfo WHERE gaRun = ? ", runNum);
 	}
-	
-	public long readLinIdForRunNum(long runNum) {
-		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);		
-		return jt.queryForLong("SELECT max(linNum) FROM descriptiveinfo WHERE gaRun = ? AND genNum = (SELECT max(genNum) FROM descriptiveinfo WHERE gaRun = ?)", new Object[] { runNum, runNum });
-	}
-	
+
 	public long readLinIdForRunNum(long runNum) {
 		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);		
 		return jt.queryForLong("SELECT max(linNum) FROM DescriptiveInfo WHERE gaRun = ? AND genNum = (SELECT max(genNum) FROM DescriptiveInfo WHERE gaRun = ?)", new Object[] { runNum, runNum });
