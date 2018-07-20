@@ -74,9 +74,9 @@ public class DrawingManager implements Drawable{
 			renderer.draw(this,context);
 			window.swapBuffers();
 			
-			if (!imageFolderName.isEmpty())
-				pngMaker.saveImage_file(stimObjIds.get(stimCounter),height,width, imageFolderName);
-			pngMaker.saveImage_db(stimObjIds.get(stimCounter),height,width);
+//			if (!imageFolderName.isEmpty())
+//				pngMaker.saveImage_file(stimObjIds.get(stimCounter),height,width, imageFolderName);
+//			pngMaker.saveImage_db(stimObjIds.get(stimCounter),height,width);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

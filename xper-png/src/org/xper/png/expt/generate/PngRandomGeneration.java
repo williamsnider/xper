@@ -1574,8 +1574,10 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); 
-			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
+
+			// JK 6 July don't do this for real
+//			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
 		}
@@ -1620,8 +1622,10 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); 
-			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
+			
+			// JK 6 July don't do this for real
+//			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
 		}
@@ -1664,8 +1668,10 @@ public class PngRandomGeneration {
 
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); 
-			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
+			 
+			// JK 6 July don't do this for real
+//			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter++;
 		}

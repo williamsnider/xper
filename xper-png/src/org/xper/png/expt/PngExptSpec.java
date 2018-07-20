@@ -12,7 +12,8 @@ public class PngExptSpec {
 	String trialType;
 	long reward;
 	List<Long> objects = new ArrayList<Long>();
-	
+	String baseFilename;
+
 	transient static XStream s;
 	
 	static {
@@ -68,4 +69,5 @@ public class PngExptSpec {
 	public void setTrialType(String trialType) {
 		this.trialType = trialType;
 	}
+		
 }

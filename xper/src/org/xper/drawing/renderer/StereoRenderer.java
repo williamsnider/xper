@@ -32,6 +32,8 @@ public abstract class StereoRenderer extends AbstractRenderer {
 	}
 	
 	public void draw(Drawable scene, Context context) {
+//		System.out.println("JK 0838 StereoRenderer:draw()");
+
 		GL11.glPushMatrix ();
 		setupLeft ();
 		drawLeft (scene, context);
@@ -47,15 +49,17 @@ public abstract class StereoRenderer extends AbstractRenderer {
 	protected abstract void setupRight();
 
 	protected void drawLeft(Drawable scene, Context context) {
-		context.setViewportIndex(0);
+		context.setViewportIndex(0);  
 		context.setRenderer(this);
 		scene.draw(context);
+//		System.out.println("JK 0838 StereoRenderer:drawLeft()");
 	}
 
 	protected void drawRight(Drawable scene, Context context) {
-		context.setViewportIndex(1);
+		context.setViewportIndex(1); 
 		context.setRenderer(this);
 		scene.draw(context);
+//		System.out.println("JK 0839 StereoRenderer:drawRight()");
 	}
 
 	public boolean isInverted() {

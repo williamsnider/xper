@@ -1,16 +1,21 @@
-package org.xper.classic;
+package org.xper.png;
 
 import java.sql.Timestamp;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.xper.Dependency;
+import org.xper.png.vo.PngTrialContext;
+import org.xper.classic.TrialEventListener;
 import org.xper.classic.vo.TrialContext;
-import org.xper.trialsync.TrialSync;
+import org.xper.juice.DynamicJuice;
 
-
-public class TrialSyncController implements TrialEventListener {
+public class PngExperimentJuiceController implements TrialEventListener {
+	// JK 26 Apr 2017  static Logger logger = Logger.getLogger(PngExperimentJuiceController.class);
+	static Logger logger = LogManager.getLogger(PngExperimentJuiceController.class);
 	
 	@Dependency
-	TrialSync trialSync;
+	DynamicJuice juice;
 
 	public void eyeInBreak(long timestamp, TrialContext context) {
 	}
@@ -31,26 +36,28 @@ public class TrialSyncController implements TrialEventListener {
 	}
 
 	public void trialComplete(long timestamp, TrialContext context) {
+		PngTrialContext c = (PngTrialContext)context;
+		long reward = c.getReward();
+		juice.setReward(reward);
+		juice.deliver();
+		System.out.println("Juice delivered " + reward + " @ " + new Timestamp(timestamp/1000).toString());
 	}
 	
 	public void trialInit(long timestamp, TrialContext context) {
-		trialSync.startTrialSyncPulse();
-		// JK 9 July 2018 System.out.println("Trial syncing started (trialInit) @ " + new Timestamp(timestamp/1000).toString());
 	}
 
 	public void trialStart(long timestamp, TrialContext context) {
 	}
 
 	public void trialStop(long timestamp, TrialContext context) {
-		trialSync.stopTrialSyncPulse();;
-		// JK 9 July 2018 System.out.println("Trial syncing stopped (trialStop) @ " + new Timestamp(timestamp/1000).toString());
 	}
 
-	public TrialSync getTrialSync() {
-		return trialSync;
+	public DynamicJuice getJuice() {
+		return juice;
 	}
 
-	public void setTrialSync(TrialSync trialSync) {
-		this.trialSync = trialSync;
+	public void setJuice(DynamicJuice juice) {
+		this.juice = juice;
 	}
+
 }

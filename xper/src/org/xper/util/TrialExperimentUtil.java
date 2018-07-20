@@ -59,13 +59,14 @@ public class TrialExperimentUtil {
 	 * @return
 	 */
 	public static TrialResult doSlide (int i, SlideTrialExperimentState stateObject) {
+//		System.out.format("JK 0939 TrialExperUtil:doSlide() : i = %d%n ",	i);
+
 		TrialDrawingController drawingController = stateObject.getDrawingController();
 		ExperimentTask currentTask = stateObject.getCurrentTask();
 		TrialContext currentContext = stateObject.getCurrentContext();
 		List<? extends SlideEventListener> slideEventListeners = stateObject.getSlideEventListeners();
 		EyeController eyeController = stateObject.getEyeController();
 		TimeUtil timeUtil = stateObject.getLocalTimeUtil();
-		
 		// show current slide
 		drawingController.showSlide(currentTask, currentContext);
 		long slideOnLocalTime = timeUtil.currentTimeMicros();
@@ -119,6 +120,9 @@ public class TrialExperimentUtil {
 		}
 
 		result = runner.runSlide();
+		
+//		System.out.format("JK 2399 TrialExperUtil:runTrial() : result = " + result.toString());
+
 		if (result != TrialResult.TRIAL_COMPLETE) {
 			return result;
 		}
@@ -139,8 +143,7 @@ public class TrialExperimentUtil {
 		TaskDataSource taskDataSource = state.getTaskDataSource();
 		TaskDoneCache taskDoneCache = state.getTaskDoneCache();
 		TrialDrawingController drawingController = state.getDrawingController();
-		List<? extends TrialEventListener> trialEventListeners = state
-		.getTrialEventListeners();
+		List<? extends TrialEventListener> trialEventListeners = state.getTrialEventListeners();
 		
 		// unget failed task
 		if (currentTask != null) {

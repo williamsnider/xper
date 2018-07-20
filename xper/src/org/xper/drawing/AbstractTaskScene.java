@@ -73,6 +73,8 @@ public abstract class AbstractTaskScene implements TaskScene {
 	protected void drawCustomBlank(Context context) {}
 	
 	public void drawTask(Context context, final boolean fixationOn) {
+//		System.out.println("JK 0119 AbstractTaskScene:drawTask(): " + ((TrialContext)context).getSlideIndex());
+
 		// clear the whole screen before define view ports in renderer
 		blankScreen.draw(null);
 		renderer.draw(new Drawable() {
@@ -81,6 +83,7 @@ public abstract class AbstractTaskScene implements TaskScene {
 					// 0 will pass for stimulus region
 					GL11.glStencilFunc(GL11.GL_EQUAL, 0, 1);
 				}
+//				System.out.println("JK 0219 AbstractTaskScene:drawTask() : calling drawStimulus() ");
 				drawStimulus(context);
 				if (useStencil) {
 					// 1 will pass for fixation and marker regions

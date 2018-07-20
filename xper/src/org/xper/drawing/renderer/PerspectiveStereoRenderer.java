@@ -18,7 +18,7 @@ public class PerspectiveStereoRenderer extends StereoRenderer {
 			double left = xmax * PROJECTION_NEAR / distance;
 			double right = (xmin - hunit) * PROJECTION_NEAR / distance;
 			GL11.glFrustum (left, right, bottom, top, PROJECTION_NEAR, distance + depth);
-//			System.out.println("leftport: " + left + ", " + right + ", " + bottom + ", " + top + ", " + PROJECTION_NEAR + ", " + distance + ", " + depth);
+			System.out.println("leftport: " + left + ", " + right + ", " + bottom + ", " + top + ", " + PROJECTION_NEAR + ", " + distance + ", " + depth);
 		} else {
 			double left = xmin * PROJECTION_NEAR / distance;
 			double right = (xmax + hunit) * PROJECTION_NEAR / distance;
@@ -45,7 +45,7 @@ public class PerspectiveStereoRenderer extends StereoRenderer {
 			double left = xmax * PROJECTION_NEAR / distance;
 			double right = (xmin - hunit) * PROJECTION_NEAR / distance;
 			GL11.glFrustum (left, right, bottom, top, PROJECTION_NEAR, distance + depth);
-//			System.out.println("rightport: " + left + ", " + right + ", " + bottom + ", " + top + ", " + PROJECTION_NEAR + ", " + distance + ", " + depth);
+			System.out.println("rightport: " + left + ", " + right + ", " + bottom + ", " + top + ", " + PROJECTION_NEAR + ", " + distance + ", " + depth);
 		} else {
 			double left = xmin * PROJECTION_NEAR / distance;
 			double right = (xmax + hunit) * PROJECTION_NEAR / distance;
