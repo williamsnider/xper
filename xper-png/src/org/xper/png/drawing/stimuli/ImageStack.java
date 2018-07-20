@@ -6,7 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -24,6 +28,7 @@ public class ImageStack implements Drawable {
     IntBuffer textureIds = BufferUtils.createIntBuffer(numFrames);
     boolean texturesLoaded = false;
     int frameNum = 0;
+    float scaler = 3.45f;    // scales actual image size to viewport size
     
     // this probably should from the database 
     String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
@@ -31,8 +36,148 @@ public class ImageStack implements Drawable {
  
     String imageName;
     String baseName;
-
+    
+    // keep track of which images go with with stim by storing the last image ndx for 
+    // each stim (3)
+    int currNdx = 0;
+    int[] stopNdx = {0, 0, 0};
+    
   
+	
+	// the list of filenames to load.  
+    public void loadImages(List<Map<String, Object>> stimInfo){    
+    	// Hard code it in stone ...
+    	int numAnimacyImages = 10 * 2;
+    	int numRollingImages = 60 * 2;
+    	
+    	String baseName;
+    	String stimType;
+    	String optionalPath = "";
+    	String side;
+//    	Boolean addExt = true;
+    	
+    	textureIds.clear();    	
+    	GL11.glGenTextures(textureIds);    	
+    	
+    	for(int n = 0; n < numFrames; n++){
+    		stimType = (String)((stimInfo.get((int)(java.lang.Math.floor(n/2)))).get("stimType"));
+    		baseName = (String)((stimInfo.get((int)(java.lang.Math.floor(n/2)))).get("descId"));
+    		
+    		// look for special cases e.g. animacy to change optional path 
+    		if(stimType.contains("ANIMACY")) {
+    			optionalPath = baseName;
+    		} else if(stimType.contains("BLANK")){
+    			optionalPath ="";
+    			baseName = "fakeBlank.png";
+//    			addExt = true;
+    		}
+    		else {
+    			optionalPath = "";
+    		}
+    		
+//    		if(addExt) {
+	    		if(n % 2 == 0) {
+	    			side = "_L";
+	    		}else {
+	    			side = "_R";
+	    		}    
+//    		}
+    		
+    		imageName = resourcePath + optionalPath + baseName + ext;
+    		System.out.println("JK 3330 ImageStack:loadImages() : " + imageName);
+    		
+    		// JK 11 July 2018 
+    		// check for BLANK and load a standard png
+    		if(imageName.contains("BLANK")) {
+    			imageName = resourcePath + "fakeBlank.png";
+//    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
+    		}
+    		loadTexture(imageName, n);    		
+    	}       	
+    	// assume success?!
+    	texturesLoaded = true;
+   	  	System.out.format("JK 3340 ImageStack:loadImages() : loaded %d images %n", numFrames);
+    }
+	
+//	// the list of filenames to load.  
+//    public void loadImages(List<String> filenames){        
+//    	textureIds.clear();    	
+//    	GL11.glGenTextures(textureIds);    	
+//    	// load _L then _R
+//    	for(int n = 0; n < numFrames; n++){
+//    		if(n % 2 == 0) {
+//    			ext = "_L.png";
+//    		}else {
+//    			ext = "_R.png";
+//    		}    	
+//    		imageName = resourcePath + filenames.get((int)(java.lang.Math.floor(n/2))) + ext;
+//    		
+//    		// JK 11 July 2018 
+//    		// check for BLANK and load a standard png
+//    		if(imageName.contains("BLANK")) {
+//    			imageName = resourcePath + "fakeBlank.png";
+////    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
+//    		}
+//    		loadTexture(imageName, n);    		
+//    	}       	
+//    	// assume success?!
+//    	texturesLoaded = true;
+//   	  	System.out.format("JK 3340 ImageStack:loadImages() : loaded %d images %n", numFrames);
+//    }
+//    
+//    
+
+	
+    
+	@Override
+	public void draw(Context context) {
+		TrialContext c = (TrialContext)context;		
+
+		int frameNum = c.getSlideIndex();
+		int vpNum = c.getViewportIndex();
+		int animNdx = c.getAnimationFrameIndex();
+
+		int ndx = 2 * frameNum + vpNum;
+//		System.out.println("JK 0838 viewPort == " + vpNum);
+//		System.out.println("JK 093 ***** ImageStack:draw() ***** ndx = " + ndx + ", animation ndx = " + c.getAnimationFrameIndex());
+	      
+		// JK 2981  18 July 2018 
+		float width = 1400  / scaler; //  2    // texture.getImageWidth();
+		float height = 1050 / scaler; //  2    // texture.getImageHeight();		
+		float yOffset = -height / 2;
+		float xOffset = -width / 2; 
+
+	
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
+	   	GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(ndx));
+
+        GL11.glBegin(GL11.GL_QUADS);
+            GL11.glTexCoord2f(0, 1);
+            GL11.glVertex2f(xOffset, yOffset);
+            GL11.glTexCoord2f(1, 1);
+            GL11.glVertex2f(xOffset + width, yOffset);
+            GL11.glTexCoord2f(1, 0);
+            GL11.glVertex2f(xOffset + width, yOffset + height);
+            GL11.glTexCoord2f(0, 0);
+            GL11.glVertex2f(xOffset, yOffset + height);
+        GL11.glEnd();
+
+        // delete the texture
+        GL11.glDeleteTextures(textureIds.get(ndx));
+        
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+    
+        if(frameNum < numFrames){
+        	frameNum += 1;
+        }
+        		
+	}
+
+	
+	
+
 	/**
 	 * @param args
 	 */
@@ -52,41 +197,6 @@ public class ImageStack implements Drawable {
 	}
 	
 	
-
-	// the list of filenames to load.  
-    public void loadImages(List<String> filenames){
-        
-    	textureIds.clear();
-    	
-    	GL11.glGenTextures(textureIds);
-    	
-    	// load _L then _R
-    	for(int n = 0; n < numFrames; n++){
-    		if(n % 2 == 0) {
-    			ext = "_L.png";
-    		}else {
-    			ext = "_R.png";
-    		}
-    	
-    		imageName = resourcePath + filenames.get((int)(java.lang.Math.floor(n/2))) + ext;
-    		
-    		// JK 11 July 2018 
-    		// check for BLANK and load a standard png
-    		if(imageName.contains("BLANK")) {
-    			imageName = resourcePath + "fakeBlank.png";
-//    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
-    		}
-
-    		loadTexture(imageName, n);    		
-    	}   
-    	
-    	// assume success?!
-    	texturesLoaded = true;
-   	
-    	System.out.format("JK 3340 ImageStack:loadImages() : loaded %d images %n", numFrames);
-    }
-    
-    
     
     public void loadFrames(String baseFilename){
         
@@ -174,52 +284,6 @@ public class ImageStack implements Drawable {
 
     
 
-	
-    
-		@Override
-		public void draw(Context context) {
-			TrialContext c = (TrialContext)context;		
-
-			int frameNum = c.getSlideIndex();
-			int vpNum = c.getViewportIndex();
-			int ndx = 2 * frameNum + vpNum;
-//			System.out.println("JK 0838 viewPort == " + vpNum);
-//			System.out.println("JK 093 ***** ImageStack:draw() ***** ndx = " + ndx + ", animation ndx = " + c.getAnimationFrameIndex());
-		      
-			// JK 2981  18 July 2018 
-			float width = 1400  / 4; //  2    // texture.getImageWidth();
-			float height = 1050 / 4; //  2    // texture.getImageHeight();		
-			float yOffset = -height / 2;
-			float xOffset = -width / 2; 
-
-		
-			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
-			
-			GL11.glEnable(GL11.GL_TEXTURE_2D);  	
-		   	GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(ndx));
-
-	        GL11.glBegin(GL11.GL_QUADS);
-	            GL11.glTexCoord2f(0, 1);
-	            GL11.glVertex2f(xOffset, yOffset);
-	            GL11.glTexCoord2f(1, 1);
-	            GL11.glVertex2f(xOffset + width, yOffset);
-	            GL11.glTexCoord2f(1, 0);
-	            GL11.glVertex2f(xOffset + width, yOffset + height);
-	            GL11.glTexCoord2f(0, 0);
-	            GL11.glVertex2f(xOffset, yOffset + height);
-	        GL11.glEnd();
-
-	        // delete the texture
-	        GL11.glDeleteTextures(textureIds.get(ndx));
-	        
-	        GL11.glDisable(GL11.GL_TEXTURE_2D);
-	    
-	        if(frameNum < numFrames){
-	        	frameNum += 1;
-	        }
-	        		
-		}
-	
 	
 		public void setBaseName(String baseFilename){
 			baseName  = baseFilename;

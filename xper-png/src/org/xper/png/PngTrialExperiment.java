@@ -81,9 +81,9 @@ public class PngTrialExperiment implements Experiment {
 					return TrialExperimentUtil.runTrial(stateObject, threadHelper, new SlideRunner() {
 
 						public TrialResult runSlide() {
-							int slidePerTrial = stateObject.getSlidePerTrial();
+							int slidesPerTrial = stateObject.getNumSlidesPerTrial();
 							
-							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidePerTrial);
+							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidesPerTrial);
 							TrialDrawingController drawingController = stateObject.getDrawingController();
 							ExperimentTask currentTask = stateObject.getCurrentTask();
 							TrialContext currentContext = stateObject.getCurrentContext();	
@@ -91,8 +91,8 @@ public class PngTrialExperiment implements Experiment {
 							TimeUtil globalTimeClient = stateObject.getGlobalTimeClient();
 							
 							try {
-								for (int i = 0; i < slidePerTrial; i++) {
-//									System.out.println("PngTrialExper() runTrial() slide " + (i+1) + " of " + slidePerTrial);
+								for (int i = 0; i < slidesPerTrial; i++) {
+//									System.out.println("PngTrialExper() runTrial() slide " + (i+1) + " of " + slidesPerTrial);
 									// draw the slide
 									TrialResult result = TrialExperimentUtil.doSlide(i, stateObject);
 									if (result != TrialResult.SLIDE_OK) {
@@ -100,7 +100,7 @@ public class PngTrialExperiment implements Experiment {
 										return result;
 									}
 									// slide done successfully
-									if (currentTask != null && i == slidePerTrial - 1) {
+									if (currentTask != null && i == slidesPerTrial - 1) {
 //										System.out.println("JK 2225 PngTrialExper() runTrial() taskDone! " );
 										taskDoneCache.put(currentTask, globalTimeClient
 												.currentTimeMicros(), false);
@@ -109,7 +109,7 @@ public class PngTrialExperiment implements Experiment {
 									}
 
 									// prepare next task
-									if (i < slidePerTrial - 1) {
+									if (i < slidesPerTrial - 1) {
 //										TrialExperimentUtil.getNextTask(stateObject);
 //										currentTask = stateObject.getCurrentTask();
 //										if (currentTask == null && !stateObject.isDoEmptyTask()) {
