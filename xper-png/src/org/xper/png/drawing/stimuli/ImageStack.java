@@ -31,7 +31,8 @@ public class ImageStack implements Drawable {
     float scaler = 3.45f;    // scales actual image size to viewport size
     
     // this probably should from the database 
-    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+//    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
     String ext = "_R.png";  
  
     String imageName;
@@ -89,7 +90,7 @@ public class ImageStack implements Drawable {
     		// JK 11 July 2018 
     		// check for BLANK and load a standard png
     		if(imageName.contains("BLANK")) {
-    			imageName = resourcePath + "fakeBlank.png";
+    			imageName = resourcePath + "180719_r-190_g-2_l-0_s-0_R.png";
 //    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
     		}
     		loadTexture(imageName, n);    		

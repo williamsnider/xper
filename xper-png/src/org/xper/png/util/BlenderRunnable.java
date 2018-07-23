@@ -18,13 +18,15 @@ public class BlenderRunnable implements Runnable {
 	List<Integer> possiblePositions = new ArrayList<Integer>();
 	List<String> constantAttributes = new ArrayList<String>();
 	
-// JK static String appPath = "/Applications/blender-279/Blender.app/Contents/MacOS/blender";
-	static String appPath = "/home/alexandriya/blender/blender";
+	static String appPath = "/Applications/blender-279/Blender.app/Contents/MacOS/blender";
+//	static String appPath = "/home/alexandriya/blender/blender";
 //	static String appPath = "/Applications/blender279/Blender.app/Contents/MacOS/blender";
-// JK 	static String blendFile = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/frameRate.blend";
-	static String blendFile = "/home/alexandriya/jkBlendRend/ProgressionClasses/frameRate.blend";
+ 	static String blendFile = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/frameRate.blend";
+//	static String blendFile = "/home/alexandriya/jkBlendRend/ProgressionClasses/frameRate.blend";
 	
 //	static String blendFile = "/Users/alexandriya/Dropbox/Blender/ProgressionClasses/frameRate.blend";
+//	static String appPath = "/home/alexandriya/blender/blender";
+//	static String blendFile = "/home/alexandriya/blendRend/ProgressionClasses/frameRate.blend";
 
 	public BlenderRunnable(String scriptPath) {
 		this.scriptPath = scriptPath;
@@ -87,7 +89,8 @@ public class BlenderRunnable implements Runnable {
 		
 		
 		try {
-			System.out.println("BlenderRunnable::run()  : " + args);
+//			System.out.println(args);
+			System.out.println("Editing blender specifications.");
 			ProcessBuilder builder = new ProcessBuilder(args);
 			Process process = builder.start();
 //			process.getOutputStream();
@@ -103,9 +106,8 @@ public class BlenderRunnable implements Runnable {
 	
 	public void run(List<String> args) {
 		try {
-			System.out.println("BlenderRunnable::run(List<> args)  : " + args);
-			
-			System.out.println(args);
+//			System.out.println(args);
+			System.out.println("Sending stimuli to cluster to render.");
 			ProcessBuilder builder = new ProcessBuilder(args);
 			Process process = builder.start();
 //			process.getOutputStream();
