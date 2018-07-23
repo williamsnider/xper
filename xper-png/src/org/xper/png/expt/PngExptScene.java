@@ -88,7 +88,7 @@ public class PngExptScene extends AbstractTaskScene {
 			// map keys "descId" and "stimType"
 			tmp = dbUtil.readDescriptiveIdAndTypeFromStimObjId(spec.getStimObjId(i));
 			stimInfo.add(i, tmp);
-			//System.out.println("PngExptScene:trialStart() : " + stimInfo.get(i) + " : " + spec.getStimObjId(i) + " : tmp = " + (String) tmp.get("stimType"));
+//			System.out.println("PngExptScene:trialStart() : " + stimInfo.get(i) + " : " + spec.getStimObjId(i) + " : tmp = " + (String) tmp.get("stimType"));
 		}
 		
 		images = new ImageStack();

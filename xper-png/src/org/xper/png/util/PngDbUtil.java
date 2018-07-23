@@ -161,6 +161,14 @@ public class PngDbUtil extends DbUtil {
 	
 	}
 	
+//// JK 23 July 2018
+//	public resetTasks(long taskId) {
+//			JdbcTemplate jt = new JdbcTemplate(dataSource);
+//			jt.update("update TaskDone set task_id = ?, part_done = 0,", 
+//					new Object[] {  taskId });
+//		
+//	}
+	
 	public int readRenderStatus(String prefix, long runNum, long genNum, long linNum) { //#####!
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		int renderStatus = jt.queryForInt("SELECT rendersFinished FROM DescriptiveInfo WHERE prefix = ? "

@@ -217,11 +217,11 @@ public class PngRandomGeneration {
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks);
 
 		System.out.println("Waiting for render completion...");
-//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-//			try
-//			{	Thread.sleep(10000);	}
-//			catch (Exception e) {System.out.println(e);}
-//		}
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 		
 		// get acq info and put into db:
 		getSpikeResponses(); 
