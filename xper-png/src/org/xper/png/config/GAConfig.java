@@ -96,18 +96,20 @@ public class GAConfig {
 		state.setTaskDataSource(generalConfig.databaseTaskDataSource());
 		state.setTaskDoneCache(classicConfig.taskDoneCache());
 		state.setGlobalTimeClient(acqConfig.timeClient());
-        state.setRequiredTargetSelectionHoldTime(generalConfig.xperRequiredTargetSelectionHoldTime());
-    	state.setTargetSelectionStartDelay(generalConfig.xperTargetSelectionEyeMonitorStartDelay());
-    	state.setTimeAllowedForInitialTargetSelection(generalConfig.xperTimeAllowedForInitialTargetSelection());
+		state.setRequiredTargetSelectionHoldTime(generalConfig.xperRequiredTargetSelectionHoldTime());
+		state.setTargetSelectionStartDelay(generalConfig.xperTargetSelectionEyeMonitorStartDelay());
+		state.setTimeAllowedForInitialTargetSelection(generalConfig.xperTimeAllowedForInitialTargetSelection());
 		state.setTargetSelector(generalConfig.eyeTargetSelector());
-    	state.setDrawingController(generalConfig.drawingController());
+		state.setDrawingController(generalConfig.drawingController());
 		state.setInterTrialInterval(classicConfig.xperInterTrialInterval());
 		state.setTimeBeforeFixationPointOn(classicConfig.xperTimeBeforeFixationPointOn());
 		state.setTimeAllowedForInitialEyeIn(classicConfig.xperTimeAllowedForInitialEyeIn());
 		state.setRequiredEyeInHoldTime(classicConfig.xperRequiredEyeInHoldTime());
 		state.setSlidePerTrial(classicConfig.xperSlidePerTrial());
-		state.setSlideLength(300);						// GA slide length -- 300
-		state.setInterSlideInterval(200);				// GA slide ISI    -- 200
+//		state.setSlideLength(300);						// GA slide length -- 300
+		state.setSlideLength(classicConfig.xperSlideLength());
+//		state.setInterSlideInterval(200);				// GA slide ISI    -- 200
+		state.setInterSlideInterval(classicConfig.xperInterSlideInterval());
 		state.setDoEmptyTask(classicConfig.xperDoEmptyTask());
 		state.setSleepWhileWait(true);
 		state.setPause(classicConfig.xperExperimentInitialPause());

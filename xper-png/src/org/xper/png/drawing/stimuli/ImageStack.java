@@ -74,7 +74,7 @@ public class ImageStack implements Drawable {
     		// JK 11 July 2018 
     		// check for BLANK and load a standard png
     		if(imageName.contains("BLANK")) {
-    			imageName = resourcePath + "180719_r-190_g-2_l-0_s-0_R.png";
+    			imageName = resourcePath + "BLANK.png";
 //    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
     		}
 
@@ -120,7 +120,9 @@ public class ImageStack implements Drawable {
     		// reorder the 4 bytes per pixel data  
     		abgr2rgba(src);
 
+//    		System.out.println(pathname);
     		ByteBuffer pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
+//    		System.out.println(pixels.capacity());
 
     		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(textureIndex));
 		
@@ -130,8 +132,8 @@ public class ImageStack implements Drawable {
     		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
     		
     		// only for RGB
-    		// GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
-    		
+//    		 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+    	
     		// RGBA
     		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
     		

@@ -36,6 +36,7 @@ public class AldenSpec_class {
 
 	int lowPotentialEnergy;
 	Point3d makePrecarious;
+	int makePrecariousFinal;
 	Point3d rotation;
 	Point3d sun;
 
@@ -72,6 +73,7 @@ public class AldenSpec_class {
 
         this.lowPotentialEnergy = d.getLowPotentialEnergy();
         this.makePrecarious = d.getMakePrecarious();
+        this.makePrecariousFinal = d.getMakePrecariousFinal();
         this.rotation = d.getRotation();
         this.sun = d.getSun();
 	}
@@ -253,6 +255,13 @@ public class AldenSpec_class {
 	}
 	public Point3d getMakePrecarious(){
 		return makePrecarious;
+	}
+	
+	public void setMakePrecariousFinal(int makePrecariousFinal){
+		this.makePrecariousFinal = makePrecariousFinal;
+	}
+	public int getMakePrecariousFinal(){
+		return makePrecariousFinal;
 	}
 	
 	public void setRotation(Point3d rotation){
