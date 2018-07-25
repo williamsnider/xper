@@ -8,6 +8,8 @@ import org.xper.drawing.renderer.AbstractRenderer;
 import org.xper.png.drawing.preview.DrawingManager;
 import org.xper.png.drawing.preview.PNGmaker;
 import org.xper.png.drawing.stick.MStickSpec;
+import org.xper.png.drawing.stimuli.BlenderSpec;
+import org.xper.png.drawing.stimuli.AldenSpec_class;
 import org.xper.png.drawing.stimuli.PngObject;
 import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.expt.generate.PngGAParams;
@@ -16,6 +18,7 @@ import org.xper.png.parsedata.DataObject;
 import org.xper.png.expt.generate.PngStimSpecGenerator;
 import org.xper.png.util.PngDbUtil;
 import org.xper.time.TimeUtil;
+
 
 public class PngExptSpecGenerator implements PngStimSpecGenerator {
 
@@ -238,8 +241,12 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 
 		// PARENT STIM
 		String parent_blenderSpec = dbUtil.readStimSpec_blender(referenceDescId).getSpec();
-		// extract chosen limb, take in profile
-		int limb = 1;
+		BlenderSpec blendObject = BlenderSpec.fromXml(parent_blenderSpec);
+		
+		AldenSpec_class aldenSpec = blendObject.getAldenSpec();
+		int limb = aldenSpec.getMassManipulationLimb();
+//		limb = 1;
+		System.out.println(limb);
 
 		PngObjectSpec s = new PngObjectSpec();
 		DataObject d = new DataObject();

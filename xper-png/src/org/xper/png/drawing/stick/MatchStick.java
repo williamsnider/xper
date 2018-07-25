@@ -3951,8 +3951,9 @@ public class MatchStick {
     public void changeRadProfile(int radType, int limb)
     {
         int i, j;
-
+//        System.out.println(nComponent);
         System.out.println(" Try to do radChange type = " + radType);
+//        System.out.println(comp[limb]);
         double mini_rad = 0.4;
         double fat_rad = 0.8;
         //need num juncpt, endpt, and limb
