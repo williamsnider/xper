@@ -22,7 +22,7 @@ public class AldenSpec_class {
 	List<Integer> affectedLimbs;
 	List<String> limbMaterials;
 	int howMany;
-	String massManipulationLimb;
+	int massManipulationLimb;
 
 	String material;
 	int optical;
@@ -36,7 +36,7 @@ public class AldenSpec_class {
 
 	int lowPotentialEnergy;
 	Point3d makePrecarious;
-	int makePrecariousFinal;
+	double makePrecariousFinal;
 	Point3d rotation;
 	Point3d sun;
 
@@ -173,10 +173,10 @@ public class AldenSpec_class {
 		return howMany;
 	}
 	
-	public void setMassManipulationLimb(String massManipulationLimb){
+	public void setMassManipulationLimb(int massManipulationLimb){
 		this.massManipulationLimb = massManipulationLimb;
 	}
-	public String getMassManipulationLimb(){
+	public int getMassManipulationLimb(){
 		return massManipulationLimb;
 	}
 
@@ -257,10 +257,10 @@ public class AldenSpec_class {
 		return makePrecarious;
 	}
 	
-	public void setMakePrecariousFinal(int makePrecariousFinal){
+	public void setMakePrecariousFinal(double makePrecariousFinal){
 		this.makePrecariousFinal = makePrecariousFinal;
 	}
-	public int getMakePrecariousFinal(){
+	public double getMakePrecariousFinal(){
 		return makePrecariousFinal;
 	}
 	
