@@ -89,7 +89,8 @@ public class BlenderRunnable implements Runnable {
 		
 		
 		try {
-//			System.out.println(args);
+			// JK 91823
+			System.out.println(args);
 			System.out.println("Editing blender specifications.");
 			ProcessBuilder builder = new ProcessBuilder(args);
 			Process process = builder.start();
