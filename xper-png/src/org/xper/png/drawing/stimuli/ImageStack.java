@@ -51,7 +51,6 @@ public class ImageStack implements Drawable {
     	int numAnimacyImages = 10 * 2;
     	int numRollingImages = 60 * 2;
     	int numStillImages = 2;
-//    	int counter = 0;
     
     	String baseName;
     	String stimType;
@@ -80,7 +79,7 @@ public class ImageStack implements Drawable {
 	    			numStr = String.format("%04d", n);
 					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
 					fullFilenames.add(imageName);
-					//System.out.println("JK 3330 ImageStack:loadImages() : " + imageName + ", textureNdx = " + textureNdx);
+					System.out.println("JK 3330 ImageStack:loadImages() : " + imageName);
     			}
     		} else if(stimType.contains("ROLL")) {
     			numFrames += numRollingImages;
@@ -93,7 +92,7 @@ public class ImageStack implements Drawable {
 					
 					imageName = resourcePath + baseName + ext;
 					fullFilenames.add(imageName);
-					//System.out.println("JK 4330 ImageStack:loadImages() : " + imageName + ", textureNdx = " + textureNdx);
+					System.out.println("JK 4330 ImageStack:loadImages() : " + imageName);
     			}
     		}  else if(stimType.contains("BLANK")) {
     			numFrames += numStillImages;
@@ -104,9 +103,9 @@ public class ImageStack implements Drawable {
 						side = "_R";
 					}
 					
-					imageName = resourcePath + "fakeBlank" + ext;
+					imageName = resourcePath + "BLANK" + side + ext;
 					fullFilenames.add(imageName);
-					//System.out.println("JK 4330 ImageStack:loadImages() : " + imageName + ", textureNdx = " + textureNdx);
+					System.out.println("JK 5330 ImageStack:loadImages() : " + imageName);
     			}
     		} else {
     			numFrames += numStillImages;
@@ -120,17 +119,16 @@ public class ImageStack implements Drawable {
     				
     				imageName = resourcePath + baseName + side + ext;
     				fullFilenames.add(imageName);
-    				//System.out.println("JK 5330 ImageStack:loadImages() : " + imageName + ", textureNdx = " + textureNdx);
+    				System.out.println("JK 6330 ImageStack:loadImages() : " + imageName);
     			}
       		}
     	}
     	
-		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames );
+//		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames );
 		 
 		//this is important!
 		setNumFrames(numFrames);
 		frameNum = 0;
-//    	textureIds.clear();    	
     	GL11.glGenTextures(textureIds); 
 		
 		int n = 0;
@@ -138,21 +136,9 @@ public class ImageStack implements Drawable {
 		for(String str : fullFilenames) {
 			loadTexture(str, n++);
 		}
-    		imageName = resourcePath + filenames.get((int)(java.lang.Math.floor(n/2))) + ext;
-    		
-    		// JK 11 July 2018 
-    		// check for BLANK and load a standard png
-    		if(imageName.contains("BLANK")) {
-    			imageName = resourcePath + "BLANK.png";
-//    			System.out.println("JK 3330 ImageStack:loadImages() :fakeBlank for " + filenames.get((int)(java.lang.Math.floor(n/2))));
-    		}
-
-    		loadTexture(imageName, n);    		
-    	}   
-    	
+   	
     	// assume success?!
     	texturesLoaded = true;
-//   	  	System.out.format("JK 3340 ImageStack:loadImages() : loaded %d images %n", numFrames);
     }
 	
     
@@ -208,8 +194,8 @@ public class ImageStack implements Drawable {
 
 //		int ndx = 2 * frameNum + vpNum;
 //		System.out.println("JK 0838 viewPort == " + vpNum);
-		System.out.println("JK 093 ***** ImageStack:draw() ***** frameNum = " + frameNum + ", animation ndx = " 
-							+ c.getAnimationFrameIndex() + ", textureIds = " + textureIds.get(frameNum));
+		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", animation ndx = " 
+							+ c.getAnimationFrameIndex());
 	      
 		// JK 2981  18 July 2018 
 		float width = 1400  / scaler; //  2    // texture.getImageWidth();
@@ -218,12 +204,9 @@ public class ImageStack implements Drawable {
 		float xOffset = -width / 2; 
 
 	
-		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
-		
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
-//	   	GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(ndx));
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(frameNum));
-//		if(frameNum + 1 < numFrames)
 
         GL11.glBegin(GL11.GL_QUADS);
             GL11.glTexCoord2f(0, 1);
@@ -255,17 +238,17 @@ public class ImageStack implements Drawable {
 	 */
 	public static void main(String[] args) {
 		
-		if(true){
-			testImage();
-			return;
-		}
+//		if(true){
+//			testImage();
+//			return;
+//		}
 
 	}
 
 	public void setNumFrames(int numImgs) {
 		this.numFrames = numImgs;
 		textureIds = BufferUtils.createIntBuffer(numFrames);	
-		System.out.println("JK 3320 ImageStack:setNumFrames() : prepping for " + numFrames + " images ");
+//		System.out.println("JK 3320 ImageStack:setNumFrames() : prepping for " + numFrames + " images ");
 	}
 	
 	

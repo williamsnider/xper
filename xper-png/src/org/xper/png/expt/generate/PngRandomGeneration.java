@@ -67,6 +67,8 @@ public class PngRandomGeneration {
 	TrialType trialType;
 		
 	public void generateGA() {	
+		
+		
 		trialType = TrialType.GA;
 		generator.setTrialType(trialType);
 		
@@ -88,6 +90,7 @@ public class PngRandomGeneration {
 		while (cont == 'y') {
 			int c = PngIOUtil.promptInteger("Enter GA run number to continue. Else enter '0'");
 			if (c==0) {
+				
 				genNum = 1;
 				runNum = runNum + 1;
 				linNum = 0;

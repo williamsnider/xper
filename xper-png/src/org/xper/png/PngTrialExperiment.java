@@ -73,7 +73,6 @@ public class PngTrialExperiment implements Experiment {
 					// initialize trial context
 					stateObject.setCurrentContext(new TrialContext());
 					stateObject.getCurrentContext().setCurrentTask(stateObject.getCurrentTask());
-// JK 					TrialExperimentUtil.checkCurrentTaskAnimation(stateObject);
 //System.out.println(stateObject.getCurrentTask().getStimSpec());
 //System.out.println("JK27 PngTrialExperiment : run task");
 					
@@ -93,6 +92,14 @@ public class PngTrialExperiment implements Experiment {
 							try {
 								for (int i = 0; i < slidesPerTrial; i++) {
 //									System.out.println("PngTrialExper() runTrial() slide " + (i+1) + " of " + slidesPerTrial);
+
+// JK 	?				TrialExperimentUtil.checkCurrentTaskAnimation(stateObject);
+
+// JK 25 July 2018  add to stateObject, keep track of animation state for slide i									
+									
+// JK 25 July 2018  stateObject.setAnimationForSlide(int i)									
+// JK 25 July 2018
+// Set stateObject.setAnimation()  								
 									// draw the slide
 									TrialResult result = TrialExperimentUtil.doSlide(i, stateObject);
 									if (result != TrialResult.SLIDE_OK) {

@@ -2,7 +2,7 @@ package org.xper.png.vo;
 
 import org.xper.db.vo.TaskDoneEntry;
 
-public class AlexTaskDoneEntry extends TaskDoneEntry {
+public class PngTaskDoneEntry extends TaskDoneEntry {
 	long tstamp_local;
 
 	public long getTstampLocal() {
