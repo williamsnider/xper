@@ -29,7 +29,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 	@Dependency
 	AbstractRenderer renderer;
 	
-	static public enum StimType { OBJECT, ENVT, COMPOSITE, STABILITY, ANIMACY_ANIMATE, ANIMACY_STILL, DENSITY, MASS, BLANK };
+	static public enum StimType { OBJECT, ENVT, COMPOSITE, STABILITY, PERTURBATION, BALL, GRASSGRAVITY, ANIMACY_ANIMATE, ANIMACY_STILL, DENSITY, MASS, BLANK };
 
 	TrialType trialType;	
 	long taskId;	
@@ -375,7 +375,33 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		return stimObjId;
 	}
 	
-	
+	public long generatePHStimBlank(String prefix, long runNum, long gen, long lineage, int stimNum, String postHoc) {
+		// GENERATE STIM	
+		long stimObjId = globalTimeUtil.currentTimeMicros();
+
+		PngObjectSpec jspec = new PngObjectSpec();
+		DataObject d = new DataObject();
+		
+		String descId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + stimNum;
+		
+		jspec.setId(stimObjId);
+		jspec.setDescId(descId);
+		jspec.setGaPrefix(prefix);
+		jspec.setGaRunNum(runNum);
+		
+		String stickspec_str = "";
+		jspec.setStimType(postHoc);
+
+		// -- set data values
+		d.setStimObjId(stimObjId);
+		d.setTrialType(TrialType.GA.toString());
+		d.setRunNum(runNum);
+		d.setBirthGen(gen);
+		d.setLineage(lineage);
+		
+		dbUtil.writeStimObjData(stimObjId, descId, jspec.toXml(), stickspec_str, "", d.toXml());
+		return stimObjId;
+	}
 	
 	public PngExptSpec generateGATrial(List<Long> stimObjIds, String trialType) {
 		

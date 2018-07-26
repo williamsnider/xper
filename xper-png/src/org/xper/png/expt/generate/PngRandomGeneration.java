@@ -104,9 +104,10 @@ public class PngRandomGeneration {
 				String progressType = "";
 				String postHoc;
 				
-				while (!Arrays.asList("n","c","s","a","d","m").contains(progressType)) {
+				while (!Arrays.asList("n","b","g","c","a","s","p","d","m").contains(progressType)) {
 					System.out.println("To continue GA, enter 'n'.");
-					progressType = PngIOUtil.promptString("To proceed with post-hoc, enter 'c' (composite), 's' (stability), 'a' (joint animacy), 'd' (density), or 'm' (mass distribution)");
+					System.out.println("To proceed with generic post-hoc, enter 'b' (rolling ball) or 'g' (grass gravity).");
+					progressType = PngIOUtil.promptString("To proceed with GA post-hoc, enter 'c' (composite), 'a' (joint animacy), 's' (stability), 'p' (perturbation), 'd' (density), or 'm' (mass distribution)");
 				}
 				
 				runNum = c;
@@ -137,17 +138,29 @@ public class PngRandomGeneration {
 						createNextGen();
 					}
 					break;
+				case "b":
+					postHoc = "BALL";
+					createPHrollingBall();
+					break;
+				case "g":
+					postHoc = "GRASSGRAVITY";
+					createPHgrassGravity();
+					break;
 				case "c":
 					postHoc = "COMPOSITE";
 					createPHcomposite();
+					break;
+				case "a":
+					postHoc = "ANIMACY";
+					createPHanimacy();
 					break;
 				case "s":
 					postHoc = "STABILITY";
 					createPHstability();
 					break;
-				case "a":
-					postHoc = "ANIMACY";
-					createPHanimacy();
+				case "p":
+					postHoc = "PERTURBATION";
+					createPHperturbation();
 					break;
 				case "d":
 					postHoc = "DENSITY";
@@ -201,12 +214,11 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        // JK 3 July 2018  args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
-		System.out.println("starting cluster render");
+        photoRunner.run(args);
 
         photoRunner.run(args);
 		// now add blanks
@@ -372,7 +384,6 @@ public class PngRandomGeneration {
 		
 		// get acq info and put into db:
 		getSpikeResponses();
-
 	}
 
 	void createPHcomposite() {
@@ -409,7 +420,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -852,7 +863,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -1020,7 +1031,9 @@ public class PngRandomGeneration {
 			}
 		}
 
-		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "ProgressionClasses/animatePostHoc.py",placeholder,limbCounts);
+		System.out.println(basePath + "animatePostHoc.py"+ placeholder+ limbCounts);
+		
+		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "animatePostHoc.py",placeholder,limbCounts);
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/animatePostHoc.py",placeholder,limbCounts);
 		blenderRunnerAnimate.run();
 		
@@ -1031,12 +1044,13 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
         photoRunner.run(args);
-			// add blanks
+		
+		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
 		// create trial structure, populate stimspec, write task-to-do
@@ -1059,10 +1073,6 @@ public class PngRandomGeneration {
 	}
 	
 	void createPHstability() {
-
-		// choose best and worst raw obj stimulus?
-		// choose top 2 best-performing materials?
-
 		List<Long> blankStimObjIds = new ArrayList<Long>();	
 		List<Long> stimObjIds = new ArrayList<Long>();
 
@@ -1223,7 +1233,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -1328,7 +1338,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				thisZ = DataObject.fromXml(dbUtil.readStimSpec_data(currentId).getSpec());
@@ -1424,12 +1434,11 @@ public class PngRandomGeneration {
 		stimObjIds.addAll(blankStimObjIds);	
 
 		// create trial structure, populate stimspec, write task-to-do
-		System.out.println("Creating trial spec for this generation.");
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numStimsPerTrial = 1;
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
+		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
 
 		System.out.println("Waiting for render completion...");
@@ -1442,7 +1451,204 @@ public class PngRandomGeneration {
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
+	
+	void createPHgrassGravity() {
 		
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
+
+		for (int n=0;n<25;n++) {
+			generator.generatePHStimBlank(prefix, runNum, genNum, linNum, n, "GRASSGRAVITY");
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n);
+		}
+
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "grassGravityPostHoc.py");
+//		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/grassGravityPostHoc.py");
+		blenderRunnerRefresh.run();
+		
+//		// create PNG thumbnails (not for blanks)
+//		if (doSaveThumbnails) {
+//			System.out.println("Saving PNGs.");
+//			pngMaker.MakeFromIds(stimObjIds);
+//		}
+		
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+        
+		// add blanks
+		stimObjIds.addAll(blankStimObjIds);	
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
+
+		// write updated global genId and number of trials in this generation to db:
+		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
+
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
+		// get acq info and put into db:
+		getSpikeResponses();
+	}
+	
+	void createPHrollingBall() {
+		
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
+
+		for (int n=0;n<5;n++) {
+			generator.generatePHStimBlank(prefix, runNum, genNum, linNum, n, "BALL");
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n);
+		}
+
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "rollingBallPostHoc.py");
+//		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/rollingBallPostHoc.py");
+		blenderRunnerRefresh.run();
+		
+//		// create PNG thumbnails (not for blanks)
+//		if (doSaveThumbnails) {
+//			System.out.println("Saving PNGs.");
+//			pngMaker.MakeFromIds(stimObjIds);
+//		}
+		
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
+		
+//        BlenderRunnable photoRunner = new BlenderRunnable();
+//        List<String> args = new ArrayList<String>();
+//        args.add("ssh");
+//        args.add("alexandriya@172.30.9.11");
+//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+//        args.add(Integer.toString(numJobs));
+//        args.add(prefixRunGen);
+//        photoRunner.setDoWaitFor(false);
+//        photoRunner.run(args);
+//        
+		// add blanks
+		stimObjIds.addAll(blankStimObjIds);	
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
+
+		// write updated global genId and number of trials in this generation to db:
+		int numStimPerTrial = 1;
+		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimPerTrial);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
+
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
+		// get acq info and put into db:
+		getSpikeResponses();
+	}
+	
+	void createPHperturbation() {
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stims:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
+
+		// choose stims to morph:
+		// which fitness method? 	1 = highest only
+		// 							2 = minima, maxima
+		//							3 = low, medium, high designation and random selection
+		int fitnessMethod = 3;
+
+		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
+		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+
+		int numMorphs = PngGAParams.PH_stability_numMorphs;
+		List<String> placeholder = new ArrayList<String>();
+		List<Integer> morphs = new ArrayList<Integer>();
+		morphs.add(fitnessMethod); // document the number of objects in use per lineage
+		morphs.add(numMorphs); // number of stability morphs that occur per lineage
+		
+		int stimNum = 0;
+
+		for (int n=0;n<stimsToMorph_lin1.size();n++) {
+			long currentId = stimsToMorph_lin1.get(n);
+
+			// includes a copy that shall remain unchanged
+			for (int m=0;m<numMorphs*2;m++) {
+				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, stimNum, "PERTURBATION"));
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
+				stimNum ++;
+			}
+		}
+
+		// do low stim all morphs, med stim all morphs, high stim all morphs. first stim in each category is the plain one.
+		
+		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "perturbationPostHoc.py",placeholder,morphs);
+//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
+		blenderRunnerPHGeneric.run();
+
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+		
+		// add blanks
+		stimObjIds.addAll(blankStimObjIds);	
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial);
+
+		// write updated global genId and number of trials in this generation to db:
+		int numStimsPerTrial = PngGAParams.GA_numStimsPerTrial;
+		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
+
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
+		// get acq info and put into db:
+		getSpikeResponses();
+	}
+	
 	ArrayList<List<Long>> chooseBestObjs(int fitnessMethod) {
 
 		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
@@ -1458,7 +1664,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
+				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
 					continue;
 				}
 
@@ -1506,7 +1712,7 @@ public class PngRandomGeneration {
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());

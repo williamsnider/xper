@@ -50,7 +50,7 @@ public class PNGmaker {
 		
 		for (Long id : stimObjIds) {
 			PngObjectSpec jspec = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(id).getSpec());
-			if (Arrays.asList(StimType.OBJECT,StimType.COMPOSITE,StimType.STABILITY,StimType.ANIMACY_ANIMATE,StimType.ANIMACY_STILL,StimType.DENSITY,StimType.MASS).contains(StimType.valueOf(jspec.getStimType()))) {
+			if (Arrays.asList(StimType.OBJECT,StimType.COMPOSITE,StimType.STABILITY,StimType.PERTURBATION,StimType.BALL,StimType.GRASSGRAVITY,StimType.ANIMACY_ANIMATE,StimType.ANIMACY_STILL,StimType.DENSITY,StimType.MASS).contains(StimType.valueOf(jspec.getStimType()))) {
 				MStickSpec stickspec = MStickSpec.fromXml(dbUtil.readStimSpec_stick(id).getSpec());
 				jspec.setDoStickGen(false); jspec.setDoBlenderMorph(false); jspec.setDoStickMorph(false);
 				specs.put(stickspec, jspec);
