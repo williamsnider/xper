@@ -60,8 +60,8 @@ public class PngRandomGeneration {
 	long genNum = 1;
 	long linNum = 0;
 	
-//	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
-	String basePath = "/home/alexandriya/jkBlendRend/"; // ProgressionClasses/";
+	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
+//	String basePath = "/home/alexandriya/jkBlendRend/"; // ProgressionClasses/";
 	
 	static public enum TrialType { GA };
 	TrialType trialType;
@@ -203,7 +203,8 @@ public class PngRandomGeneration {
 			pngMaker.MakeFromIds(stimObjIds);
 		}
 
-		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "ProgressionClasses/randomSpec.py");
+		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "randomSpec.py");
+//		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "ProgressionClasses/randomSpec.py");
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py");
 		blenderRunner.run();
 
@@ -256,7 +257,8 @@ public class PngRandomGeneration {
 			System.out.println("Lineage " + linNum + ": Generating and saving random stimulus " + k); 
 		}
 		
-		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "ProgressionClasses/randomSpec.py",stimObjIds);
+		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "randomSpec.py",stimObjIds);
+//		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "ProgressionClasses/randomSpec.py",stimObjIds);
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py",stimObjIds);
 		blenderRunner.run();
 
@@ -339,11 +341,13 @@ public class PngRandomGeneration {
 		System.out.println(stimsToMorph+" MORPH");
 		System.out.println(stimsToRestore+" RESTORE");
 
-		BlenderRunnable blenderRunnerMorph = new BlenderRunnable(basePath + "ProgressionClasses/morphSpec.py",stimsToMorph);
+		BlenderRunnable blenderRunnerMorph = new BlenderRunnable(basePath + "morphSpec.py",stimsToMorph);
+//		BlenderRunnable blenderRunnerMorph = new BlenderRunnable(basePath + "ProgressionClasses/morphSpec.py",stimsToMorph);
 //		BlenderRunnable blenderRunnerMorph = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/morphSpec.py",stimsToMorph);
 		blenderRunnerMorph.run();
 
-		BlenderRunnable blenderRunnerRestore = new BlenderRunnable(basePath + "ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
+		BlenderRunnable blenderRunnerRestore = new BlenderRunnable(basePath + "restoreMorphSpec.py",stimsToRestore);
+//		BlenderRunnable blenderRunnerRestore = new BlenderRunnable(basePath + "ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
 //		BlenderRunnable blenderRunnerRestore = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
 		blenderRunnerRestore.run();
 
@@ -359,7 +363,8 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -789,7 +794,8 @@ public class PngRandomGeneration {
 			possiblePositions1.add((int) (long) linNum); // document lineage for python
 			System.out.println(constantAttributes_lin1);
 			System.out.println(possiblePositions1);
-			BlenderRunnable blenderRunnerComposite_lin1 = new BlenderRunnable(basePath + "ProgressionClasses/compositePostHoc.py",constantAttributes_lin1,possiblePositions1);
+			
+			BlenderRunnable blenderRunnerComposite_lin1 = new BlenderRunnable(basePath + "compositePostHoc.py",constantAttributes_lin1,possiblePositions1);
 //			BlenderRunnable blenderRunnerComposite_lin1 = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/compositePostHoc.py",constantAttributes_lin1,possiblePositions);
 			blenderRunnerComposite_lin1.run();
 		}
@@ -801,7 +807,8 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1110,7 +1117,8 @@ public class PngRandomGeneration {
 
 		// do low stim all morphs, med stim all morphs, high stim all morphs. first stim in each category is the plain one.
 		
-		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
+		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "stabilityPostHoc.py",placeholder,morphs);
+//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
 		blenderRunnerPHGeneric.run();
 
@@ -1121,7 +1129,8 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1276,7 +1285,8 @@ public class PngRandomGeneration {
 		
 		constantAttributes.add(allMatAttrs_lin1.get(allMatAttrs_lin1.size()-2));
 
-		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable(basePath + "ProgressionClasses/densityPostHoc.py", constantAttributes, "both");
+		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable(basePath + "densityPostHoc.py", constantAttributes, "both");
+//		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable(basePath + "ProgressionClasses/densityPostHoc.py", constantAttributes, "both");
 //		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/densityPostHoc.py" + constantAttributes);
 		blenderRunnerPHDensity.run();
 		
@@ -1287,7 +1297,8 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1379,7 +1390,8 @@ public class PngRandomGeneration {
 		// call python here to determine which is the limb of interest
 		// load blenderspec back in order to extract id of limb of interest (in specGenerator)
 		
-		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "ProgressionClasses/massPostHoc.py");
+		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "massPostHoc.py");
+//		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "ProgressionClasses/massPostHoc.py");
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/massPostHoc.py");
 		blenderRunnerAnimate.run();
 
@@ -1407,7 +1419,8 @@ public class PngRandomGeneration {
 			}
 		}
 		
-		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "ProgressionClasses/stimRefresh.py",placeholder,objCounts);
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "stimRefresh.py",placeholder,objCounts);
+//		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "ProgressionClasses/stimRefresh.py",placeholder,objCounts);
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/stimRefresh.py",placeholder,objCounts);
 		blenderRunnerRefresh.run();
 		
@@ -1424,7 +1437,8 @@ public class PngRandomGeneration {
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
