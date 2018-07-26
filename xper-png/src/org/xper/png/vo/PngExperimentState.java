@@ -5,6 +5,7 @@ import org.xper.Dependency;
 import org.xper.classic.vo.SlideTrialExperimentState;
 import org.xper.experiment.TaskDataSource;
 import org.xper.eye.EyeTargetSelector;
+import org.xper.png.expt.PngExptSpec;
 
 /**
  * Target position and size describe the response window.
@@ -37,18 +38,16 @@ public class PngExperimentState extends SlideTrialExperimentState {
 	int correctTrialCount = 1;
 	int MaxTrialCount = 3;
 
-	Document currentSpecDoc;
 	
 	public PngExperimentState () {
 	}
 	
 	
-//	// JK 6 July 2018 debug
-//	public void setTaskDataSource(TaskDataSource taskDataSource) {
-//	//	taskDataSource = taskDataSource;
-//		taskDataSource.
-//		super.setTaskDataSource(taskDataSource);
-//	}
+	
+	public int getNumSlidesPerTrial() {
+		return PngExptSpec.fromXml(getCurrentTask().getStimSpec()).getStimObjIdCount();
+		
+	}
 
 	public int getCorrectTrialCount() {
 		return correctTrialCount;
@@ -72,13 +71,7 @@ public class PngExperimentState extends SlideTrialExperimentState {
 		
 	}
 	
-	public Document getCurrentSpecDoc() {
-		return currentSpecDoc;
-	}
 
-	public void setCurrentSpecDoc(Document currentSpecDoc) {
-		this.currentSpecDoc = currentSpecDoc;
-	}
 
 	public EyeTargetSelector getTargetSelector() {
 		return targetSelector;

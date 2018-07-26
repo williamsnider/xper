@@ -68,7 +68,7 @@ JK 21 June 2018
 	
 	
 	<target name="dist" depends="compile">
-		<jar jarfile="${dist.home}/xper_sach.jar" basedir="${build.home}">
+		<jar jarfile="${dist.home}/xper-png.jar" basedir="${build.home}">
 		</jar>
 		
 		<jar jarfile="${dist.home}/ga_randgen.jar">

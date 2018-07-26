@@ -222,9 +222,6 @@ public abstract class AbstractRenderer implements Renderer {
 	}
 
 	public void setDistance(double distance) {
-		
-		System.out.println("JK 0382 setDistance() " + distance);
-
 		this.distance = distance;
 	}
 

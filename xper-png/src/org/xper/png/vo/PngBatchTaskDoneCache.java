@@ -7,12 +7,12 @@ import org.xper.util.DbUtil;
 
 import com.mysql.jdbc.TimeUtil;
 
-public class AlexBatchTaskDoneCache extends BatchTaskDoneCache {
+public class PngBatchTaskDoneCache extends BatchTaskDoneCache {
 
 	DbUtil dbUtil = super.getDbUtil();
 	TimeUtil timeUtil;
 	
-	public AlexBatchTaskDoneCache(int batchSize) {
+	public PngBatchTaskDoneCache(int batchSize) {
 		super(batchSize);
 		// TODO Auto-generated constructor stub
 	}

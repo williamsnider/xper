@@ -1,7 +1,9 @@
 package org.xper.png.expt;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.xper.Dependency;
 import org.xper.classic.vo.TrialContext;
@@ -70,21 +72,28 @@ public class PngExptScene extends AbstractTaskScene {
 	
 	// JK 9 July 2018
 	public void trialStart(TrialContext context) {
-		System.out.println("\nJK 0639 PngExptScene:trialStart "); //+ context.getCurrentTask().get);
-		
+		System.out.println("\nJK 0639 PngExptScene:trialStart "); 
+	
 		spec = PngExptSpec.fromXml(context.getCurrentTask().getStimSpec());
-		int numImages = spec.getStimObjIdCount();
-		List<String> filenames = new ArrayList<String>();
 		
+		// numImages might not be the actual number / 2 since animations are specified with a single basename
+		int numImages = spec.getStimObjIdCount();
+		
+		List<Map<String, Object>> stimInfo = new ArrayList<Map<String, Object>>();
+		Map<String, Object> tmp = new HashMap();
 		
 		for(int i = 0; i < numImages; i++) {
-			filenames.add(i, dbUtil.readDescriptiveIdFromStimObjId(spec.getStimObjId(i)));
-//			System.out.println("PngExptScene:trialStart() : " + filenames.get(i) + " : " + spec.getStimObjId(i));
+			//filenames.add(i, dbUtil.readDescriptiveIdFromStimObjId(spec.getStimObjId(i)));
+			
+			// map keys "descId" and "stimType"
+			tmp = dbUtil.readDescriptiveIdAndTypeFromStimObjId(spec.getStimObjId(i));
+			stimInfo.add(i, tmp);
+//			System.out.println("PngExptScene:trialStart() : " + stimInfo.get(i) + " : " + spec.getStimObjId(i) + " : tmp = " + (String) tmp.get("stimType"));
 		}
 		
 		images = new ImageStack();
-		images.setNumFrames(numImages);
-		images.loadImages(filenames);
+		// this doesn't always work so don't bother images.setNumFrames(numImages);
+		images.loadImages(stimInfo);
 	}
 
 

@@ -4,7 +4,7 @@ import org.xper.png.util.PngIOUtil;
 
 import com.thoughtworks.xstream.XStream;
 
-public class AlexExpLogMessage {
+public class PngExpLogMessage {
 	String status;				// start, stop, gen_done, ... ?
 	String trialType;			// which trial type (ga, beh, etc) ?
 	long depth = -1;			// electrode depth, if applicable
@@ -16,7 +16,7 @@ public class AlexExpLogMessage {
 	long cellNum = -1;			// cell number as YYYYMMDDXXX
 
 	
-	public AlexExpLogMessage(String status, String trialType, long genNum, long globalGenId, boolean realExp, long timestamp) {
+	public PngExpLogMessage(String status, String trialType, long genNum, long globalGenId, boolean realExp, long timestamp) {
 		super();
 		setStatus(status);
 		setTrialType(trialType);
@@ -25,7 +25,7 @@ public class AlexExpLogMessage {
 		setRealExp(realExp);
 		setTimestamp(timestamp);
 	}
-	public AlexExpLogMessage(String status, String trialType,long depth, long genNum, long globalGenId, boolean realExp, long timestamp) {
+	public PngExpLogMessage(String status, String trialType,long depth, long genNum, long globalGenId, boolean realExp, long timestamp) {
 		super();
 		setStatus(status);
 		setTrialType(trialType);
@@ -36,7 +36,7 @@ public class AlexExpLogMessage {
 		setTimestamp(timestamp);
 	}
 	
-	public AlexExpLogMessage(String status, String trialType,long depth, long genNum, long globalGenId, long cellNum, boolean realExp, long timestamp) {
+	public PngExpLogMessage(String status, String trialType,long depth, long genNum, long globalGenId, long cellNum, boolean realExp, long timestamp) {
 		super();
 		setStatus(status);
 		setTrialType(trialType);
@@ -108,14 +108,14 @@ public class AlexExpLogMessage {
 	static XStream xstream = new XStream();
 
 	static {
-		xstream.alias("AlexExpLogMessage", AlexExpLogMessage.class);
+		xstream.alias("AlexExpLogMessage", PngExpLogMessage.class);
 	}
 	
-	public static AlexExpLogMessage fromXml (String xml) {
-		return (AlexExpLogMessage)xstream.fromXML(xml);
+	public static PngExpLogMessage fromXml (String xml) {
+		return (PngExpLogMessage)xstream.fromXML(xml);
 	}
 	
-	public static String toXml (AlexExpLogMessage msg) {
+	public static String toXml (PngExpLogMessage msg) {
 		return xstream.toXML(msg);
 	}
 }

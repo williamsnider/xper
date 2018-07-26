@@ -4,6 +4,7 @@ package org.xper.png.util;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -150,6 +151,22 @@ public class PngDbUtil extends DbUtil {
 	public String readDescriptiveIdFromStimObjId(long stimObjId) {
 		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);
 		return jt.queryForObject("SELECT descId from StimObjData where id = ?",String.class, stimObjId);
+	}
+	
+//	JK 20 July 2018
+	public Map<String, Object> readDescriptiveIdAndTypeFromStimObjId(long stimObjId) {
+		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);
+		return jt.queryForMap("SELECT descId as descId, EXTRACTVALUE(javaspec, '/PngObjectSpec/stimType') as stimType " +
+								 "FROM StimObjData where id = ?", stimObjId);
+	
+	}
+	
+//// JK 23 July 2018
+	public void resetTasks(long taskId) {
+			JdbcTemplate jt = new JdbcTemplate(dataSource);
+			jt.update("update TaskDone set task_id = ?, part_done = 0,", 
+					new Object[] {  taskId });
+		
 	}
 	
 	public int readRenderStatus(String prefix, long runNum, long genNum, long linNum) { //#####!
