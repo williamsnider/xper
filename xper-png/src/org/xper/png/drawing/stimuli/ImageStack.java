@@ -71,18 +71,35 @@ public class ImageStack implements Drawable {
     		if(stimType.contains("ANIMATE")) {
     			numFrames += numAnimacyImages;
     			optionalPath = baseName + "/";
-    			for(int n = 1; n <= numAnimacyImages; n++) {
+    			for(int n = 0; n < numAnimacyImages; n++) {
 	    			if(n % 2 == 0) {
-						side = "_R_";
+						side = "_L";
 					} else {
-						side = "_L_";
-						folderIdent++;
+						side = "_R";
 					}
-	    			numStr = String.format("%04d", folderIdent);
+	    			numStr = String.format("_%04d", (int)(Math.round(n/2) + 1));
 					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
 					fullFilenames.add(imageName);
-					System.out.println("JK 3330 ImageStack:loadImages() : " + imageName);
+					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
     			}
+    			
+  // JK 27 July
+  //   this could be much slicker ...
+    			
+    			// loop 'backwards'
+    			numFrames += numAnimacyImages;
+    			for(int n = numAnimacyImages - 1; n >= 0; n--) {
+	    			if(n % 2 == 0) {
+						side = "_L";
+					} else {
+						side = "_R";
+					}
+	    			numStr = String.format("_%04d", (int)(Math.round(n/2) + 1));
+					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
+					fullFilenames.add(imageName);
+					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : down " + imageName);
+    			}
+    			
     		} else if(stimType.contains("ROLL")) {
     			numFrames += numRollingImages;
     			for(int n = 0; n < numRollingImages; n++) {
@@ -94,7 +111,7 @@ public class ImageStack implements Drawable {
 					
 					imageName = resourcePath + baseName + ext;
 					fullFilenames.add(imageName);
-					System.out.println("JK 4330 ImageStack:loadImages() : " + imageName);
+//					System.out.println("JK 4330 ImageStack:loadImages() : " + imageName);
     			}
     		}  else if(stimType.contains("BLANK")) {
     			numFrames += numStillImages;
@@ -107,7 +124,7 @@ public class ImageStack implements Drawable {
 					
 					imageName = resourcePath + "BLANK" + side + ext;
 					fullFilenames.add(imageName);
-					System.out.println("JK 5330 ImageStack:loadImages() : " + imageName);
+					System.out.println("JK 5330 ImageStack:loadImages() BLANK : " + imageName);
     			}
     		} else {
     			numFrames += numStillImages;
@@ -121,12 +138,11 @@ public class ImageStack implements Drawable {
     				
     				imageName = resourcePath + baseName + side + ext;
     				fullFilenames.add(imageName);
-    				System.out.println("JK 6330 ImageStack:loadImages() : " + imageName);
+    				System.out.println("JK 6330 ImageStack:loadImages() STILL : " + imageName);
     			}
       		}
     	}
     	
-//		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames );
 		 
 		//this is important!
 		setNumFrames(numFrames);
@@ -138,7 +154,10 @@ public class ImageStack implements Drawable {
 		for(String str : fullFilenames) {
 			loadTexture(str, n++);
 		}
-   	
+  
+		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
+
+		
     	// assume success?!
     	texturesLoaded = true;
     }
@@ -196,9 +215,9 @@ public class ImageStack implements Drawable {
 
 //		int ndx = 2 * frameNum + vpNum;
 //		System.out.println("JK 0838 viewPort == " + vpNum);
-		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", animation ndx = " 
-							+ c.getAnimationFrameIndex());
+//		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", slideIndex = " + c.getSlideIndex() + ", animation ndx = " + c.getAnimationFrameIndex());
 	      
+		
 		// JK 2981  18 July 2018 
 		float width = 1400  / scaler; //  2    // texture.getImageWidth();
 		float height = 1050 / scaler; //  2    // texture.getImageHeight();		
@@ -226,7 +245,7 @@ public class ImageStack implements Drawable {
         
         GL11.glDisable(GL11.GL_TEXTURE_2D);
     
-        if(frameNum < numFrames){
+        if(frameNum < numFrames - 1){
         	frameNum += 1;
         }
         		

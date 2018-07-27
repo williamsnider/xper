@@ -6,6 +6,10 @@ import org.xper.classic.vo.SlideTrialExperimentState;
 import org.xper.experiment.TaskDataSource;
 import org.xper.eye.EyeTargetSelector;
 import org.xper.png.expt.PngExptSpec;
+import org.xper.png.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Target position and size describe the response window.
@@ -37,7 +41,10 @@ public class PngExperimentState extends SlideTrialExperimentState {
 	
 	int correctTrialCount = 1;
 	int MaxTrialCount = 3;
-
+	
+	// JK 27 July 2018
+	//   save animation states for each slide
+	ArrayList<Boolean>animationStates = new ArrayList<Boolean>();
 	
 	public PngExperimentState () {
 	}
@@ -131,7 +138,30 @@ public class PngExperimentState extends SlideTrialExperimentState {
 	public void setMaintainHoldTime(long maintainHoldTime) {
 		this.maintainHoldTime = maintainHoldTime;
 	}
-
 	
+	
+	public void setAnimationStates(PngDbUtil dbUtil) {
+		animationStates.clear();
+		long taskId = this.getCurrentTask().getTaskId();
+		List<String> typeStrs = dbUtil.readAllStimTypesByTask(taskId);
+		
+		for(String str : typeStrs) {
+			if(str.contains("ANIMATE")) {
+				animationStates.add(Boolean.TRUE);
+			}else {
+				animationStates.add(Boolean.FALSE);
+			}
+		}
+		
+		for(Boolean b : animationStates) {
+			System.out.println("JK 83832 setAnimationStates() : state == " + b.toString());
+		}
+	}
+	
+	public void setAnimationForSlide(int slideNum) {
+		super.setAnimation(this.animationStates.get(slideNum));
+	}
+	
+		
 	
 }

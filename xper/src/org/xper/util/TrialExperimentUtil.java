@@ -73,7 +73,8 @@ public class TrialExperimentUtil {
 		currentContext.setCurrentSlideOnTime(slideOnLocalTime);
 		EventUtil.fireSlideOnEvent(i, slideOnLocalTime,
 				slideEventListeners);
-
+//		System.out.println("JK 9099 slide on " + slideOnLocalTime % 10000);
+		
 		// wait for current slide to finish
 		do {
 			if (!eyeController.isEyeIn()) {
@@ -87,7 +88,7 @@ public class TrialExperimentUtil {
 						currentContext);
 				if (logger.isDebugEnabled()) {
 					long t = timeUtil.currentTimeMicros();
-					logger.debug(new Timestamp(t/1000).toString() + " " + t % 1000 + " frame: " + currentContext.getAnimationFrameIndex());
+					logger.debug(new Timestamp(t/1000).toString() + " " + t % 10000 + " frame: " + currentContext.getAnimationFrameIndex());
 				}
 			}
 		} while (timeUtil.currentTimeMicros() < slideOnLocalTime
@@ -101,7 +102,8 @@ public class TrialExperimentUtil {
 						currentContext.getAnimationFrameIndex(),
 						slideEventListeners);
 		currentContext.setAnimationFrameIndex(0);
-		
+		stateObject.setAnimation(false);
+//		System.out.println("JK 9099 slide off + " + timeUtil.currentTimeMicros() % 1000);
 		return TrialResult.SLIDE_OK;
 	}
 	

@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.xper.db.vo.GenerationTaskDoneList;
+import org.xper.db.vo.RFInfoEntry;
 import org.xper.db.vo.StimSpecEntry;
 import org.xper.db.vo.TaskDoneEntry;
 import org.xper.util.DbUtil;
@@ -161,13 +162,84 @@ public class PngDbUtil extends DbUtil {
 	
 	}
 	
-//// JK 23 July 2018
-	public void resetTasks(long taskId) {
-			JdbcTemplate jt = new JdbcTemplate(dataSource);
-			jt.update("update TaskDone set task_id = ?, part_done = 0,", 
-					new Object[] {  taskId });
+//	SELECT  extractvalue(spec, '/StimSpec/object')
+//	FROM StimSpec
+//	where id = 1532619299807779
+	
+	
+	
+// JK 26 July 2018
+public List<Long> readAllStimObjIdsByTask(long taskId) {
 		
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		
+		final List<Long> allIds = new ArrayList<Long>();
+				
+		jt.query(
+				" SELECT EXTRACTVALUE(spec, '/StimSpec/object') as objStr " +
+			    " FROM StimSpec where id = ?", 
+				new Object[] { taskId },
+				new RowCallbackHandler() {
+					public void processRow(ResultSet rs) throws SQLException {
+						String[] strs;
+						strs = (rs.getString("objStr")).split(" ");
+						
+						for(String s : strs) {							
+							allIds.add(Long.parseLong(s));
+						}
+					}});
+		return allIds;
 	}
+	
+//
+// FROM alexandriya_180218_test.StimObjData
+//# where id = 1532369879621234
+//order by id desc;
+
+
+//JK 26 July 2018
+public List<String> readAllStimTypesByTask(long taskId) {
+		
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		final List<String> stimTypes = new ArrayList<String>();
+		final List<Long> allIds = readAllStimObjIdsByTask(taskId);
+		
+		for(Long id : allIds) {
+		jt.query(
+				" SELECT EXTRACTVALUE(javaspec, '/PngObjectSpec/stimType') as stimStr " +
+			    " FROM StimObjData where id = ?", 
+				new Object[] { id },
+				new RowCallbackHandler() {
+					public void processRow(ResultSet rs) throws SQLException {
+						stimTypes.add(rs.getString("stimStr"));
+					}});
+		}
+		return stimTypes;
+	}
+
+//
+//	public List<long> readStimObjIds(long taskId) {
+//		final ArrayList<long> result = new ArrayList<long>();
+//
+//		JdbcTemplate jt = new JdbcTemplate(dataSource);
+//		jt.query(
+//				" SELECT EXTRACTVALUE(spec, '/StimSpec/object') " +
+//				" from RFInfo " +
+//				" where tstamp >= ? and tstamp <= ? " + 
+//				" order by tstamp ", 
+//				new Object[] {startTime, stopTime },
+//				new RowCallbackHandler() {
+//					public void processRow(ResultSet rs) throws SQLException {
+//						RFInfoEntry ent = new RFInfoEntry();
+//						ent.setTstamp(rs.getLong("tstamp")); 
+//						ent.setInfo(rs.getString("info")); 
+//						result.add(ent);
+//					}				
+//				});
+//		return result;
+//	}
+
+	
 	
 	public int readRenderStatus(String prefix, long runNum, long genNum, long linNum) { //#####!
 		JdbcTemplate jt = new JdbcTemplate(dataSource);

@@ -43,6 +43,9 @@ public class PngTrialExperiment implements Experiment {
 
 	@Dependency
 	PngExperimentState stateObject;
+	
+	// JK 
+	PngDbUtil dbUtil;
 
 	public boolean isRunning() {
 		return threadHelper.isRunning();
@@ -59,6 +62,7 @@ public class PngTrialExperiment implements Experiment {
 //					System.out.println("\n\n JK 04225 PngTrialExperiment : fetching next task");
 					// get a task
 					TrialExperimentUtil.getNextTask(stateObject);
+					
 
 					if (stateObject.getCurrentTask() == null && !stateObject.isDoEmptyTask()) {
 						try {
@@ -73,16 +77,14 @@ public class PngTrialExperiment implements Experiment {
 					// initialize trial context
 					stateObject.setCurrentContext(new TrialContext());
 					stateObject.getCurrentContext().setCurrentTask(stateObject.getCurrentTask());
-//System.out.println(stateObject.getCurrentTask().getStimSpec());
-//System.out.println("JK27 PngTrialExperiment : run task");
 					
 					// run trial
 					return TrialExperimentUtil.runTrial(stateObject, threadHelper, new SlideRunner() {
 
 						public TrialResult runSlide() {
 							int slidesPerTrial = stateObject.getNumSlidesPerTrial();
-							
-							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidesPerTrial);
+							stateObject.setAnimationStates(dbUtil);
+//							System.out.println("JK28 PngTrialExperiment : slidesPerTrial =  " + slidesPerTrial);
 							TrialDrawingController drawingController = stateObject.getDrawingController();
 							ExperimentTask currentTask = stateObject.getCurrentTask();
 							TrialContext currentContext = stateObject.getCurrentContext();	
@@ -93,13 +95,8 @@ public class PngTrialExperiment implements Experiment {
 								for (int i = 0; i < slidesPerTrial; i++) {
 //									System.out.println("PngTrialExper() runTrial() slide " + (i+1) + " of " + slidesPerTrial);
 
-// JK 	?				TrialExperimentUtil.checkCurrentTaskAnimation(stateObject);
-
-// JK 25 July 2018  add to stateObject, keep track of animation state for slide i									
-									
-// JK 25 July 2018  stateObject.setAnimationForSlide(int i)									
-// JK 25 July 2018
-// Set stateObject.setAnimation()  								
+									stateObject.setAnimationForSlide(i);								
+							
 									// draw the slide
 									TrialResult result = TrialExperimentUtil.doSlide(i, stateObject);
 									if (result != TrialResult.SLIDE_OK) {
@@ -117,22 +114,7 @@ public class PngTrialExperiment implements Experiment {
 
 									// prepare next task
 									if (i < slidesPerTrial - 1) {
-//										TrialExperimentUtil.getNextTask(stateObject);
-//										currentTask = stateObject.getCurrentTask();
-//										if (currentTask == null && !stateObject.isDoEmptyTask()) {
-//											try {
-//												Thread.sleep(SlideTrialExperimentState.NO_TASK_SLEEP_INTERVAL);
-//											} catch (InterruptedException e) {
-//											}
-//											//return TrialResult.NO_MORE_TASKS;
-//											//deliver juice after complete.
-//											System.out.println("JK 3232 PngTrialExper() runTrial() : returning TRIAL_COMPLETE early");
-//
-//											return TrialResult.TRIAL_COMPLETE;
-//										}
-										// JK stateObject.setAnimation(XmlUtil.slideIsAnimation(currentTask));
-//										stateObject.setAnimation(false);
-										
+									
 										currentContext.setSlideIndex(i + 1);
 										currentContext.setCurrentTask(currentTask);
 										drawingController.prepareNextSlide(currentTask,
@@ -191,5 +173,10 @@ public class PngTrialExperiment implements Experiment {
 	public void setPause(boolean pause) {
 		stateObject.setPause(pause);
 	}
+	
+	public void setDbUtil(PngDbUtil dbUtil) {
+		this.dbUtil = dbUtil;
+	}
+	
 
 }
