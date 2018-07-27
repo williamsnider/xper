@@ -1433,16 +1433,16 @@ public class PngRandomGeneration {
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-        BlenderRunnable photoRunner = new BlenderRunnable();
-        List<String> args = new ArrayList<String>();
-        args.add("ssh");
-        args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-        args.add(Integer.toString(numJobs));
-        args.add(prefixRunGen);
-        photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+//        BlenderRunnable photoRunner = new BlenderRunnable();
+//        List<String> args = new ArrayList<String>();
+//        args.add("ssh");
+//        args.add("alexandriya@172.30.9.11");
+////        args.add(basePath + "masterSubmitScript.sh");
+//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+//        args.add(Integer.toString(numJobs));
+//        args.add(prefixRunGen);
+//        photoRunner.setDoWaitFor(false);
+//        photoRunner.run(args);
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
@@ -1475,8 +1475,8 @@ public class PngRandomGeneration {
 		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
 		System.out.println("Blank stimulus added.");
 
-		for (int n=0;n<25;n++) {
-			generator.generatePHStimBlank(prefix, runNum, genNum, linNum, n, "GRASSGRAVITY");
+		for (int n=0;n<13;n++) {
+			stimObjIds.add(generator.generatePHStimBlank(prefix, runNum, genNum, linNum, n, "GRASSGRAVITY"));
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n);
 		}
 
@@ -1502,6 +1502,7 @@ public class PngRandomGeneration {
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
         photoRunner.run(args);
+        System.out.println(args);
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
@@ -1535,7 +1536,7 @@ public class PngRandomGeneration {
 		System.out.println("Blank stimulus added.");
 
 		for (int n=0;n<5;n++) {
-			generator.generatePHStimBlank(prefix, runNum, genNum, linNum, n, "BALL");
+			stimObjIds.add(generator.generatePHStimBlank(prefix, runNum, genNum, linNum, n, "BALL"));
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n);
 		}
 

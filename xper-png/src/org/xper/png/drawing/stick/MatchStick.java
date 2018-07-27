@@ -3993,7 +3993,7 @@ public class MatchStick {
             	for (i=1; i<=nJuncPt; i++)
             	{
             		int nRelated_comp = JuncPt[i].nComp;
-            		nowRad = 0.6 - 0.05 *try_times; // a strict value
+            		nowRad = 0.6 - 0.05 *try_times; // a strict value 0.6 - 
             		if ( i== 1)
             			System.out.println("type == 3, retry , nowRad " + nowRad);
             		// assign the value to each component

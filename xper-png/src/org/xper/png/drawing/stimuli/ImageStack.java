@@ -31,8 +31,8 @@ public class ImageStack implements Drawable {
     float scaler = 3.45f;    // scales actual image size to viewport size
     
     // this probably should from the database 
-    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
-//    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
+//    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
     String ext = "_R.png";  
  
     String imageName;
@@ -49,6 +49,7 @@ public class ImageStack implements Drawable {
     public void loadImages(List<Map<String, Object>> stimInfo){    
     	// Hard code it in stone ...
     	int numAnimacyImages = 10 * 2;
+    	int folderIdent = 0;
     	int numRollingImages = 60 * 2;
     	int numStillImages = 2;
     
@@ -72,11 +73,12 @@ public class ImageStack implements Drawable {
     			optionalPath = baseName + "/";
     			for(int n = 1; n <= numAnimacyImages; n++) {
 	    			if(n % 2 == 0) {
-						side = "_R";
+						side = "_R_";
 					} else {
-						side = "_L";
+						side = "_L_";
+						folderIdent++;
 					}
-	    			numStr = String.format("%04d", n);
+	    			numStr = String.format("%04d", folderIdent);
 					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
 					fullFilenames.add(imageName);
 					System.out.println("JK 3330 ImageStack:loadImages() : " + imageName);
@@ -85,9 +87,9 @@ public class ImageStack implements Drawable {
     			numFrames += numRollingImages;
     			for(int n = 0; n < numRollingImages; n++) {
 	    			if(n % 2 == 0) {
-						side = "_L";
+						side = "_L_";
 					} else {
-						side = "_R";
+						side = "_R_";
 					}
 					
 					imageName = resourcePath + baseName + ext;
@@ -155,9 +157,9 @@ public class ImageStack implements Drawable {
     		// reorder the 4 bytes per pixel data  
     		abgr2rgba(src);
 
-//    		System.out.println(pathname);
+    		System.out.println(pathname);
     		ByteBuffer pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
-//    		System.out.println(pixels.capacity());
+    		System.out.println(pixels.capacity());
 
     		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(textureIndex));
 		
@@ -168,7 +170,7 @@ public class ImageStack implements Drawable {
     		
     		// only for RGB
 //    		 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
-    	
+    		
     		// RGBA
     		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
 //    		System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex);    		
