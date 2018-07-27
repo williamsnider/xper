@@ -3,6 +3,7 @@ package org.xper.png.util;
 
 import org.xper.png.vo.PngExperimentState;
 import org.xper.png.vo.PngTrialContext;
+import org.xper.classic.vo.TrialExperimentState;
 import org.xper.drawing.Coordinates2D;
 import org.xper.drawing.RGBColor;
 import org.xper.drawing.object.Circle;
@@ -12,6 +13,18 @@ import org.xper.util.ThreadHelper;
 import org.xper.util.ThreadUtil;
 
 public class PngExperimentUtil {
+	
+	// JK 26 July 2018
+	// need to specify animation here
+	public static void getNextTask(PngDbUtil dbUtil, PngExperimentState state) {
+		
+		// this  TrialExperimentUtil.getNextTask(state):
+		state.setCurrentTask(state.getTaskDataSource().getNextTask());
+		
+		
+
+	}
+	
 	public static boolean isTargetOn (PngTrialContext context) {
 		//if (context.getSlideIndex() == context.getCountObjects() - 1) {
 		if ((context.getTargetIndex() >= 0) && (context.getSlideIndex() == context.getCountObjects() - 1)) {	// this actually asks if this is the target, and not just the last slide

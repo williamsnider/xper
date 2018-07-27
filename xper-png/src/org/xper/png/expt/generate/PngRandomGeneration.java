@@ -85,7 +85,7 @@ public class PngRandomGeneration {
 		// if so, run createNextGen for that prefix and ga run
 		// else run createFirstGen with a new prefix and incremented ga run
 		
-		char cont = 'y';
+char cont = 'y';  // 'n'; //
 		
 		while (cont == 'y') {
 			int c = PngIOUtil.promptInteger("Enter GA run number to continue. Else enter '0'");
@@ -100,7 +100,7 @@ public class PngRandomGeneration {
 				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); 
 				createFirstGen();
 			} else {
-				
+							
 				String progressType = "";
 				String postHoc;
 				
@@ -167,6 +167,13 @@ public class PngRandomGeneration {
 		}
 
 		writeExptStop();
+		
+//	List<String>types = this.dbUtil.readAllStimTypesByTask(1532619299807779L);
+//	
+//	for(String s : types) {
+//		System.out.println(s);
+//	}
+		
 	}
 
 	void createFirstGen() {

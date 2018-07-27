@@ -229,4 +229,5 @@ public class TrialExperimentState {
 		this.delayAfterTrialComplete = delayAfterTrialComplete;
 	}
 
+	
 }

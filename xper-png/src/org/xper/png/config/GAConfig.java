@@ -43,6 +43,9 @@ public class GAConfig {
 	public PngTrialExperiment experiment() {
 		PngTrialExperiment xper = new PngTrialExperiment();
 		xper.setStateObject(experimentState());
+		// JK share the dbUtil with the experiment
+		xper.setDbUtil(generalConfig.pngDbUtil());
+
 //		xper.setEyeMonitor(classicConfig.eyeMonitor());
 //		xper.setFirstSlideISI(alexConfig.xperFirstInterSlideInterval());		// these are no longer used -- see AlexTrialExperiment
 //		xper.setFirstSlideLength(alexConfig.xperFirstSlideLength());			// these are no longer used -- see AlexTrialExperiment
