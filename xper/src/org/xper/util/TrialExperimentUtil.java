@@ -86,6 +86,7 @@ public class TrialExperimentUtil {
 				currentContext.setAnimationFrameIndex(currentContext.getAnimationFrameIndex()+1);
 				drawingController.animateSlide(currentTask,
 						currentContext);
+				System.out.println(" frame: " + currentContext.getAnimationFrameIndex());
 				if (logger.isDebugEnabled()) {
 					long t = timeUtil.currentTimeMicros();
 					logger.debug(new Timestamp(t/1000).toString() + " " + t % 10000 + " frame: " + currentContext.getAnimationFrameIndex());

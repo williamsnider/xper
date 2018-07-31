@@ -49,9 +49,11 @@ public class ImageStack implements Drawable {
     public void loadImages(List<Map<String, Object>> stimInfo){    
     	// Hard code it in stone ...
     	int numAnimacyImages = 10 * 2;
-    	int folderIdent = 0;
     	int numRollingImages = 60 * 2;
     	int numStillImages = 2;
+    	
+    	int animacyRepeat = 45+1;
+    	int currentImg = 0;
     
     	String baseName;
     	String stimType;
@@ -59,46 +61,57 @@ public class ImageStack implements Drawable {
     	String side;
     	String numStr;
     	String ext = ".png";
-    	
-		List<String> fullFilenames = new ArrayList<String>();
-    	    	
+
+    	List<String> fullFilenames = new ArrayList<String>();
+
     	// determine how many frames for this trial while buiding filename(s) and loading the Texture
     	numFrames = 0;
-    	
+
     	for(Map<String, Object>si : stimInfo) {
     		stimType = (String)si.get("stimType");
     		baseName = (String)si.get("descId");
+    		
     		if(stimType.contains("ANIMATE")) {
-    			numFrames += numAnimacyImages;
     			optionalPath = baseName + "/";
-    			for(int n = 0; n < numAnimacyImages; n++) {
-	    			if(n % 2 == 0) {
-						side = "_L";
-					} else {
-						side = "_R";
-					}
-	    			numStr = String.format("_%04d", (int)(Math.round(n/2) + 1));
-					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
-					fullFilenames.add(imageName);
-					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
+    			numFrames += animacyRepeat*2;
+
+    			for (int numImg = 0; numImg < animacyRepeat*2; numImg++) {
+
+    				if(currentImg % 2 == 0) {
+    					side = "_L";
+    				} else {
+    					side = "_R";
+    				}
+
+    				numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
+    				imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
+    				fullFilenames.add(imageName);
+    				System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
+
+    				if (currentImg == numAnimacyImages-1) {
+    					currentImg = 0;
+    				}
+    				else {
+    					currentImg++;
+    				}
     			}
-    			
-  // JK 27 July
-  //   this could be much slicker ...
-    			
-    			// loop 'backwards'
-    			numFrames += numAnimacyImages;
-    			for(int n = numAnimacyImages - 1; n >= 0; n--) {
-	    			if(n % 2 == 0) {
-						side = "_L";
-					} else {
-						side = "_R";
-					}
-	    			numStr = String.format("_%04d", (int)(Math.round(n/2) + 1));
-					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
-					fullFilenames.add(imageName);
-					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : down " + imageName);
-    			}
+
+    			//  // JK 27 July
+    			//  //   this could be much slicker ...
+    			//    			
+    			//    			// loop 'backwards'
+//    			numFrames += numAnimacyImages;
+//    			for(int n = numAnimacyImages - 1; n >= 0; n--) {
+//	    			if(n % 2 == 0) {
+//						side = "_L";
+//					} else {
+//						side = "_R";
+//					}
+//	    			numStr = String.format("_%04d", (int)(Math.round(n/2) + 1));
+//					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
+//					fullFilenames.add(imageName);
+//					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : down " + imageName);
+//    			}
     			
     		} else if(stimType.contains("ROLL")) {
     			numFrames += numRollingImages;
@@ -156,15 +169,11 @@ public class ImageStack implements Drawable {
 		}
   
 		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
-
 		
     	// assume success?!
     	texturesLoaded = true;
     }
 	
-    
-    
-
     int loadTexture(String pathname, int textureIndex) {
 
     	try {
@@ -172,13 +181,13 @@ public class ImageStack implements Drawable {
     		BufferedImage img = ImageIO.read(imageFile);
 
     		byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
-
+    		
     		// reorder the 4 bytes per pixel data  
     		abgr2rgba(src);
 
-    		System.out.println(pathname);
+//    		System.out.println(pathname);
     		ByteBuffer pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
-    		System.out.println(pixels.capacity());
+//    		System.out.println(pixels.capacity());
 
     		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(textureIndex));
 		

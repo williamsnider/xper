@@ -1594,6 +1594,7 @@ char cont = 'y';  // 'n'; //
 	}
 	
 	void createPHperturbation() {
+		
 		List<Long> blankStimObjIds = new ArrayList<Long>();	
 		List<Long> stimObjIds = new ArrayList<Long>();
 
@@ -1609,30 +1610,22 @@ char cont = 'y';  // 'n'; //
 
 		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
 		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
-
-		int numMorphs = PngGAParams.PH_stability_numMorphs;
-		List<String> placeholder = new ArrayList<String>();
-		List<Integer> morphs = new ArrayList<Integer>();
-		morphs.add(fitnessMethod); // document the number of objects in use per lineage
-		morphs.add(numMorphs); // number of stability morphs that occur per lineage
-		
 		int stimNum = 0;
 
 		for (int n=0;n<stimsToMorph_lin1.size();n++) {
 			long currentId = stimsToMorph_lin1.get(n);
 
 			// includes a copy that shall remain unchanged
-			for (int m=0;m<numMorphs*2;m++) {
+			for (int m=0;m<PngGAParams.PH_perturbation_numMorphs+1;m++) {
 				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, stimNum, "PERTURBATION"));
 				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
 				stimNum ++;
 			}
 		}
-
-		// do low stim all morphs, med stim all morphs, high stim all morphs. first stim in each category is the plain one.
 		
-		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "perturbationPostHoc.py",placeholder,morphs);
-//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
+		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "perturbationPostHoc.py");
+//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "ProgressionClasses/perturbationPostHoc.py");
+//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/perturbationPostHoc.py");
 		blenderRunnerPHGeneric.run();
 
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage;
@@ -1642,6 +1635,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
+//        args.add(basePath + "masterSubmitScript.sh");
         args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);

@@ -19,6 +19,7 @@ public final class PngGAParams {
 	public static double[] GA_fracPerPercentDiv = {0.1,0.15,0.2,0.2,0.35}; 	// percent of stimuli to morph chosen from each GA_percentDivs bin
 	
 	public static int PH_stability_numMorphs = 5; 							// STABILITY: 	will remain the same unless burial depth selection changes: low pot with all depths (5) + high pot " (5)
+	public static int PH_perturbation_numMorphs = 8;
 	public static int[] PH_bulbousness_morphs = {1,3,4,5,6};					// MASS: 		shape morph types applied to selected limb in mass posthoc
 	public static int PH_animacy_numMaterials = 4;							// ANIMACY: 		how many of squish/stiff materials should be used
 	public static int targetedColoration = 0; 								// ANIMACY: 		extent to which squish/stiff materials are represented on the object
