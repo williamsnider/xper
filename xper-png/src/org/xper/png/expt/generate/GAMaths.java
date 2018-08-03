@@ -245,6 +245,9 @@ public class GAMaths {
 		allIds = new ArrayList<Long>(id_fr.keySet());
 		int numIds = allIds.size();
 		Long currentId = null;
+		
+		int numPercentDivs = PngGAParams.PH_percentDivs.length;
+		int[] stimsDivs = new int[numPercentDivs]; // how many stimuli in each group?
 
 		switch (method) {
 		case 1:
@@ -276,9 +279,6 @@ public class GAMaths {
 			List<Long> mediums = new ArrayList<Long>(); 			// middle 60 percent
 			List<Long> highs = new ArrayList<Long>(); 			// upper 10 percent
 
-			int numPercentDivs = PngGAParams.PH_percentDivs.length;
-			int[] stimsDivs = new int[numPercentDivs]; // how many stimuli in each group?
-
 			for (int n=0;n<numPercentDivs;n++) {
 				stimsDivs[n] = (int)Math.round(numIds*PngGAParams.PH_percentDivs[n]);
 			}
@@ -304,6 +304,36 @@ public class GAMaths {
 			choice = new Random().nextInt(stimsDivs[2]-stimsDivs[1]);
 			morphIds.add(highs.get(choice));
 			break;
+		case 4:
+			System.out.println("yes, here");
+			List<Long> highResponders = new ArrayList<Long>(); 			// upper 10 percent
+			
+			for (int n=0;n<numPercentDivs;n++) {
+				stimsDivs[n] = (int)Math.round(numIds*PngGAParams.PH_percentDivs[n]);
+			}
+
+			for (int n=0;n<numIds;n++) {
+				if (n >= stimsDivs[1]) {
+					highResponders.add(allIds.get(n));
+				}
+			}
+			
+			int numDistinctObjs;
+			
+			if (highResponders.size()<PngGAParams.PH_numObjects_fitnessMethod) {
+				numDistinctObjs = highResponders.size();
+			} else {
+				numDistinctObjs = PngGAParams.PH_numObjects_fitnessMethod;
+			}
+			
+			System.out.println(numDistinctObjs);
+			
+			for (int n=0;n<numDistinctObjs;n++) {
+				choice = new Random().nextInt(stimsDivs[2]-stimsDivs[1]);
+				morphIds.add(highResponders.get(choice));
+			}
+			break;
+			
 		}
 		return morphIds;
 	}

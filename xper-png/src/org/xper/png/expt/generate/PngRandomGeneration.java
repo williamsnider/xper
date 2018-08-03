@@ -707,7 +707,7 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 3;
+		int fitnessMethod = 4;
 
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
@@ -850,7 +850,7 @@ char cont = 'y';  // 'n'; //
 		List<List<Long>> trialGroups = new ArrayList<List<Long>>();
 		List<Long> trialSubGroup = new ArrayList<Long>();
 
-		// make blank stims. assuming two linages.		
+		// make blank stims. assuming two lineages.		
 		long blankStimObjId = generator.generateBlankStim(prefix, runNum, genNum, linNum); 
 		blankStimObjIds.add(blankStimObjId);
 
@@ -928,17 +928,24 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 3;
+		int fitnessMethod = 4;
+		int numDistinctObjs;
 
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
 
 		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
 
+		if (fitnessMethod == 4) {
+			numDistinctObjs = stimsToMorph_lin1.size();
+		} else {
+			numDistinctObjs = fitnessMethod;
+		}
+		
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> limbCounts = new ArrayList<Integer>();
 		limbCounts.add(PngGAParams.PH_animacy_numMaterials); // document the number of materials in use
-		limbCounts.add(fitnessMethod); // document the number of objects in use per lineage
+		limbCounts.add(numDistinctObjs); // document the number of objects in use per lineage
 		limbCounts.add(PngGAParams.targetedColoration); // document whether targeted coloration
 		
 		//each stimulus has associated number of limbs, should be repeated that many times
@@ -1098,15 +1105,22 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 3;
+		int fitnessMethod = 4;
+		int numDistinctObjs;
 
 		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
 		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+		
+		if (fitnessMethod == 4) {
+			numDistinctObjs = stimsToMorph_lin1.size();
+		} else {
+			numDistinctObjs = fitnessMethod;
+		}
 
 		int numMorphs = PngGAParams.PH_stability_numMorphs;
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> morphs = new ArrayList<Integer>();
-		morphs.add(fitnessMethod); // document the number of objects in use per lineage
+		morphs.add(numDistinctObjs); // document the number of objects in use per lineage
 		morphs.add(numMorphs); // number of stability morphs that occur per lineage
 		
 		int stimNum = 0;
@@ -1376,16 +1390,23 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 3;
+		int fitnessMethod = 4;
+		int numDistinctObjs;
 
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
 
 		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
 
+		if (fitnessMethod == 4) {
+			numDistinctObjs = stimsToMorph_lin1.size();
+		} else {
+			numDistinctObjs = fitnessMethod;
+		}
+		
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> objCounts = new ArrayList<Integer>();
-		objCounts.add(fitnessMethod); // document the number of objects in use per lineage
+		objCounts.add(numDistinctObjs); // document the number of objects in use per lineage
 
 		for (int n=0;n<stimsToMorph_lin1.size();n++) {
 			long currentId = stimsToMorph_lin1.get(n);
@@ -1560,16 +1581,16 @@ char cont = 'y';  // 'n'; //
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-//        BlenderRunnable photoRunner = new BlenderRunnable();
-//        List<String> args = new ArrayList<String>();
-//        args.add("ssh");
-//        args.add("alexandriya@172.30.9.11");
-//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-//        args.add(Integer.toString(numJobs));
-//        args.add(prefixRunGen);
-//        photoRunner.setDoWaitFor(false);
-//        photoRunner.run(args);
-//        
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+        
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
@@ -1606,7 +1627,7 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 3;
+		int fitnessMethod = 4;
 
 		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
 		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
@@ -1617,12 +1638,12 @@ char cont = 'y';  // 'n'; //
 
 			// includes a copy that shall remain unchanged
 			for (int m=0;m<PngGAParams.PH_perturbation_numMorphs+1;m++) {
-				stimObjIds.add(generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, stimNum, "PERTURBATION"));
+				stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "PERTURBATION"));
 				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
 				stimNum ++;
 			}
 		}
-		
+
 		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "perturbationPostHoc.py");
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "ProgressionClasses/perturbationPostHoc.py");
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/perturbationPostHoc.py");

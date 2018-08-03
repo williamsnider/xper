@@ -144,9 +144,12 @@ public class PngExperimentState extends SlideTrialExperimentState {
 		animationStates.clear();
 		long taskId = this.getCurrentTask().getTaskId();
 		List<String> typeStrs = dbUtil.readAllStimTypesByTask(taskId);
+		System.out.println(typeStrs);
 		
 		for(String str : typeStrs) {
 			if(str.contains("ANIMATE")) {
+				animationStates.add(Boolean.TRUE);
+			}else if (str.contains("BALL")){
 				animationStates.add(Boolean.TRUE);
 			}else {
 				animationStates.add(Boolean.FALSE);

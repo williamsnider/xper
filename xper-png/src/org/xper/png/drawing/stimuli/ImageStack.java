@@ -49,7 +49,7 @@ public class ImageStack implements Drawable {
     public void loadImages(List<Map<String, Object>> stimInfo){    
     	// Hard code it in stone ...
     	int numAnimacyImages = 10 * 2;
-    	int numRollingImages = 60 * 2;
+    	int numRollingImages = 40 * 2;
     	int numStillImages = 2;
     	
     	int animacyRepeat = 45+1;
@@ -111,21 +111,40 @@ public class ImageStack implements Drawable {
 //					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
 //					fullFilenames.add(imageName);
 //					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : down " + imageName);
-//    			}
-    			
-    		} else if(stimType.contains("ROLL")) {
-    			numFrames += numRollingImages;
-    			for(int n = 0; n < numRollingImages; n++) {
-	    			if(n % 2 == 0) {
-						side = "_L_";
-					} else {
-						side = "_R_";
-					}
-					
-					imageName = resourcePath + baseName + ext;
-					fullFilenames.add(imageName);
-//					System.out.println("JK 4330 ImageStack:loadImages() : " + imageName);
+    			//    			}
+
+    		} else if(stimType.contains("BALL")) {
+    			optionalPath = baseName + "/";
+    			numFrames += animacyRepeat*2;
+    			System.out.println(numFrames);
+    			int pause = 0;
+
+    			for (int numImg = 0; numImg < animacyRepeat*2; numImg++) {
+
+    				if (pause < 14) {
+    					if (pause % 2 == 0) {
+        					currentImg = 0;
+        				} else {
+        					currentImg = 1;
+        				}
+    				}
+    				
+    				if(currentImg % 2 == 0) {
+    					side = "_L";
+    				} else {
+    					side = "_R";
+    				}
+
+    				numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
+    				imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
+    				fullFilenames.add(imageName);
+    				pause++;
+    				currentImg++;
+    				
+//    				System.out.println("JK 3330 ImageStack:loadImages() BALL : up " + imageName);
+    				//					System.out.println("JK 4330 ImageStack:loadImages() : " + imageName);
     			}
+    			
     		}  else if(stimType.contains("BLANK")) {
     			numFrames += numStillImages;
     			for(int n = 0; n < numStillImages; n++) {
@@ -155,13 +174,12 @@ public class ImageStack implements Drawable {
     			}
       		}
     	}
-    	
 		 
 		//this is important!
 		setNumFrames(numFrames);
 		frameNum = 0;
     	GL11.glGenTextures(textureIds); 
-		
+    	
 		int n = 0;
 		
 		for(String str : fullFilenames) {
