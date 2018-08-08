@@ -17,8 +17,8 @@ public class AcqDataTest extends TestCase {
 		DbUtil dbUtil;
 		dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-//		dataSource.setUrl("jdbc:mysql://localhost/wang");
-		dataSource.setUrl("jdbc:mysql://localhost/ram_160321_stim");
+//		dataSource.setUrl("jdbc:mysql://172.30.6.80/wang");
+		dataSource.setUrl("jdbc:mysql://172.30.6.80/ram_160321_stim");
 		dataSource.setUsername("xper_rw");
 		dataSource.setPassword("up2nite");
 
