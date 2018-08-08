@@ -26,6 +26,5 @@ hs_err_pid*
 # JK 
 .directory
 dist
-xper/app/xper.properties
-xper/class/xper.properties
+**/xper.properties
 xper/class/
