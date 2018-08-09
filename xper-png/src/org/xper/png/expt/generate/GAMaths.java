@@ -239,6 +239,7 @@ public class GAMaths {
 	static public List<Long> choosePostHoc(Map<Long, Double> id_fr, int method) {
 		
 		List<Long> allIds = new ArrayList<Long>(id_fr.keySet());
+		System.out.println(allIds);
 		List<Long> morphIds = new ArrayList<Long>();
 		
 		id_fr = PngMapUtil.sortByValue(id_fr);
@@ -304,34 +305,41 @@ public class GAMaths {
 			choice = new Random().nextInt(stimsDivs[2]-stimsDivs[1]);
 			morphIds.add(highs.get(choice));
 			break;
+			
 		case 4:
+			// select PH_numObjects_fitnessMethod highest stimuli
 			System.out.println("yes, here");
-			List<Long> highResponders = new ArrayList<Long>(); 			// upper 10 percent
 			
-			for (int n=0;n<numPercentDivs;n++) {
-				stimsDivs[n] = (int)Math.round(numIds*PngGAParams.PH_percentDivs[n]);
-			}
-
-			for (int n=0;n<numIds;n++) {
-				if (n >= stimsDivs[1]) {
-					highResponders.add(allIds.get(n));
-				}
+			for (int n=1;n<=PngGAParams.PH_numObjects_fitnessMethod;n++) {
+				morphIds.add(allIds.get(allIds.size()-n));
 			}
 			
-			int numDistinctObjs;
-			
-			if (highResponders.size()<PngGAParams.PH_numObjects_fitnessMethod) {
-				numDistinctObjs = highResponders.size();
-			} else {
-				numDistinctObjs = PngGAParams.PH_numObjects_fitnessMethod;
-			}
-			
-			System.out.println(numDistinctObjs);
-			
-			for (int n=0;n<numDistinctObjs;n++) {
-				choice = new Random().nextInt(stimsDivs[2]-stimsDivs[1]);
-				morphIds.add(highResponders.get(choice));
-			}
+//			List<Long> highResponders = new ArrayList<Long>(); 			// upper 10 percent
+//			
+//			for (int n=0;n<numPercentDivs;n++) {
+//				stimsDivs[n] = (int)Math.round(numIds*PngGAParams.PH_percentDivs[n]);
+//			}
+//
+//			for (int n=0;n<numIds;n++) {
+//				if (n >= stimsDivs[1]) {
+//					highResponders.add(allIds.get(n));
+//				}
+//			}
+//
+//			int numDistinctObjs;
+//			
+//			if (highResponders.size()<PngGAParams.PH_numObjects_fitnessMethod) {
+//				numDistinctObjs = highResponders.size();
+//			} else {
+//				numDistinctObjs = PngGAParams.PH_numObjects_fitnessMethod;
+//			}
+//			
+//			System.out.println(numDistinctObjs);
+//			
+//			for (int n=0;n<numDistinctObjs;n++) {
+//				choice = new Random().nextInt(stimsDivs[2]-stimsDivs[1]);
+//				morphIds.add(highResponders.get(choice));
+//			}
 			break;
 			
 		}

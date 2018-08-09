@@ -228,7 +228,6 @@ char cont = 'y';  // 'n'; //
         photoRunner.setDoWaitFor(false);
         photoRunner.run(args);
 
-        photoRunner.run(args);
 		// now add blanks
 		stimObjIds.addAll(blankStimObjIds);
 
@@ -707,7 +706,7 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 4;
+		int fitnessMethod = 3;
 
 		// choose best, worst alden stimuli
 		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
@@ -1412,7 +1411,7 @@ char cont = 'y';  // 'n'; //
 			long currentId = stimsToMorph_lin1.get(n);
 			long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, n, "MASS");
 			stimObjIds.add(whichStim_lin1);
-			System.out.println("Lineage " + linNum + ": Generating and saving stimulus 0: conserved stimulus");
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ": conserved radius profile/low potential stimulus");
 		}
 		
 		// call python here to determine which is the limb of interest
@@ -1423,15 +1422,15 @@ char cont = 'y';  // 'n'; //
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/massPostHoc.py");
 		blenderRunnerAnimate.run();
 
-		// need to wait until python is finished to carry on (wait for a couple seconds for calculation)
-		System.out.println("Waiting for python db update.");
-		try {
-			Thread.sleep(10000);
-		}
-		catch(InterruptedException ex) {
-			Thread.currentThread().interrupt();
-		}
-		System.out.println("Past python db update.");
+//		// need to wait until python is finished to carry on (wait for a couple seconds for calculation)
+//		System.out.println("Waiting for python db update.");
+//		try {
+//			Thread.sleep(10000);
+//		}
+//		catch(InterruptedException ex) {
+//			Thread.currentThread().interrupt();
+//		}
+//		System.out.println("Past python db update.");
 		
 		int stimNum = stimsToMorph_lin1.size();
 		
@@ -1440,11 +1439,21 @@ char cont = 'y';  // 'n'; //
 
 			// unchanged copy already accounted for
 			for (int m=0;m<PngGAParams.PH_bulbousness_morphs.length;m++) {
-				long whichStim_lin1 = generator.generatePHControlledMorph(prefix, runNum, genNum, linNum, currentId, stimNum, PngGAParams.PH_bulbousness_morphs[m], "MASS", fitnessMethod);
+				long whichStim_lin1 = generator.generatePHControlledMorph(prefix, runNum, genNum, linNum, currentId, stimNum, PngGAParams.PH_bulbousness_morphs[m], "MASS", numDistinctObjs);
 				stimObjIds.add(whichStim_lin1);
 				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + stimNum);
 				stimNum ++;
 			}
+		}
+		
+		for (int n=0;n<stimsToMorph_lin1.size();n++) {
+			long currentId = stimsToMorph_lin1.get(n);
+
+			// original image
+			long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, stimNum, "MASS");
+			stimObjIds.add(whichStim_lin1);
+			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + stimNum + ": conserved radius profile/original potential stimulus");
+			stimNum ++;
 		}
 		
 		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "stimRefresh.py",placeholder,objCounts);
@@ -1461,16 +1470,16 @@ char cont = 'y';  // 'n'; //
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-//        BlenderRunnable photoRunner = new BlenderRunnable();
-//        List<String> args = new ArrayList<String>();
-//        args.add("ssh");
-//        args.add("alexandriya@172.30.9.11");
-////        args.add(basePath + "masterSubmitScript.sh");
-//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-//        args.add(Integer.toString(numJobs));
-//        args.add(prefixRunGen);
-//        photoRunner.setDoWaitFor(false);
-//        photoRunner.run(args);
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+//        args.add(basePath + "masterSubmitScript.sh");
+        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
@@ -1627,7 +1636,7 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 4;
+		int fitnessMethod = 3;
 
 		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
 		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
@@ -1941,6 +1950,7 @@ char cont = 'y';  // 'n'; //
 		{
 			lastTrialToDo = dbUtil.readTaskToDoMaxId();	// move this outside loop?
 			lastTrialDone = dbUtil.readTaskDoneCompleteMaxId();
+
 			if ( counter % 20 == 0)
 				System.out.print(".");
 			counter++;
@@ -1973,6 +1983,8 @@ char cont = 'y';  // 'n'; //
 			} else {
 				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum,linNum,0); 
 			}
+			
+			System.out.println("SPIKE ENTRY:"+spikeEntry);
 			
 			// for each trial done in a generation:
 				// get blank FRs:

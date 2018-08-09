@@ -213,7 +213,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		return returnDetails;
 	}
 	
-	public long generatePHControlledMorph(String prefix, long runNum, long gen, long lineage, long parentId, int stimNum, int profile, String postHoc, int fitnessMethod) {
+	public long generatePHControlledMorph(String prefix, long runNum, long gen, long lineage, long parentId, int stimNum, int profile, String postHoc, int numStim) {
 		
 		// load blenderspec back in order to extract id of limb of interest
 
@@ -231,7 +231,7 @@ public class PngExptSpecGenerator implements PngStimSpecGenerator {
 		// 1 : 5 morphs (8 9 10 11 12) : length < to <= length*2+1
 		// 2 : 5 morphs (13 14 15 16 17) : length*2+1 < to <= length*3+1
 
-		int refStim = Math.floorDiv(stimNum-fitnessMethod, PngGAParams.PH_bulbousness_morphs.length);
+		int refStim = Math.floorDiv(stimNum-numStim, PngGAParams.PH_bulbousness_morphs.length);
 		String referenceDescId = prefix + "_r-" + runNum + "_g-" + gen + "_l-" + lineage + "_s-" + refStim;
 //		System.out.println(referenceDescId+' '+stimNum);
 

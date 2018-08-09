@@ -59,18 +59,21 @@ public class PngTrialExperiment implements Experiment {
 		TrialExperimentUtil.run(stateObject, threadHelper, new TrialRunner() {
 			public TrialResult runTrial() {
 				try {
-//					System.out.println("\n\n JK 04225 PngTrialExperiment : fetching next task");
+					System.out.println("\n\n JK 04225 PngTrialExperiment : fetching next task");
 					// get a task
 					TrialExperimentUtil.getNextTask(stateObject);
+					System.out.println("CURRENT TASK: "+stateObject.getCurrentTask());
+					System.out.println(stateObject.isDoEmptyTask());
+					
 					
 
 					if (stateObject.getCurrentTask() == null && !stateObject.isDoEmptyTask()) {
 						try {
-//							System.out.println("JK 01126 PngTrialExperiment : null task");
+							System.out.println("JK 01126 PngTrialExperiment : null task");
 							Thread.sleep(SlideTrialExperimentState.NO_TASK_SLEEP_INTERVAL);
 						} catch (InterruptedException e) {
 						}
-//						System.out.println("JK 04126 PngTrialExperiment : TrialResult.NO_MORE_TASKS");
+						System.out.println("JK 04126 PngTrialExperiment : TrialResult.NO_MORE_TASKS");
 						return TrialResult.NO_MORE_TASKS;
 					}
 
