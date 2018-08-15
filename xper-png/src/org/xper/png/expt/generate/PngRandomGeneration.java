@@ -204,11 +204,11 @@ char cont = 'y';  // 'n'; //
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + k); 
 		}
 
-		// create PNG thumbnails (not for blanks)
-		if (doSaveThumbnails) {
-			System.out.println("Saving PNGs.");
-			pngMaker.MakeFromIds(stimObjIds);
-		}
+//		// create PNG thumbnails (not for blanks)
+//		if (doSaveThumbnails) {
+//			System.out.println("Saving PNGs.");
+//			pngMaker.MakeFromIds(stimObjIds);
+//		}
 
 		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "randomSpec.py");
 //		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "ProgressionClasses/randomSpec.py");
@@ -1421,16 +1421,6 @@ char cont = 'y';  // 'n'; //
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "ProgressionClasses/massPostHoc.py");
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/massPostHoc.py");
 		blenderRunnerAnimate.run();
-
-//		// need to wait until python is finished to carry on (wait for a couple seconds for calculation)
-//		System.out.println("Waiting for python db update.");
-//		try {
-//			Thread.sleep(10000);
-//		}
-//		catch(InterruptedException ex) {
-//			Thread.currentThread().interrupt();
-//		}
-//		System.out.println("Past python db update.");
 		
 		int stimNum = stimsToMorph_lin1.size();
 		
@@ -1460,12 +1450,6 @@ char cont = 'y';  // 'n'; //
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "ProgressionClasses/stimRefresh.py",placeholder,objCounts);
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/stimRefresh.py",placeholder,objCounts);
 		blenderRunnerRefresh.run();
-		
-//		// create PNG thumbnails (not for blanks)
-//		if (doSaveThumbnails) {
-//			System.out.println("Saving PNGs.");
-//			pngMaker.MakeFromIds(stimObjIds);
-//		}
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
@@ -1521,12 +1505,6 @@ char cont = 'y';  // 'n'; //
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/grassGravityPostHoc.py");
 		blenderRunnerRefresh.run();
 		
-//		// create PNG thumbnails (not for blanks)
-//		if (doSaveThumbnails) {
-//			System.out.println("Saving PNGs.");
-//			pngMaker.MakeFromIds(stimObjIds);
-//		}
-		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
@@ -1580,12 +1558,6 @@ char cont = 'y';  // 'n'; //
 		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "rollingBallPostHoc.py");
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/rollingBallPostHoc.py");
 		blenderRunnerRefresh.run();
-		
-//		// create PNG thumbnails (not for blanks)
-//		if (doSaveThumbnails) {
-//			System.out.println("Saving PNGs.");
-//			pngMaker.MakeFromIds(stimObjIds);
-//		}
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
