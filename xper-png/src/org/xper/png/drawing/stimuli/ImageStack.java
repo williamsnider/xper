@@ -28,7 +28,7 @@ public class ImageStack implements Drawable {
     IntBuffer textureIds = BufferUtils.createIntBuffer(numFrames);
     boolean texturesLoaded = false;
     int frameNum = 0;
-    float scaler = 3.45f;    // scales actual image size to viewport size
+    float scaler = 1.0f; //  3.45f;    // scales actual image size to viewport size
     
     // this probably should from the database 
     String resourcePath = "/home/alexandriya/catch_cluster_images/"; 

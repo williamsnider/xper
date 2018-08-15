@@ -78,7 +78,12 @@ public class FixCalConfig {
 	public FixationPoint experimentFixationPoint() {
 		FixationPoint f = new FixationPoint ();
 		f.setColor(classicConfig.xperFixationPointColor());
-		f.setSize(classicConfig.xperFixationPointSize());
+		
+		// JK 15 Aug 2018
+		// hardcode this since it should never change
+		//f.setSize(classicConfig.xperFixationPointSize());
+		f.setSize(10);
+		
 		return f;
 	}
 	

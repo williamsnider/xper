@@ -152,7 +152,7 @@
 			</manifest>
 		</jar>
 -->
-		<jar jarfile="${dist.home}/experiment.jar">
+		<!-- <jar jarfile="${dist.home}/experiment.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/app/experiment/Experiment.class" />
 			</fileset>
@@ -180,7 +180,8 @@
 				<attribute name="Main-Class" value="org.xper.app.experiment.test.RandGen" />
 				<attribute name="Class-Path" value=". ${manifest.classpath} xper.jar" />
 			</manifest>
-		</jar>
+		</jar> 
+		-->
 <!--
 		<jar jarfile="${dist.home}/mock_xper.jar">
 			<fileset dir="${build.home}">
