@@ -18,6 +18,7 @@ import org.xper.png.drawing.stimuli.PngObject;
 import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.util.PngDbUtil;
 import org.lwjgl.opengl.GL11;
+//import org.xper.png.drawing.screenobj.PngBlankScreen;
 
 
 public class PngExptScene extends AbstractTaskScene {
@@ -28,6 +29,8 @@ public class PngExptScene extends AbstractTaskScene {
 	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
 	
+	String blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK";
+	ImageStack blankImage = new ImageStack();
  
 	public void initGL(int w, int h) {
 		super.setUseStencil(false);
@@ -43,6 +46,12 @@ public class PngExptScene extends AbstractTaskScene {
 
         GL11.glOrtho(0, w, h, 0, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        
+        // context is valid so load blanks
+        //((PngBlankScreen)blankScreen).loadImages();
+    	blankImage.setNumFrames(2);
+		blankImage.loadTexture(blankImageStr + "_L.png", 0);
+		blankImage.loadTexture(blankImageStr + "_R.png", 1);
         
 	}
 
@@ -69,9 +78,15 @@ public class PngExptScene extends AbstractTaskScene {
 	}
 	
 	
+	protected void drawCustomBlank(Context context) {
+		System.out.println("JK drawCustomBlank()");
+		blankImage.draw(context);
+	}
+	
 	
 	// JK 9 July 2018
 	public void trialStart(TrialContext context) {
+		
 		System.out.println("\nJK 0639 PngExptScene:trialStart "); 
 	
 		spec = PngExptSpec.fromXml(context.getCurrentTask().getStimSpec());
@@ -99,6 +114,7 @@ public class PngExptScene extends AbstractTaskScene {
 
 	public void trialStop(TrialContext context) {
 		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
+		
 	}
 	
 }

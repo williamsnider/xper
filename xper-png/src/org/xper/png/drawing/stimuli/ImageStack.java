@@ -164,7 +164,7 @@ public class ImageStack implements Drawable {
     
     
 
-    int loadTexture(String pathname, int textureIndex) {
+    public int loadTexture(String pathname, int textureIndex) {
 
     	try {
     		File imageFile = new File(pathname);
@@ -216,6 +216,12 @@ public class ImageStack implements Drawable {
 //		System.out.println("JK 0838 viewPort == " + vpNum);
 //		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", slideIndex = " + c.getSlideIndex() + ", animation ndx = " + c.getAnimationFrameIndex());
 	      
+		if(c == null) {
+			System.out.println("JK 093 ImageStack:draw() : null context");
+		} else {
+			System.out.println("JK 093 ImageStack:draw() : valid context");
+		
+		}
 		
 		// JK 2981  18 July 2018 
 		float width = 1400  / scaler; //  2    // texture.getImageWidth();
