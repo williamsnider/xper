@@ -19,7 +19,6 @@ import org.xper.png.expt.PngExptSpecGenerator;
 import org.xper.png.expt.generate.PngRandomGeneration;
 import org.xper.png.vo.PngExperimentState;
 import org.xper.png.PngTrialExperiment;
-import org.xper.png.drawing.screenobj.PngBlankScreen;
 
 
 @Configuration(defaultLazy=Lazy.TRUE)

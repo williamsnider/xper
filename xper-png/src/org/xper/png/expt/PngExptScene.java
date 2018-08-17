@@ -18,7 +18,6 @@ import org.xper.png.drawing.stimuli.PngObject;
 import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.util.PngDbUtil;
 import org.lwjgl.opengl.GL11;
-//import org.xper.png.drawing.screenobj.PngBlankScreen;
 
 
 public class PngExptScene extends AbstractTaskScene {
@@ -43,13 +42,11 @@ public class PngExptScene extends AbstractTaskScene {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
 		
-
         GL11.glOrtho(0, w, h, 0, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
         // context is valid so load blanks
-        //((PngBlankScreen)blankScreen).loadImages();
-    	blankImage.setNumFrames(2);
+        blankImage.setNumFrames(2);
 		blankImage.loadTexture(blankImageStr + "_L.png", 0);
 		blankImage.loadTexture(blankImageStr + "_R.png", 1);
         
@@ -98,7 +95,6 @@ public class PngExptScene extends AbstractTaskScene {
 		Map<String, Object> tmp = new HashMap();
 		
 		for(int i = 0; i < numImages; i++) {
-			//filenames.add(i, dbUtil.readDescriptiveIdFromStimObjId(spec.getStimObjId(i)));
 			
 			// map keys "descId" and "stimType"
 			tmp = dbUtil.readDescriptiveIdAndTypeFromStimObjId(spec.getStimObjId(i));
