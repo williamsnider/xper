@@ -28,15 +28,19 @@ public class PngExptScene extends AbstractTaskScene {
 	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
 	
-	String blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK";
+	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK_FIX";
+	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK";
+	
 	ImageStack blankImage = new ImageStack();
+//	ImageStack fixBlankImage = new ImageStack();
  
 	public void initGL(int w, int h) {
 		super.setUseStencil(false);
 		super.initGL(w, h);
-		System.out.println("JK 2838 w = " + w + ", h = " + h);
+		System.out.println("JK 32838 w = " + w + ", h = " + h);
 		
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          
+//		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          
+		GL11.glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 		GL11.glViewport(0,0,w,h);
         GL11.glMatrixMode(GL11.GL_MODELVIEW); 
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -46,24 +50,28 @@ public class PngExptScene extends AbstractTaskScene {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
         // context is valid so load blanks
-        blankImage.setNumFrames(2);
+        blankImage.setNumFrames(4);
 		blankImage.loadTexture(blankImageStr + "_L.png", 0);
 		blankImage.loadTexture(blankImageStr + "_R.png", 1);
+//		fixBlankImage.setNumFrames(2);
+		blankImage.loadTexture(fixationImageStr + "_L.png", 2);
+		blankImage.loadTexture(fixationImageStr + "_R.png", 3);
         
 	}
 
 	
 	public void setTask(ExperimentTask task) {
 		if(task == null) {
-			System.out.println("PgnExptScene:setTask() : task is null ...");
+//			System.out.println("PgnExptScene:setTask() : task is null ...");
 		}
 	}
 
 	public void drawStimulus(Context context) {
-		TrialContext c = (TrialContext)context;
+//		TrialContext c = (TrialContext)context;
 //		System.out.println("JK 0239 PngExptScene:drawStimulus(): slide index = " + c.getSlideIndex());
 
-		images.draw(c);
+//		images.draw(c);
+		images.draw(context);
 	}
 
 	public PngDbUtil getDbUtil() {
@@ -74,17 +82,25 @@ public class PngExptScene extends AbstractTaskScene {
 		this.dbUtil = dbUtil;
 	}
 	
-	
-	protected void drawCustomBlank(Context context) {
-		System.out.println("JK drawCustomBlank()");
-		blankImage.draw(context);
+
+	protected void drawCustomBlank(Context context, final boolean fixationOn, final boolean markerOn) {
+//		fixBlankImage.draw(context);
+		if(fixationOn) {
+			blankImage.setFrameNum(2);
+			blankImage.draw(context);
+			System.out.println("JK 1889 drawCustomBlank() blank with FIX on");
+		} else {
+			blankImage.setFrameNum(0);
+			blankImage.draw(context);
+			System.out.println("JK 5432 drawCustomBlank() blank ");
+		}
 	}
 	
 	
 	// JK 9 July 2018
 	public void trialStart(TrialContext context) {
 		
-		System.out.println("\nJK 0639 PngExptScene:trialStart "); 
+		System.out.println("\nJK 55639 PngExptScene:trialStart "); 
 	
 		spec = PngExptSpec.fromXml(context.getCurrentTask().getStimSpec());
 		
@@ -110,7 +126,7 @@ public class PngExptScene extends AbstractTaskScene {
 
 	public void trialStop(TrialContext context) {
 		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
-		
+//		blankImage.draw(context);
 	}
 	
 }

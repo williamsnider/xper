@@ -96,7 +96,7 @@ public class GAConfig {
 	// -shs: set slide length and ISI here (not via db):
 	@Bean
 	public PngExperimentState experimentState() {
-		System.out.println("JK GAConfig : experimentState()");
+//		System.out.println("JK GAConfig : experimentState()");
 
 		PngExperimentState state = new PngExperimentState();
 		state.setLocalTimeUtil(baseConfig.localTimeUtil());

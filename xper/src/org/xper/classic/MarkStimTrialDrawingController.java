@@ -19,8 +19,6 @@ public class MarkStimTrialDrawingController implements TrialDrawingController {
 
 	protected void drawTaskScene(ExperimentTask task, Context context) {
 		if (task != null) {
-//			System.out.println("JK 09523 DrawController : drawTaskScene() : index = " + ((TrialContext)context).getSlideIndex());
-
 			taskScene.setTask(task);
 			taskScene.drawTask(context, fixationOnWithStimuli);
 		} else {
@@ -92,7 +90,6 @@ public class MarkStimTrialDrawingController implements TrialDrawingController {
 	}
 
 	public void prepareNextSlide(ExperimentTask task, TrialContext context) {
-//		System.out.println("JK 08523 DrawController : prepareNextSlide() : slide index = " + context.getSlideIndex());
 		taskScene.nextMarker();
 		drawTaskScene(task, context);
 	}

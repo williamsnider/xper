@@ -226,9 +226,6 @@ public class ClassicConfig {
 	@Bean
 	public SlideTrialExperimentState experimentState () {
 		
-		// JK 
-		System.out.println("JK ClassicConfig : experimentState()");
-		
 		SlideTrialExperimentState state = new SlideTrialExperimentState ();
 		state.setLocalTimeUtil(baseConfig.localTimeUtil());
 		state.setTrialEventListeners(trialEventListeners());

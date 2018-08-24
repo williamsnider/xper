@@ -22,7 +22,7 @@ import org.xper.png.drawing.preview.DrawingManager;
 
 public class ImageStack implements Drawable {
 
-	 private static final int BYTES_PER_PIXEL = 4; //3 for RGB, 4 for RGBA
+	private static final int BYTES_PER_PIXEL = 4; //3 for RGB, 4 for RGBA
 
 	int numFrames = 1;
     IntBuffer textureIds = BufferUtils.createIntBuffer(numFrames);
@@ -43,7 +43,13 @@ public class ImageStack implements Drawable {
     int currNdx = 0;
     int[] stopNdx = {0, 0, 0};
     
-  
+	// JK 2981  18 July 2018 
+	float width = 1400  / scaler; //  2    // texture.getImageWidth();
+	float height = 1050 / scaler; //  2    // texture.getImageHeight();		
+	float yOffset = -height / 2;
+	float xOffset = -width / 2; 
+
+	 
 	
 	// the list of filenames to load.  
     public void loadImages(List<Map<String, Object>> stimInfo){    
@@ -79,7 +85,7 @@ public class ImageStack implements Drawable {
 	    			numStr = String.format("_%04d", (int)(Math.round(n/2) + 1));
 					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
 					fullFilenames.add(imageName);
-					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
+//					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
     			}
     			
   // JK 27 July
@@ -96,7 +102,7 @@ public class ImageStack implements Drawable {
 	    			numStr = String.format("_%04d", (int)(Math.round(n/2) + 1));
 					imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
 					fullFilenames.add(imageName);
-					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : down " + imageName);
+//					System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : down " + imageName);
     			}
     			
     		} else if(stimType.contains("ROLL")) {
@@ -123,7 +129,7 @@ public class ImageStack implements Drawable {
 					
 					imageName = resourcePath + "BLANK" + side + ext;
 					fullFilenames.add(imageName);
-					System.out.println("JK 5330 ImageStack:loadImages() BLANK : " + imageName);
+//					System.out.println("JK 5330 ImageStack:loadImages() BLANK : " + imageName);
     			}
     		} else {
     			numFrames += numStillImages;
@@ -137,7 +143,7 @@ public class ImageStack implements Drawable {
     				
     				imageName = resourcePath + baseName + side + ext;
     				fullFilenames.add(imageName);
-    				System.out.println("JK 6330 ImageStack:loadImages() STILL : " + imageName);
+//    				System.out.println("JK 6330 ImageStack:loadImages() STILL : " + imageName);
     			}
       		}
     	}
@@ -154,7 +160,7 @@ public class ImageStack implements Drawable {
 			loadTexture(str, n++);
 		}
   
-		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
+//		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
 
 		
     	// assume success?!
@@ -213,22 +219,16 @@ public class ImageStack implements Drawable {
 //		int animNdx = c.getAnimationFrameIndex();
 
 //		int ndx = 2 * frameNum + vpNum;
-//		System.out.println("JK 0838 viewPort == " + vpNum);
+//		System.out.println("JK 0838 ImageStack:draw() : viewPort == " + vpNum);
 //		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", slideIndex = " + c.getSlideIndex() + ", animation ndx = " + c.getAnimationFrameIndex());
 	      
-		if(c == null) {
-			System.out.println("JK 093 ImageStack:draw() : null context");
-		} else {
-			System.out.println("JK 093 ImageStack:draw() : valid context");
+//		if(c == null) {
+//			System.out.println("JK 093 ImageStack:draw() : null context");
+//		} else {
+//			System.out.println("JK 093 ImageStack:draw() : valid context");
+//		
+//		}
 		
-		}
-		
-		// JK 2981  18 July 2018 
-		float width = 1400  / scaler; //  2    // texture.getImageWidth();
-		float height = 1050 / scaler; //  2    // texture.getImageHeight();		
-		float yOffset = -height / 2;
-		float xOffset = -width / 2; 
-
 	
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
@@ -252,7 +252,8 @@ public class ImageStack implements Drawable {
     
         if(frameNum < numFrames - 1){
         	frameNum += 1;
-        }
+        } 
+
         		
 	}
 
@@ -337,6 +338,14 @@ public class ImageStack implements Drawable {
 		}
 
 
+		public void setFrameNum(int newFrameNum) {
+			if(newFrameNum < numFrames && newFrameNum >= 0) {
+				frameNum = newFrameNum;
+			}else {
+				System.out.println("ImageStack:setFrameNum() : newFrameNum is not right : " +  newFrameNum); 
+			}
+		}
+		  
 
 		public static int loadTexture(BufferedImage image){
 
@@ -413,7 +422,8 @@ public class ImageStack implements Drawable {
 			
 		}
 		
-		  
+		
+		
 }
 		
 		
