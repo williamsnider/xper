@@ -122,9 +122,9 @@ public class ImageStack implements Drawable {
     			numFrames += numStillImages;
     			for(int n = 0; n < numStillImages; n++) {
 	    			if(n % 2 == 0) {
-						side = "_L";
+						side = "_FIX_L";
 					} else {
-						side = "_R";
+						side = "_FIX_R";
 					}
 					
 					imageName = resourcePath + "BLANK" + side + ext;
@@ -168,6 +168,11 @@ public class ImageStack implements Drawable {
     }
 	
     
+    // call this before loadTexture and after setNumFrames
+    public void genTextures() {
+    	GL11.glGenTextures(textureIds); 
+
+    }
     
 
     public int loadTexture(String pathname, int textureIndex) {
@@ -197,7 +202,7 @@ public class ImageStack implements Drawable {
     	
     		// RGBA
     		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
-//    		System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex);    		
+//   System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex + " id = " + textureIds.get(textureIndex));    		
     		return textureIds.get(textureIndex);
 
     	} catch(IOException e) {
@@ -229,8 +234,10 @@ public class ImageStack implements Drawable {
 //		
 //		}
 		
-	
-		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);		
+//		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", id = " + textureIds.get(frameNum));
+				
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
+		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(frameNum));
 
@@ -246,19 +253,27 @@ public class ImageStack implements Drawable {
         GL11.glEnd();
 
         // delete the texture
-        GL11.glDeleteTextures(textureIds.get(frameNum));
+//        GL11.glDeleteTextures(textureIds.get(frameNum));
         
         GL11.glDisable(GL11.GL_TEXTURE_2D);
     
         if(frameNum < numFrames - 1){
         	frameNum += 1;
+//        	System.out.println("JK 093 ImageStack:draw() : frameNum = " + frameNum);
+        	
         } 
 
         		
 	}
 
 	
-	
+	public void cleanUp() {
+		for(int i = 0; i < numFrames; i++) {
+			GL11.glDeleteTextures(textureIds.get(i));
+		}
+		
+//		System.out.println("JK 093028 ImageStack:cleanUp() : errors = " + GL11.glGetError());
+	}
 
 	/**
 	 * @param args

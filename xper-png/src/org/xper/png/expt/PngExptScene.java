@@ -37,10 +37,9 @@ public class PngExptScene extends AbstractTaskScene {
 	public void initGL(int w, int h) {
 		super.setUseStencil(false);
 		super.initGL(w, h);
-		System.out.println("JK 32838 w = " + w + ", h = " + h);
+//		System.out.println("JK 32838 w = " + w + ", h = " + h);
 		
-//		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          
-		GL11.glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          
 		GL11.glViewport(0,0,w,h);
         GL11.glMatrixMode(GL11.GL_MODELVIEW); 
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -51,9 +50,10 @@ public class PngExptScene extends AbstractTaskScene {
         
         // context is valid so load blanks
         blankImage.setNumFrames(4);
+        blankImage.genTextures();
+
 		blankImage.loadTexture(blankImageStr + "_L.png", 0);
 		blankImage.loadTexture(blankImageStr + "_R.png", 1);
-//		fixBlankImage.setNumFrames(2);
 		blankImage.loadTexture(fixationImageStr + "_L.png", 2);
 		blankImage.loadTexture(fixationImageStr + "_R.png", 3);
         
@@ -88,11 +88,11 @@ public class PngExptScene extends AbstractTaskScene {
 		if(fixationOn) {
 			blankImage.setFrameNum(2);
 			blankImage.draw(context);
-			System.out.println("JK 1889 drawCustomBlank() blank with FIX on");
+//			System.out.println("JK 1889 drawCustomBlank() blank with FIX on");
 		} else {
 			blankImage.setFrameNum(0);
 			blankImage.draw(context);
-			System.out.println("JK 5432 drawCustomBlank() blank ");
+//			System.out.println("JK 5432 drawCustomBlank() blank ");
 		}
 	}
 	
@@ -121,10 +121,13 @@ public class PngExptScene extends AbstractTaskScene {
 		images = new ImageStack();
 		// this doesn't always work so don't bother images.setNumFrames(numImages);
 		images.loadImages(stimInfo);
+	
 	}
 
 
 	public void trialStop(TrialContext context) {
+		images.cleanUp();
+//		blankImage.setFrameNum(0);
 		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
 //		blankImage.draw(context);
 	}
