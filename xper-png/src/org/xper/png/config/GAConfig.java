@@ -113,7 +113,7 @@ public class GAConfig {
 		state.setSlideLength(classicConfig.xperSlideLength());
 //		state.setInterSlideInterval(200);				// GA slide ISI    -- 200
 		state.setInterSlideInterval(classicConfig.xperInterSlideInterval());
-		state.setDoEmptyTask(classicConfig.xperDoEmptyTask());
+		state.setDoEmptyTask(false);
 		state.setSleepWhileWait(true);
 		state.setPause(classicConfig.xperExperimentInitialPause());
 		state.setDelayAfterTrialComplete(classicConfig.xperDelayAfterTrialComplete());
