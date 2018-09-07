@@ -66,11 +66,18 @@ public abstract class AbstractTaskScene implements TaskScene {
 					// 0 will pass for stimulus region
 					GL11.glStencilFunc(GL11.GL_EQUAL, 0, 1);
 				}
-				drawCustomBlank(context);
+				// JK 24 Aug 2018 
+//				drawCustomBlank(context);
+				drawCustomBlank(context, fixationOn, markerOn);
 			}}, context);
 	}
 	
 	protected void drawCustomBlank(Context context) {}
+	
+	// JK 22 Aug 2018 
+	//   pass trial state to custom blank drawing 
+	protected void drawCustomBlank(Context context, final boolean fixationOn, final boolean markerOn) {}
+
 	
 	public void drawTask(Context context, final boolean fixationOn) {
 //		System.out.println("JK 0119 AbstractTaskScene:drawTask(): " + ((TrialContext)context).getSlideIndex());

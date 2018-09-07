@@ -13,12 +13,12 @@ import org.xper.config.AcqConfig;
 import org.xper.config.BaseConfig;
 import org.xper.config.ClassicConfig;
 import org.xper.drawing.object.BlankScreen;
+import org.xper.drawing.object.FixationPoint;
 import org.xper.png.expt.PngExptScene;
 import org.xper.png.expt.PngExptSpecGenerator;
 import org.xper.png.expt.generate.PngRandomGeneration;
 import org.xper.png.vo.PngExperimentState;
 import org.xper.png.PngTrialExperiment;
-
 
 
 @Configuration(defaultLazy=Lazy.TRUE)
@@ -57,11 +57,19 @@ public class GAConfig {
 	@Bean
 	public PngExptScene taskScene() {
 		PngExptScene scene = new PngExptScene();
+		FixationPoint f = classicConfig.experimentFixationPoint();
+		
 		scene.setRenderer(generalConfig.experimentGLRenderer());
 		scene.setDbUtil(generalConfig.pngDbUtil());
-		scene.setFixation(classicConfig.experimentFixationPoint());
+		
+		// JK 16 Aug 2018
+		//   the images will contain the fixation spot so 
+		f.setSize(0);
+		scene.setFixation(f);
+		
 		scene.setMarker(classicConfig.screenMarker());
 		scene.setBlankScreen(new BlankScreen());
+//		scene.setBlankScreen(new PngBlankScreen());
 		return scene;
 	}
 	
@@ -88,7 +96,7 @@ public class GAConfig {
 	// -shs: set slide length and ISI here (not via db):
 	@Bean
 	public PngExperimentState experimentState() {
-		System.out.println("JK GAConfig : experimentState()");
+//		System.out.println("JK GAConfig : experimentState()");
 
 		PngExperimentState state = new PngExperimentState();
 		state.setLocalTimeUtil(baseConfig.localTimeUtil());
@@ -113,7 +121,11 @@ public class GAConfig {
 		state.setSlideLength(classicConfig.xperSlideLength());
 //		state.setInterSlideInterval(200);				// GA slide ISI    -- 200
 		state.setInterSlideInterval(classicConfig.xperInterSlideInterval());
+		
+		// JK 16 Aug 2018 
+		//state.setDoEmptyTask(classicConfig.xperDoEmptyTask());
 		state.setDoEmptyTask(false);
+		
 		state.setSleepWhileWait(true);
 		state.setPause(classicConfig.xperExperimentInitialPause());
 		state.setDelayAfterTrialComplete(classicConfig.xperDelayAfterTrialComplete());

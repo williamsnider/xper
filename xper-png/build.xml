@@ -3,9 +3,11 @@
 	<property name="xper.home" location="${basedir}/../xper" />
 	<property name="native.home" location="${basedir}/../xper-native" />
 	<property name="dist.home" location="${basedir}/../dist" />
+	<property name="png.home" location="${dist.home}/png" />
 	
 	<target name="clean">
 		<delete dir="${build.home}" />
+		<delete dir="${png.home}" />
 	</target>
 
 	<path id="classpath">
@@ -28,6 +30,7 @@
 	<target name="prepare">
 		<mkdir dir="${build.home}" />
 		<mkdir dir="${dist.home}" />
+		<mkdir dir="${dist.home}/png" />
 		
 		<copy todir="${dist.home}" includeEmptyDirs="false">
 			<fileset dir="src" excludes="**/*.java" />
@@ -50,10 +53,10 @@ JK 21 June 2018
 	
 	<!--  JK 21 June 2018	--> 
 		<target name="compile" depends="prepare">
-			<javac srcdir="src" destdir="${build.home}">
+			<javac srcdir="src" destdir="${build.home}"> 
 				<classpath refid="classpath" />
 			</javac>
-			<javac srcdir="app" destdir="${build.home}">
+			<javac srcdir="app" destdir="${build.home}"> 
 				<classpath refid="classpath" />
 			</javac>
 		</target>
@@ -68,20 +71,20 @@ JK 21 June 2018
 	
 	
 	<target name="dist" depends="compile">
-		<jar jarfile="${dist.home}/xper-png.jar" basedir="${build.home}">
+		<jar jarfile="${png.home}/xper-png.jar" basedir="${build.home}">
 		</jar>
 		
-		<jar jarfile="${dist.home}/ga_randgen.jar">
+		<jar jarfile="${png.home}/ga_randgen.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/png/app/ga/RandGen.class" />
 			</fileset>
 			<manifest>
 				<attribute name="Main-Class" value="org.xper.png.app.ga.RandGen" />
-				<attribute name="Class-Path" value=". ${manifest.classpath}" />
+				<attribute name="Class-Path" value=". ${manifest.classpath} " />
 			</manifest>
 		</jar>
 		
-		<jar jarfile="${dist.home}/ga_experiment.jar">
+		<jar jarfile="${png.home}/ga_experiment.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/png/app/ga/Experiment.class" />
 			</fileset>
@@ -91,12 +94,12 @@ JK 21 June 2018
 			</manifest>
 		</jar>
 
-		<jar jarfile="${dist.home}/ga_console.jar">
+		<jar jarfile="${png.home}/ga_console.jar">
 			<fileset dir="${build.home}">
 				<include name="org/xper/png/app/ga/Console.class" />
 			</fileset>
 			<manifest>
-				<attribute name="Main-Class" value="org.xper.sach.app.ga.GAConsole" />
+				<attribute name="Main-Class" value="org.xper.png.app.ga.Console" />
 				<attribute name="Class-Path" value=". ${manifest.classpath}" />
 			</manifest>
 		</jar>

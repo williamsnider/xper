@@ -13,6 +13,10 @@ public class CalibrationPointSetupMessage {
 		xstream.alias("CalibrationPointSetupMessage", CalibrationPointSetupMessage.class);
 	}
 
+	public CalibrationPointSetupMessage() {
+		
+	}
+	
 	public CalibrationPointSetupMessage(Coordinates2D fixationPosition) {
 		super();
 		this.fixationPosition = fixationPosition;

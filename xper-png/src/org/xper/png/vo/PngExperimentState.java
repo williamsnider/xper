@@ -156,9 +156,9 @@ public class PngExperimentState extends SlideTrialExperimentState {
 			}
 		}
 		
-		for(Boolean b : animationStates) {
-			System.out.println("JK 83832 setAnimationStates() : state == " + b.toString());
-		}
+//		for(Boolean b : animationStates) {
+//			System.out.println("JK 83832 setAnimationStates() : state == " + b.toString());
+//		}
 	}
 	
 	public void setAnimationForSlide(int slideNum) {

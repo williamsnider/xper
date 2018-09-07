@@ -66,15 +66,15 @@ public class AlternatingScreenMarker implements ScreenMarker {
 
 	
 	public void draw(Context context) {
-		if (context.getViewportIndex() == viewportIndex) {
+//		if (context.getViewportIndex() == viewportIndex) {
 			drawMarker(context, whiteColor, blackColor);
-		}
+//		}
 	}
 	
 	public void drawAllOff(Context context) {
-		if (context.getViewportIndex() == viewportIndex) {
+//		if (context.getViewportIndex() == viewportIndex) {
 			drawMarker(context, blackColor, blackColor);
-		}
+//		}
 	}
 
 	public int getViewportIndex() {
