@@ -229,7 +229,7 @@ public class GeneralConfig {
 		MarkEveryStepTrialDrawingController controller = new MarkEveryStepTrialDrawingController();
 		controller.setWindow(monkeyWindow());
 		controller.setTaskScene(classicConfig.taskScene());
-		controller.setFixationOnWithStimuli(classicConfig.xperFixationOnWithStimuli());
+		controller.setFixationOnWithStimuli(true); //classicConfig.xperFixationOnWithStimuli()
 		return controller;
 	}
 	

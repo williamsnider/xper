@@ -7,16 +7,13 @@ import java.util.Map;
 
 import org.xper.Dependency;
 import org.xper.classic.vo.TrialContext;
-import org.xper.db.vo.StimSpecEntry;
 import org.xper.drawing.AbstractTaskScene;
 import org.xper.drawing.Context;
 import org.xper.experiment.ExperimentTask;
 
-import org.xper.png.drawing.stick.MStickSpec;
 import org.xper.png.drawing.stimuli.ImageStack;
-import org.xper.png.drawing.stimuli.PngObject;
-import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.util.PngDbUtil;
+
 import org.lwjgl.opengl.GL11;
 
 
@@ -35,7 +32,7 @@ public class PngExptScene extends AbstractTaskScene {
 //	ImageStack fixBlankImage = new ImageStack();
  
 	public void initGL(int w, int h) {
-		super.setUseStencil(false);
+		super.setUseStencil(true);
 		super.initGL(w, h);
 //		System.out.println("JK 32838 w = " + w + ", h = " + h);
 		
@@ -108,7 +105,7 @@ public class PngExptScene extends AbstractTaskScene {
 		int numImages = spec.getStimObjIdCount();
 		
 		List<Map<String, Object>> stimInfo = new ArrayList<Map<String, Object>>();
-		Map<String, Object> tmp = new HashMap();
+		Map<String, Object> tmp = new HashMap<String, Object>();
 		
 		for(int i = 0; i < numImages; i++) {
 			

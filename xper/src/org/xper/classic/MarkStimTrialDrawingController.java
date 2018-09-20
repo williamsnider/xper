@@ -85,7 +85,7 @@ public class MarkStimTrialDrawingController implements TrialDrawingController {
 	}
 
 	public void slideFinish(ExperimentTask task, TrialContext context) {
-		taskScene.drawBlank(context, true, false);
+		taskScene.drawBlank(context, true, true);
 		window.swapBuffers();
 	}
 
@@ -116,7 +116,7 @@ public class MarkStimTrialDrawingController implements TrialDrawingController {
 	}
 
 	public void trialComplete(TrialContext context) {
-		taskScene.drawBlank(context, false, false);
+		taskScene.drawBlank(context, false, true);
 		window.swapBuffers();
 	}
 
