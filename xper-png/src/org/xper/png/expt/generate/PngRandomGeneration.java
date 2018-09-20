@@ -60,8 +60,8 @@ public class PngRandomGeneration {
 	long genNum = 1;
 	long linNum = 0;
 	
-	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
-//	String basePath = "/home/alexandriya/jkBlendRend/"; // ProgressionClasses/";
+//	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
+	String basePath = "/home/alexandriya/blendRend/ProgressionClasses/"; // ProgressionClasses/";
 	
 	static public enum TrialType { GA };
 	TrialType trialType;
@@ -222,7 +222,8 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+//        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -370,7 +371,7 @@ char cont = 'y';  // 'n'; //
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
 //        args.add(basePath + "masterSubmitScript.sh");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -814,7 +815,7 @@ char cont = 'y';  // 'n'; //
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
 //        args.add(basePath + "masterSubmitScript.sh");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1064,7 +1065,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1150,7 +1151,7 @@ char cont = 'y';  // 'n'; //
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
 //        args.add(basePath + "masterSubmitScript.sh");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1318,7 +1319,7 @@ char cont = 'y';  // 'n'; //
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
 //        args.add(basePath + "masterSubmitScript.sh");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1459,7 +1460,7 @@ char cont = 'y';  // 'n'; //
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
 //        args.add(basePath + "masterSubmitScript.sh");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1512,7 +1513,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1566,7 +1567,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
@@ -1638,7 +1639,7 @@ char cont = 'y';  // 'n'; //
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
 //        args.add(basePath + "masterSubmitScript.sh");
-        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);

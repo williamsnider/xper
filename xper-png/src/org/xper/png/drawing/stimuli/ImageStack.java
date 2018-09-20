@@ -31,8 +31,8 @@ public class ImageStack implements Drawable {
     float scaler = 1.0f; //  3.45f;    // scales actual image size to viewport size
     
     // this probably should from the database 
-//    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
-    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
+    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+//    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
     String ext = "_R.png";  
  
     String imageName;
@@ -155,9 +155,9 @@ public class ImageStack implements Drawable {
     			numFrames += numStillImages;
     			for(int n = 0; n < numStillImages; n++) {
 	    			if(n % 2 == 0) {
-						side = "_FIX_L";
+						side = "_L";
 					} else {
-						side = "_FIX_R";
+						side = "_R";
 					}
 					
 					imageName = resourcePath + "BLANK" + side + ext;
