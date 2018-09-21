@@ -25,8 +25,8 @@ public class PngExptScene extends AbstractTaskScene {
 	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
 	
-	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK_FIX";
-	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK";
+	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK_FIX";
+	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK";
 	
 	ImageStack blankImage = new ImageStack();
 //	ImageStack fixBlankImage = new ImageStack();
@@ -50,6 +50,8 @@ public class PngExptScene extends AbstractTaskScene {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
         // context is valid so load blanks
+        blankImage.setScreenWidth(screenWidth);
+        blankImage.setScreenHeight(screenHeight);
         blankImage.setNumFrames(4);
         blankImage.genTextures();
 
@@ -119,7 +121,6 @@ public class PngExptScene extends AbstractTaskScene {
 //			System.out.println("PngExptScene:trialStart() : " + stimInfo.get(i) + " : " + spec.getStimObjId(i) + " : tmp = " + (String) tmp.get("stimType"));
 		}
 		
-		images = new ImageStack();
 		// this doesn't always work so don't bother images.setNumFrames(numImages);
 		images.setScreenWidth(screenWidth);
 		images.setScreenHeight(screenHeight);

@@ -155,7 +155,7 @@ public class ImageStack implements Drawable {
 						side = "_R";
 					}
 					
-					imageName = resourcePath + "BLANK_FIX" + side + ext;
+					imageName = resourcePath + "BLANK/BLANK_FIX" + side + ext;
 					fullFilenames.add(imageName);
 //					System.out.println("JK 5330 ImageStack:loadImages() BLANK : " + imageName);
     			}
@@ -230,6 +230,7 @@ public class ImageStack implements Drawable {
     		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
 //   System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex + " id = " + textureIds.get(textureIndex));    		
     		return textureIds.get(textureIndex);
+    		
 
     	} catch(IOException e) {
     		e.printStackTrace();
@@ -263,6 +264,7 @@ public class ImageStack implements Drawable {
 //		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", id = " + textureIds.get(frameNum));
 				
 		// JK 2981  18 July 2018 
+		
 		float width = (float) screenWidth  / scaler; //  2    // texture.getImageWidth();
 		float height = (float) screenHeight / scaler; //  2    // texture.getImageHeight();		
 		float yOffset = -height / 2;
