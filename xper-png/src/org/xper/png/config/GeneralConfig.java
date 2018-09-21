@@ -16,7 +16,6 @@ import org.springframework.config.java.plugin.context.AnnotationDrivenConfig;
 import org.springframework.config.java.util.DefaultScopes;
 import org.xper.classic.JuiceController;
 import org.xper.classic.MarkEveryStepTrialDrawingController;
-import org.xper.classic.SlideEventLogger;
 import org.xper.classic.SlideTrialExperiment;
 import org.xper.classic.TrialDrawingController;
 import org.xper.classic.TrialEventListener;

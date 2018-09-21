@@ -3,8 +3,6 @@ package org.xper.png.drawing.stimuli;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Point3d;
-
 public class EnviroSpec_class {
 	double horizonTilt;
 	double horizonSlant;

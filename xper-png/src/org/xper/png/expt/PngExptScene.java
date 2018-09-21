@@ -31,6 +31,10 @@ public class PngExptScene extends AbstractTaskScene {
 	ImageStack blankImage = new ImageStack();
 //	ImageStack fixBlankImage = new ImageStack();
  
+	double screenWidth;
+	double screenHeight;
+	
+	
 	public void initGL(int w, int h) {
 		super.setUseStencil(true);
 		super.initGL(w, h);
@@ -117,6 +121,8 @@ public class PngExptScene extends AbstractTaskScene {
 		
 		images = new ImageStack();
 		// this doesn't always work so don't bother images.setNumFrames(numImages);
+		images.setScreenWidth(screenWidth);
+		images.setScreenHeight(screenHeight);
 		images.loadImages(stimInfo);
 	
 	}
@@ -127,6 +133,14 @@ public class PngExptScene extends AbstractTaskScene {
 //		blankImage.setFrameNum(0);
 		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
 //		blankImage.draw(context);
+	}
+	
+	public void setScreenWidth(double screenWidth) {
+		this.screenWidth = screenWidth;
+	}
+	
+	public void setScreenHeight(double screenHeight) {
+		this.screenHeight = screenHeight;
 	}
 	
 }

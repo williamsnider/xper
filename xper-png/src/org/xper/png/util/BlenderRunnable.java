@@ -2,12 +2,7 @@ package org.xper.png.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.xper.png.drawing.stimuli.PngObjectSpec;
 
 public class BlenderRunnable implements Runnable {
 	List<String> args = new ArrayList<String>();

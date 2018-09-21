@@ -1,13 +1,9 @@
 package org.xper.png.drawing.stimuli;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.xper.drawing.Context;
 import org.xper.drawing.Drawable;
 import org.xper.png.drawing.stick.MStickSpec;
 import org.xper.png.drawing.stick.MatchStick;
-import org.xper.png.util.BlenderRunnable;
 
 public class PngObject implements Drawable {
 	Long id;

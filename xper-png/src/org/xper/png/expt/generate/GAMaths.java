@@ -4,15 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.Iterator;
 import java.util.Random;
 
-import org.xper.Dependency;
-import org.xper.png.drawing.stimuli.PngObjectSpec;
-import org.xper.png.drawing.stimuli.BlenderSpec;
-import org.xper.png.parsedata.DataObject;
-import org.xper.png.util.PngDbUtil;
 import org.xper.png.util.PngMapUtil;
 
 import javax.vecmath.Point3d;

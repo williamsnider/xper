@@ -3,7 +3,6 @@ package org.xper.png.util;
 
 import org.xper.png.vo.PngExperimentState;
 import org.xper.png.vo.PngTrialContext;
-import org.xper.classic.vo.TrialExperimentState;
 import org.xper.drawing.Coordinates2D;
 import org.xper.drawing.RGBColor;
 import org.xper.drawing.object.Circle;

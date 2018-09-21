@@ -7,8 +7,6 @@ import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.valuesource.SystemPropertiesValueSource;
 import org.springframework.config.java.plugin.context.AnnotationDrivenConfig;
-import org.xper.classic.SlideTrialExperiment;
-import org.xper.classic.vo.SlideTrialExperimentState;
 import org.xper.config.AcqConfig;
 import org.xper.config.BaseConfig;
 import org.xper.config.ClassicConfig;
@@ -57,6 +55,8 @@ public class GAConfig {
 	@Bean
 	public PngExptScene taskScene() {
 		PngExptScene scene = new PngExptScene();
+		scene.setScreenHeight(classicConfig.xperMonkeyScreenHeight());
+		scene.setScreenWidth(classicConfig.xperMonkeyScreenWidth());
 		FixationPoint f = classicConfig.experimentFixationPoint();
 		
 		scene.setRenderer(generalConfig.experimentGLRenderer());

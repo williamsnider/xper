@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,13 +42,9 @@ public class ImageStack implements Drawable {
     int currNdx = 0;
     int[] stopNdx = {0, 0, 0};
     
-	// JK 2981  18 July 2018 
-	float width = 1400  / scaler; //  2    // texture.getImageWidth();
-	float height = 1050 / scaler; //  2    // texture.getImageHeight();		
-	float yOffset = -height / 2;
-	float xOffset = -width / 2; 
-
-	 
+	double screenWidth;
+	double screenHeight;
+    
 	
 	// the list of filenames to load.  
     public void loadImages(List<Map<String, Object>> stimInfo){    
@@ -160,7 +155,7 @@ public class ImageStack implements Drawable {
 						side = "_R";
 					}
 					
-					imageName = resourcePath + "BLANK" + side + ext;
+					imageName = resourcePath + "BLANK_FIX" + side + ext;
 					fullFilenames.add(imageName);
 //					System.out.println("JK 5330 ImageStack:loadImages() BLANK : " + imageName);
     			}
@@ -267,6 +262,12 @@ public class ImageStack implements Drawable {
 		
 //		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", id = " + textureIds.get(frameNum));
 				
+		// JK 2981  18 July 2018 
+		float width = (float) screenWidth  / scaler; //  2    // texture.getImageWidth();
+		float height = (float) screenHeight / scaler; //  2    // texture.getImageHeight();		
+		float yOffset = -height / 2;
+		float xOffset = -width / 2;
+		
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
@@ -454,20 +455,29 @@ public class ImageStack implements Drawable {
 			DrawingManager testWindow = new DrawingManager(1050, 1400);
 			
 			for(int i = 0; i < numTrials; i++){
-				ImageStack s = new ImageStack();	
+				ImageStack s = new ImageStack();
+				s.setScreenHeight(1050);
+				s.setScreenWidth(1400);
 
        			s.setNumFrames(10);
      			s.loadFrames("180709_r-219_g-1_l-0_s-");
-//				
-//				List<ImageStack> images = new ArrayList<ImageStack>();
-//				images.add(s);
-//				testWindow.setStimObjs(images);		// add object to be drawn
+				
+				List<ImageStack> images = new ArrayList<ImageStack>();
+				images.add(s);
+				testWindow.setStimObjs(images);		// add object to be drawn
 			}
 			
-//			testWindow.drawStimuli();
+			testWindow.drawStimuli();
 			
 		}
 		
+		public void setScreenWidth(double screenWidth) {
+			this.screenWidth = screenWidth/2;
+		}
+		
+		public void setScreenHeight(double screenHeight) {
+			this.screenHeight = screenHeight;
+		}
 		
 		
 }
