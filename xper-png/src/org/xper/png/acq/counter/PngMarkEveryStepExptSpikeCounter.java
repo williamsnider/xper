@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.xper.Dependency;
 import org.xper.acq.counter.MarkEveryStepExperimentSpikeCounter;
 import org.xper.acq.counter.MarkEveryStepTaskSpikeDataEntry;
 import org.xper.acq.counter.TrialStageData;
@@ -13,23 +12,19 @@ import org.xper.db.vo.TaskDoneEntry;
 import org.xper.png.expt.PngExptSpec;
 import org.xper.png.util.PngDbUtil;
 import org.xper.png.util.PngMathUtil;
-//import org.xper.util.DbUtil;
 
 
 public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpikeCounter {	
-	@Dependency
-	PngDbUtil dbUtil;
-	
-	public void setDbUtil(PngDbUtil dbUtil) {
-		this.dbUtil = dbUtil;
-	}
+	PngDbUtil thisDbUtil;
 	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpikeByGeneration(String prefix, long runNum, long genNum, long linNum) { //#####!
-		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum, linNum); //#####!
+		castDB();
+		GenerationTaskDoneList taskDone = thisDbUtil.readTaskDoneByFullGen(prefix, runNum, genNum, linNum); //#####!
 		return getFakeTaskSpike(taskDone.getDoneTasks());
 	}
 	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getFakeTaskSpike(List<TaskDoneEntry> tasks) {
+		castDB();
 		SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> ret = new TreeMap<Long, MarkEveryStepTaskSpikeDataEntry>();
 		if (tasks.size() <= 0) return ret;
 
@@ -39,7 +34,7 @@ public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpi
 			spike.setTaskId(taskId);
 			
 			// get number of stims in a task/trial:
-			PngExptSpec trialSpec = PngExptSpec.fromXml(dbUtil.readStimSpec(dbUtil.getStimIdByTaskId(taskId)).getSpec());
+			PngExptSpec trialSpec = PngExptSpec.fromXml(thisDbUtil.readStimSpec(thisDbUtil.getStimIdByTaskId(taskId)).getSpec());
 			int numStims = trialSpec.getStimObjIdCount();
 			
 			// for each stim add spike info:
@@ -58,14 +53,21 @@ public class PngMarkEveryStepExptSpikeCounter extends MarkEveryStepExperimentSpi
 	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getTaskSpikeByGeneration(
 			String prefix, long runNum, long genNum, long linNum, int dataChan) { //#####!
+		castDB();
 		return getTaskSpikeByGeneration(prefix, runNum, genNum, linNum, dataChan, Integer.MAX_VALUE); //#####!
 	}
 	
 	public SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> getTaskSpikeByGeneration(
 			String prefix, long runNum, long genNum, long linNum, int dataChan, int maxStages) { //#####!
 		
-		GenerationTaskDoneList taskDone = dbUtil.readTaskDoneByFullGen(prefix, runNum, genNum, linNum); //#####!
+		GenerationTaskDoneList taskDone = thisDbUtil.readTaskDoneByFullGen(prefix, runNum, genNum, linNum); //#####!
 		return getTaskSpike(taskDone.getDoneTasks(), dataChan, maxStages);
+	}
+	
+	void castDB() {
+		if (dbUtil instanceof PngDbUtil) {
+			thisDbUtil = (PngDbUtil) dbUtil;
+		}
 	}
 	
 }

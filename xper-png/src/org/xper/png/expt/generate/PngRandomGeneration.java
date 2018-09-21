@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+
 import javax.vecmath.Point3d;
+
 import java.lang.Thread;
 
 import org.xper.Dependency;
@@ -50,7 +52,7 @@ public class PngRandomGeneration {
 	int taskCount;
 	
 	boolean doSaveThumbnails = true;
-	boolean useFakeSpikes = true;
+	boolean useFakeSpikes = false;
 	
 	PNGmaker pngMaker;
 	
@@ -2183,4 +2185,20 @@ char cont = 'y';  // 'n'; //
 	public void setTaskCount(int taskCount) {
 		this.taskCount = taskCount;
 	}
+	
+	//public static void main(String[] args) {
+	//	CreateDbDataSource cdbs = new CreateDbDataSource();
+	//	DataSource ds = cdbs.getDataSource();
+	//	PngDbUtil dbUtil = new PngDbUtil(ds);
+	//	
+	//	PngRandomGeneration prg = new PngRandomGeneration();
+	//	prg.setDbUtil(dbUtil);
+	//	
+	//	prg.getPrefix();
+	//	prg.getRunNum();
+	//	prg.getGenNum();
+	//	prg.getLinNum();
+	//	
+	//	prg.getSpikeResponses();
+	//}
 }
