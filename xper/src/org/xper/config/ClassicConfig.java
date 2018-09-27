@@ -153,7 +153,7 @@ public class ClassicConfig {
 		console.setConsoleRenderer(consoleRenderer());
 		console.setMonkeyScreenDimension(monkeyWindow().getScreenDimension());
 		console.setModel(experimentConsoleModel());
-		console.setCanvasScaleFactor(1);
+		console.setCanvasScaleFactor(3);
 		
 		ExperimentMessageReceiver receiver = messageReceiver();
 		// register itself to avoid circular reference

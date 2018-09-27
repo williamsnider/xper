@@ -87,7 +87,7 @@ public class ImageStack implements Drawable {
     				numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
     				imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
     				fullFilenames.add(imageName);
-    				System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
+//    				System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
 
     				if (currentImg == numAnimacyImages-1) {
     					currentImg = 0;
@@ -117,7 +117,7 @@ public class ImageStack implements Drawable {
     		} else if(stimType.contains("BALL")) {
     			optionalPath = baseName + "/";
     			numFrames += animacyRepeat*2;
-    			System.out.println(numFrames);
+//    			System.out.println(numFrames);
     			int pause = 0;
 
     			for (int numImg = 0; numImg < animacyRepeat*2; numImg++) {
@@ -187,7 +187,7 @@ public class ImageStack implements Drawable {
 			loadTexture(str, n++);
 		}
   
-		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
+//		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
 		
     	// assume success?!
     	texturesLoaded = true;

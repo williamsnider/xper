@@ -103,7 +103,7 @@ public class PngExptScene extends AbstractTaskScene {
 	// JK 9 July 2018
 	public void trialStart(TrialContext context) {
 		
-		System.out.println("\nJK 55639 PngExptScene:trialStart "); 
+//		System.out.println("\nJK 55639 PngExptScene:trialStart "); 
 	
 		spec = PngExptSpec.fromXml(context.getCurrentTask().getStimSpec());
 		
@@ -132,7 +132,7 @@ public class PngExptScene extends AbstractTaskScene {
 	public void trialStop(TrialContext context) {
 		images.cleanUp();
 //		blankImage.setFrameNum(0);
-		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
+//		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
 //		blankImage.draw(context);
 	}
 	

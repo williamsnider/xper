@@ -2,9 +2,9 @@ package org.xper.png.expt.generate;
 
 public final class PngGAParams {
 	public static final int GA_maxNumGens = 10;
-	public static final int GA_numNonBlankStimsPerLin = 10;	//40 10
+	public static final int GA_numNonBlankStimsPerLin = 50;	//40 10
 	public static final int GA_numStimsPerLin = GA_numNonBlankStimsPerLin + 1;
-	public static final int GA_numRepsPerStim = 5;			
+	public static final int GA_numRepsPerStim = 10; //5			
 	public static final int GA_numStimsPerTrial = 4;
 	public static final int GA_numLineages = 2;
 	public static final int GA_numTasks = (int) Math.ceil(GA_numStimsPerLin*GA_numRepsPerStim/GA_numStimsPerTrial); //#####! was (int) Math.ceil(GA_numStimsPerLin*GA_numLineages*GA_numRepsPerStim/GA_numStimsPerTrial)
