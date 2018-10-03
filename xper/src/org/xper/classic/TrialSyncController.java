@@ -1,7 +1,5 @@
 package org.xper.classic;
 
-import java.sql.Timestamp;
-
 import org.xper.Dependency;
 import org.xper.classic.vo.TrialContext;
 import org.xper.trialsync.TrialSync;

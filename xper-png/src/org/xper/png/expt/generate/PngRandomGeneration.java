@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+
 import javax.vecmath.Point3d;
+
 import java.lang.Thread;
 
 import org.xper.Dependency;
@@ -34,7 +36,6 @@ import org.xper.png.util.BlenderRunnable;
 import org.xper.png.util.ExpLogMessage;
 import org.xper.png.util.PngDbUtil;
 import org.xper.png.util.PngIOUtil;
-import org.xper.png.util.PngMapUtil;
 import org.xper.time.TimeUtil;
 
 
@@ -51,7 +52,7 @@ public class PngRandomGeneration {
 	int taskCount;
 	
 	boolean doSaveThumbnails = true;
-	boolean useFakeSpikes = true;
+	boolean useFakeSpikes = false;
 	
 	PNGmaker pngMaker;
 	
@@ -60,8 +61,8 @@ public class PngRandomGeneration {
 	long genNum = 1;
 	long linNum = 0;
 	
-	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
-//	String basePath = "/home/alexandriya/jkBlendRend/"; // ProgressionClasses/";
+//	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
+	String basePath = "/home/alexandriya/blendRend/ProgressionClasses/"; // ProgressionClasses/";
 	
 	static public enum TrialType { GA };
 	TrialType trialType;
@@ -2184,4 +2185,20 @@ char cont = 'y';  // 'n'; //
 	public void setTaskCount(int taskCount) {
 		this.taskCount = taskCount;
 	}
+	
+	//public static void main(String[] args) {
+	//	CreateDbDataSource cdbs = new CreateDbDataSource();
+	//	DataSource ds = cdbs.getDataSource();
+	//	PngDbUtil dbUtil = new PngDbUtil(ds);
+	//	
+	//	PngRandomGeneration prg = new PngRandomGeneration();
+	//	prg.setDbUtil(dbUtil);
+	//	
+	//	prg.getPrefix();
+	//	prg.getRunNum();
+	//	prg.getGenNum();
+	//	prg.getLinNum();
+	//	
+	//	prg.getSpikeResponses();
+	//}
 }

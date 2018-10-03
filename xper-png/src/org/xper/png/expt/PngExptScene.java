@@ -7,16 +7,13 @@ import java.util.Map;
 
 import org.xper.Dependency;
 import org.xper.classic.vo.TrialContext;
-import org.xper.db.vo.StimSpecEntry;
 import org.xper.drawing.AbstractTaskScene;
 import org.xper.drawing.Context;
 import org.xper.experiment.ExperimentTask;
 
-import org.xper.png.drawing.stick.MStickSpec;
 import org.xper.png.drawing.stimuli.ImageStack;
-import org.xper.png.drawing.stimuli.PngObject;
-import org.xper.png.drawing.stimuli.PngObjectSpec;
 import org.xper.png.util.PngDbUtil;
+
 import org.lwjgl.opengl.GL11;
 
 
@@ -28,14 +25,18 @@ public class PngExptScene extends AbstractTaskScene {
 	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
 	
-	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK_FIX";
-	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK";
+	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK_FIX";
+	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK";
 	
 	ImageStack blankImage = new ImageStack();
 //	ImageStack fixBlankImage = new ImageStack();
  
+	double screenWidth;
+	double screenHeight;
+	
+	
 	public void initGL(int w, int h) {
-		super.setUseStencil(false);
+		super.setUseStencil(true);
 		super.initGL(w, h);
 //		System.out.println("JK 32838 w = " + w + ", h = " + h);
 		
@@ -49,6 +50,8 @@ public class PngExptScene extends AbstractTaskScene {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         
         // context is valid so load blanks
+        blankImage.setScreenWidth(screenWidth);
+        blankImage.setScreenHeight(screenHeight);
         blankImage.setNumFrames(4);
         blankImage.genTextures();
 
@@ -100,7 +103,7 @@ public class PngExptScene extends AbstractTaskScene {
 	// JK 9 July 2018
 	public void trialStart(TrialContext context) {
 		
-		System.out.println("\nJK 55639 PngExptScene:trialStart "); 
+//		System.out.println("\nJK 55639 PngExptScene:trialStart "); 
 	
 		spec = PngExptSpec.fromXml(context.getCurrentTask().getStimSpec());
 		
@@ -108,7 +111,7 @@ public class PngExptScene extends AbstractTaskScene {
 		int numImages = spec.getStimObjIdCount();
 		
 		List<Map<String, Object>> stimInfo = new ArrayList<Map<String, Object>>();
-		Map<String, Object> tmp = new HashMap();
+		Map<String, Object> tmp = new HashMap<String, Object>();
 		
 		for(int i = 0; i < numImages; i++) {
 			
@@ -118,8 +121,9 @@ public class PngExptScene extends AbstractTaskScene {
 //			System.out.println("PngExptScene:trialStart() : " + stimInfo.get(i) + " : " + spec.getStimObjId(i) + " : tmp = " + (String) tmp.get("stimType"));
 		}
 		
-		images = new ImageStack();
 		// this doesn't always work so don't bother images.setNumFrames(numImages);
+		images.setScreenWidth(screenWidth);
+		images.setScreenHeight(screenHeight);
 		images.loadImages(stimInfo);
 	
 	}
@@ -128,8 +132,16 @@ public class PngExptScene extends AbstractTaskScene {
 	public void trialStop(TrialContext context) {
 		images.cleanUp();
 //		blankImage.setFrameNum(0);
-		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
+//		System.out.println("JK 0739 PngExptScene:trialStop\n\n" );
 //		blankImage.draw(context);
+	}
+	
+	public void setScreenWidth(double screenWidth) {
+		this.screenWidth = screenWidth;
+	}
+	
+	public void setScreenHeight(double screenHeight) {
+		this.screenHeight = screenHeight;
 	}
 	
 }

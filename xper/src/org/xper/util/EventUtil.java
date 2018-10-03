@@ -54,6 +54,7 @@ public class EventUtil {
 	public static void fireInitialEyeInFailEvent(long timestamp,
 			List<? extends TrialEventListener> trialEventListeners,
 			TrialContext currentContext) {
+		System.out.println("FAIL: EYEIN");
 		for (TrialEventListener listener : trialEventListeners) {
 			listener.initialEyeInFail(timestamp, currentContext);
 		}
@@ -62,6 +63,7 @@ public class EventUtil {
 	public static void fireEyeInHoldFailEvent(long timestamp,
 			List<? extends TrialEventListener> trialEventListeners,
 			TrialContext currentContext) {
+		System.out.println("FAIL: HOLD");
 		for (TrialEventListener listener : trialEventListeners) {
 			listener.eyeInHoldFail(timestamp, currentContext);
 		}
@@ -78,6 +80,7 @@ public class EventUtil {
 	public static void fireEyeInBreakEvent(long timestamp,
 			List<? extends TrialEventListener> trialEventListeners,
 			TrialContext currentContext) {
+		System.out.println("FAIL: BREAK");
 		for (TrialEventListener listener : trialEventListeners) {
 			listener.eyeInBreak(timestamp, currentContext);
 		}

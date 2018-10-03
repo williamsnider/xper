@@ -18,6 +18,7 @@ import org.xper.util.DbUtil;
 
 public class MarkEveryStepExperimentSpikeCounter {
 	@Dependency
+	protected
 	DbUtil dbUtil;
 
 	public void setDbUtil(DbUtil dbUtil) {

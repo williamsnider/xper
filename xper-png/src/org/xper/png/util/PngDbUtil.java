@@ -4,7 +4,6 @@ package org.xper.png.util;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.xper.db.vo.GenerationTaskDoneList;
-import org.xper.db.vo.RFInfoEntry;
 import org.xper.db.vo.StimSpecEntry;
 import org.xper.db.vo.TaskDoneEntry;
 import org.xper.util.DbUtil;

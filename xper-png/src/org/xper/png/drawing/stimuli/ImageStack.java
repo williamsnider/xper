@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +30,8 @@ public class ImageStack implements Drawable {
     float scaler = 1.0f; //  3.45f;    // scales actual image size to viewport size
     
     // this probably should from the database 
-//    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
-    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
+    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+//    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
     String ext = "_R.png";  
  
     String imageName;
@@ -43,13 +42,9 @@ public class ImageStack implements Drawable {
     int currNdx = 0;
     int[] stopNdx = {0, 0, 0};
     
-	// JK 2981  18 July 2018 
-	float width = 1400  / scaler; //  2    // texture.getImageWidth();
-	float height = 1050 / scaler; //  2    // texture.getImageHeight();		
-	float yOffset = -height / 2;
-	float xOffset = -width / 2; 
-
-	 
+	double screenWidth;
+	double screenHeight;
+    
 	
 	// the list of filenames to load.  
     public void loadImages(List<Map<String, Object>> stimInfo){    
@@ -92,7 +87,7 @@ public class ImageStack implements Drawable {
     				numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
     				imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
     				fullFilenames.add(imageName);
-    				System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
+//    				System.out.println("JK 3330 ImageStack:loadImages() ANIMATE : up " + imageName);
 
     				if (currentImg == numAnimacyImages-1) {
     					currentImg = 0;
@@ -122,7 +117,7 @@ public class ImageStack implements Drawable {
     		} else if(stimType.contains("BALL")) {
     			optionalPath = baseName + "/";
     			numFrames += animacyRepeat*2;
-    			System.out.println(numFrames);
+//    			System.out.println(numFrames);
     			int pause = 0;
 
     			for (int numImg = 0; numImg < animacyRepeat*2; numImg++) {
@@ -155,12 +150,12 @@ public class ImageStack implements Drawable {
     			numFrames += numStillImages;
     			for(int n = 0; n < numStillImages; n++) {
 	    			if(n % 2 == 0) {
-						side = "_FIX_L";
+						side = "_L";
 					} else {
-						side = "_FIX_R";
+						side = "_R";
 					}
 					
-					imageName = resourcePath + "BLANK" + side + ext;
+					imageName = resourcePath + "BLANK/BLANK_FIX" + side + ext;
 					fullFilenames.add(imageName);
 //					System.out.println("JK 5330 ImageStack:loadImages() BLANK : " + imageName);
     			}
@@ -192,7 +187,7 @@ public class ImageStack implements Drawable {
 			loadTexture(str, n++);
 		}
   
-		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
+//		System.out.println("JK 1290 ImageStack:loadImages() :  numFrames = " + numFrames + ", n = " + n);
 		
     	// assume success?!
     	texturesLoaded = true;
@@ -235,6 +230,7 @@ public class ImageStack implements Drawable {
     		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
 //   System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex + " id = " + textureIds.get(textureIndex));    		
     		return textureIds.get(textureIndex);
+    		
 
     	} catch(IOException e) {
     		e.printStackTrace();
@@ -267,6 +263,13 @@ public class ImageStack implements Drawable {
 		
 //		System.out.println("JK 093 ImageStack:draw() frameNum = " + frameNum + ", id = " + textureIds.get(frameNum));
 				
+		// JK 2981  18 July 2018 
+		
+		float width = (float) screenWidth  / scaler; //  2    // texture.getImageWidth();
+		float height = (float) screenHeight / scaler; //  2    // texture.getImageHeight();		
+		float yOffset = -height / 2;
+		float xOffset = -width / 2;
+		
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
@@ -454,20 +457,29 @@ public class ImageStack implements Drawable {
 			DrawingManager testWindow = new DrawingManager(1050, 1400);
 			
 			for(int i = 0; i < numTrials; i++){
-				ImageStack s = new ImageStack();	
+				ImageStack s = new ImageStack();
+				s.setScreenHeight(1050);
+				s.setScreenWidth(1400);
 
        			s.setNumFrames(10);
      			s.loadFrames("180709_r-219_g-1_l-0_s-");
-//				
-//				List<ImageStack> images = new ArrayList<ImageStack>();
-//				images.add(s);
-//				testWindow.setStimObjs(images);		// add object to be drawn
+				
+				List<ImageStack> images = new ArrayList<ImageStack>();
+				images.add(s);
+				testWindow.setStimObjs(images);		// add object to be drawn
 			}
 			
-//			testWindow.drawStimuli();
+			testWindow.drawStimuli();
 			
 		}
 		
+		public void setScreenWidth(double screenWidth) {
+			this.screenWidth = screenWidth/2;
+		}
+		
+		public void setScreenHeight(double screenHeight) {
+			this.screenHeight = screenHeight;
+		}
 		
 		
 }

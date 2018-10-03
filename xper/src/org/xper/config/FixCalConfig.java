@@ -15,6 +15,7 @@ import org.springframework.config.java.plugin.context.AnnotationDrivenConfig;
 import org.springframework.config.java.util.DefaultScopes;
 import org.xper.classic.TrialEventListener;
 import org.xper.drawing.Coordinates2D;
+import org.xper.drawing.RGBColor;
 import org.xper.drawing.object.BlankScreen;
 import org.xper.drawing.object.Circle;
 import org.xper.drawing.object.FixationPoint;
@@ -77,8 +78,9 @@ public class FixCalConfig {
 	@Bean
 	public FixationPoint experimentFixationPoint() {
 		FixationPoint f = new FixationPoint ();
-		f.setColor(classicConfig.xperFixationPointColor());
-		f.setSize(classicConfig.xperFixationPointSize());
+		// RAM: 180813
+		f.setColor(new RGBColor(1,1,1)); //classicConfig.xperFixationPointColor()
+		f.setSize(2); // classicConfig.xperFixationPointSize()
 		return f;
 	}
 	

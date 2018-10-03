@@ -2,12 +2,7 @@ package org.xper.png.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.xper.png.drawing.stimuli.PngObjectSpec;
 
 public class BlenderRunnable implements Runnable {
 	List<String> args = new ArrayList<String>();
@@ -18,11 +13,11 @@ public class BlenderRunnable implements Runnable {
 	List<Integer> possiblePositions = new ArrayList<Integer>();
 	List<String> constantAttributes = new ArrayList<String>();
 	
-	static String appPath = "/Applications/blender-279/Blender.app/Contents/MacOS/blender";
-//	static String appPath = "/home/alexandriya/blender/blender";
+//	static String appPath = "/Applications/blender-279/Blender.app/Contents/MacOS/blender";
+	static String appPath = "/home/alexandriya/blender/blender";
 //	static String appPath = "/Applications/blender279/Blender.app/Contents/MacOS/blender";
- 	static String blendFile = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/frameRate.blend";
-//	static String blendFile = "/home/alexandriya/jkBlendRend/ProgressionClasses/frameRate.blend";
+// 	static String blendFile = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/frameRate.blend";
+	static String blendFile = "/home/alexandriya/blendRend/ProgressionClasses/frameRate.blend";
 	
 //	static String blendFile = "/Users/alexandriya/Dropbox/Blender/ProgressionClasses/frameRate.blend";
 //	static String appPath = "/home/alexandriya/blender/blender";

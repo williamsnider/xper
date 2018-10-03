@@ -4,8 +4,6 @@ package org.xper.png.drawing.stick;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
-
 import javax.media.j3d.Transform3D;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Point3d;

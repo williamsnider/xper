@@ -24,7 +24,7 @@ public class MonkeyWindow implements Window {
 	int screenWidth;
 	int screenHeight;
 
-	static final double DEFAULT_CANVAS_SCALE_FACTOR = 2;
+	static final double DEFAULT_CANVAS_SCALE_FACTOR = 1;
 
 	public MonkeyWindow() {
 		DisplayMode mode = Display.getDisplayMode();

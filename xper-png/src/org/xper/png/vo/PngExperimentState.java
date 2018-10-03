@@ -1,9 +1,7 @@
 package org.xper.png.vo;
 
-import org.dom4j.Document;
 import org.xper.Dependency;
 import org.xper.classic.vo.SlideTrialExperimentState;
-import org.xper.experiment.TaskDataSource;
 import org.xper.eye.EyeTargetSelector;
 import org.xper.png.expt.PngExptSpec;
 import org.xper.png.util.*;

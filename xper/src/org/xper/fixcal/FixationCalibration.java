@@ -227,33 +227,33 @@ public class FixationCalibration extends AbstractTaskScene implements TrialEvent
 			
 			double h0 = stats[CENTER][H].getMean();
 			double v0 = stats[CENTER][V].getMean();
-			System.out.println("Center estimate = " + h0 + ", " + v0);
+//			System.out.println("Center estimate = " + h0 + ", " + v0);
 			logger.info("h0: " + h0 + " v0: " + v0);
 			
 			double hr = stats[RIGHT][H].getMean();
 			double vr = stats[RIGHT][V].getMean();
-			System.out.println("Right estimate = " + hr + ", " + vr);
+//			System.out.println("Right estimate = " + hr + ", " + vr);
 			logger.info("hr: " + hr + " vr: " + vr);
 			double sxh_r = (hr - h0) / calibrationDegree;
 			double sxv_r = (vr - v0) / calibrationDegree;
 			
 			double hl = stats[LEFT][H].getMean();
 			double vl = stats[LEFT][V].getMean();
-			System.out.println("Left estimate = " + hl + ", " + vl);
+//			System.out.println("Left estimate = " + hl + ", " + vl);
 			logger.info("hl: " + hl + " vl: " + vl);
 			double sxh_l = ( hl - h0) / (-calibrationDegree);
 			double sxv_l = ( vl - v0) / (-calibrationDegree);
 			
 			double hu = stats[UP][H].getMean();
 			double vu = stats[UP][V].getMean();
-			System.out.println("Up estimate = " + hu + ", " + vu);
+//			System.out.println("Up estimate = " + hu + ", " + vu);
 			logger.info("hu: " + hu + " vu: " + vu);
 			double syh_u =  (hu - h0) / calibrationDegree;
 			double syv_u =  (vu - v0) / calibrationDegree;
 			
 			double hd = stats[DOWN][H].getMean();
 			double vd = stats[DOWN][V].getMean();
-			System.out.println("Down estimate = " + hd + ", " + vd);
+//			System.out.println("Down estimate = " + hd + ", " + vd);
 			logger.info("hd: " + hd + " vd: " + vd);
 			double syh_d = ( hd - h0) / (-calibrationDegree);
 			double syv_d = ( vd - v0) / (-calibrationDegree);
