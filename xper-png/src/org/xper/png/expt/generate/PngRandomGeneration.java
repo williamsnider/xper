@@ -60,9 +60,10 @@ public class PngRandomGeneration {
 	long runNum = 1;
 	long genNum = 1;
 	long linNum = 0;
+	List<String> specifiedPostHocStimuli = new ArrayList<String>(); 
 	
-//	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
-	String basePath = "/home/alexandriya/blendRend/ProgressionClasses/"; // ProgressionClasses/";
+	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
+//	String basePath = "/home/alexandriya/blendRend/ProgressionClasses/"; // ProgressionClasses/";
 	
 	static public enum TrialType { GA };
 	TrialType trialType;
@@ -90,11 +91,13 @@ char cont = 'y';  // 'n'; //
 		
 		while (cont == 'y') {
 			int c = PngIOUtil.promptInteger("Enter GA run number to continue. Else enter '0'");
+			System.out.println("");
 			if (c==0) {
 				
 				genNum = 1;
 				runNum = runNum + 1;
 				linNum = 0;
+				System.out.println("Run "+Long.toString(runNum)+", Generation "+Long.toString(genNum)+", Lineage "+Long.toString(linNum));
 				
 				DateFormat df = new SimpleDateFormat("yyMMdd");
 				prefix = df.format(new Date()); 
@@ -109,8 +112,40 @@ char cont = 'y';  // 'n'; //
 					System.out.println("To continue GA, enter 'n'.");
 					System.out.println("To proceed with generic post-hoc, enter 'b' (rolling ball) or 'g' (grass gravity).");
 					progressType = PngIOUtil.promptString("To proceed with GA post-hoc, enter 'c' (composite), 'a' (joint animacy), 's' (stability), 'p' (perturbation), 'd' (density), or 'm' (mass distribution)");
+					
+					if (progressType.equals("d")) {
+						System.out.println("Density is no longer an approved post-hoc and is not supported at this time.");
+						System.out.println("");
+						progressType = "";
+					}
+					
+					if (progressType.equals("s")) {
+						System.out.println("Stability is no longer an approved post-hoc.");
+						System.out.println("");
+						progressType = "";
+					}
 				}
 				
+				if (Arrays.asList("a","s","p","m").contains(progressType)) {
+					System.out.println("");
+					System.out.println("To choose custom stimuli for GA post-hoc, enter descriptive IDs now, separating entries with a Return keypress. Enter 'c' when finished.");
+					System.out.println("Alternatively, enter 'c' now to continue with the default selection process.");
+					String overrideAutoSelect = PngIOUtil.promptString("");
+					
+					if (!overrideAutoSelect.equals("c")) {
+						specifiedPostHocStimuli.add(overrideAutoSelect);
+						
+						while (!overrideAutoSelect.equals("c")) {
+							overrideAutoSelect = PngIOUtil.promptString("");
+							
+							if (!overrideAutoSelect.equals("c")) {
+								specifiedPostHocStimuli.add(overrideAutoSelect);
+							}
+						}	
+					}
+				}
+				
+				System.out.println("");
 				runNum = c;
 				linNum = getLinId(runNum);
 				// if current linNum is 1, genNum increments and linNum is set to 0
@@ -125,9 +160,8 @@ char cont = 'y';  // 'n'; //
 				}
 				
 				prefix = getPrefix(runNum);
-				System.out.println(genNum);
-				System.out.println(linNum);
-
+				System.out.println("Run "+Long.toString(runNum)+", Generation "+Long.toString(genNum)+", Lineage "+Long.toString(linNum));
+				
 				dbUtil.writeCurrentDescriptivePrefixAndGen(globalTimeUtil.currentTimeMicros(), prefix, runNum, genNum, linNum); 
 				
 				switch (progressType) {
@@ -812,17 +846,17 @@ char cont = 'y';  // 'n'; //
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-        BlenderRunnable photoRunner = new BlenderRunnable();
-        List<String> args = new ArrayList<String>();
-        args.add("ssh");
-        args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
-//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
-        args.add(Integer.toString(numJobs));
-        args.add(prefixRunGen);
-        photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+//        BlenderRunnable photoRunner = new BlenderRunnable();
+//        List<String> args = new ArrayList<String>();
+//        args.add("ssh");
+//        args.add("alexandriya@172.30.9.11");
+////        args.add(basePath + "masterSubmitScript.sh");
+////        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+//        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
+//        args.add(Integer.toString(numJobs));
+//        args.add(prefixRunGen);
+//        photoRunner.setDoWaitFor(false);
+//        photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
@@ -931,20 +965,32 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 4;
+		
 		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
 
-		// choose best, worst alden stimuli
-		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 4;
+			
+			// choose best, worst alden stimuli
+			stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
+			
+			if (fitnessMethod == 4) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+			
+		} else {
+			numDistinctObjs = specifiedPostHocStimuli.size();
+			
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+				}
+		}
 
 		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
-
-		if (fitnessMethod == 4) {
-			numDistinctObjs = stimsToMorph_lin1.size();
-		} else {
-			numDistinctObjs = fitnessMethod;
-		}
-		
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> limbCounts = new ArrayList<Integer>();
 		limbCounts.add(PngGAParams.PH_animacy_numMaterials); // document the number of materials in use
@@ -974,84 +1020,57 @@ char cont = 'y';  // 'n'; //
 			stims_lin1.add(whichStim_lin1);
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", conserved stimulus");
 			stimNum ++;
-			
+
 			trialSubGroup.add(whichStim_lin1);
 			trialSubGroup.add(whichStim_lin1);
 			trialSubGroup.add(whichStim_lin1);
 			trialGroups.add(trialSubGroup);
-			
+
 			trialSubGroup = new ArrayList<Long>();
 
-			// include a copy for animation and a copy for still
-			for (int c=0;c<PngGAParams.PH_animacy_numMaterials;c++) {
-				
+
+			if (n%2==0) {
+
+				whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
+				stimObjIds.add(whichStim_lin1);
+				stims_lin1.add(whichStim_lin1);
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs squish still");
+				stimNum ++;
+
+
 				// SQUISH
-				if (PngGAParams.targetedColoration!=1) {
-					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
-					stimObjIds.add(whichStim_lin1);
-					stims_lin1.add(whichStim_lin1);
-					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs squish still");
-					stimNum ++;
-				}
-				
 				for (int m=0;m<numPHanimations;m++) {
-				
-					if (PngGAParams.targetedColoration==1) {
-						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
-						stimObjIds.add(whichStim_lin1);
-						stims_lin1.add(whichStim_lin1);
-						System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", limb " + m + ", squish still");
-						stimNum ++;
-					}
-					
+
 					long whichStim_lin1_anim = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_ANIMATE");
 					stimObjIds.add(whichStim_lin1_anim);
 					stims_lin1.add(whichStim_lin1_anim);
 					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", limb " + m + ", squish animated");
 					stimNum ++;
-					
+
 					trialSubGroup.add(whichStim_lin1);
 					trialSubGroup.add(whichStim_lin1_anim);
 					trialSubGroup.add(whichStim_lin1);
 					trialGroups.add(trialSubGroup);
 
 					trialSubGroup = new ArrayList<Long>();
-
 				}
+
+			} else {
 
 				// STIFF
-				if (PngGAParams.targetedColoration!=1) {
-					whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
-					stimObjIds.add(whichStim_lin1);
-					stims_lin1.add(whichStim_lin1);
-					System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs stiff still");
-					stimNum ++;
+				whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
+				stimObjIds.add(whichStim_lin1);
+				stims_lin1.add(whichStim_lin1);
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs stiff still");
+				stimNum ++;
 
-					trialSubGroup.add(whichStim_lin1);
-					trialSubGroup.add(whichStim_lin1);
-					trialSubGroup.add(whichStim_lin1);
-					trialGroups.add(trialSubGroup);
+				trialSubGroup.add(whichStim_lin1);
+				trialSubGroup.add(whichStim_lin1);
+				trialSubGroup.add(whichStim_lin1);
+				trialGroups.add(trialSubGroup);
 
-					trialSubGroup = new ArrayList<Long>();
-				}
+				trialSubGroup = new ArrayList<Long>();
 
-				else {
-
-					for (int m=0;m<numPHanimations;m++) {
-						whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "ANIMACY_STILL"); // object
-						stimObjIds.add(whichStim_lin1);
-						stims_lin1.add(whichStim_lin1);
-						System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + ", all limbs stiff still");
-						stimNum ++;
-
-						trialSubGroup.add(whichStim_lin1);
-						trialSubGroup.add(whichStim_lin1);
-						trialSubGroup.add(whichStim_lin1);
-						trialGroups.add(trialSubGroup);
-
-						trialSubGroup = new ArrayList<Long>();
-					}
-				}
 			}
 		}
 
@@ -1109,18 +1128,31 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 4;
-		int numDistinctObjs;
-
-		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
-		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
 		
-		if (fitnessMethod == 4) {
-			numDistinctObjs = stimsToMorph_lin1.size();
-		} else {
-			numDistinctObjs = fitnessMethod;
-		}
+		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
 
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 4;
+			
+			ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
+			stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+			
+			if (fitnessMethod == 4) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+			
+		} else {
+			numDistinctObjs = specifiedPostHocStimuli.size();
+			
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+				}
+		}
+		
 		int numMorphs = PngGAParams.PH_stability_numMorphs;
 		List<String> placeholder = new ArrayList<String>();
 		List<Integer> morphs = new ArrayList<Integer>();
@@ -1396,18 +1428,26 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 4;
 		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
 
-		// choose best, worst alden stimuli
-		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
-
-		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
-
-		if (fitnessMethod == 4) {
-			numDistinctObjs = stimsToMorph_lin1.size();
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 4;
+			stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod);
+			
+			if (fitnessMethod == 4) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+			
 		} else {
-			numDistinctObjs = fitnessMethod;
+			numDistinctObjs = specifiedPostHocStimuli.size();
+			
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+				}
 		}
 		
 		List<String> placeholder = new ArrayList<String>();
@@ -1584,13 +1624,13 @@ char cont = 'y';  // 'n'; //
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
+		int numStimPerTrial = 1;
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
-		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
+		createPHTrialsFromStimObjs(stimObjIds,numStimPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numStimPerTrial = 1;
 		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimPerTrial);
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
 
@@ -1618,10 +1658,34 @@ char cont = 'y';  // 'n'; //
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
-		int fitnessMethod = 3;
+		
+		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
 
-		ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
-		List<Long> stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 4;
+			
+			ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
+			stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+			
+			if (fitnessMethod == 3) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+			
+		} else {
+			numDistinctObjs = specifiedPostHocStimuli.size();
+			
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+				}
+		}
+
+		List<String> placeholder = new ArrayList<String>();
+		List<Integer> numObjs = new ArrayList<Integer>();
+		numObjs.add(numDistinctObjs); // document the number of objects in use per lineage
 		int stimNum = 0;
 
 		for (int n=0;n<stimsToMorph_lin1.size();n++) {
@@ -1635,7 +1699,7 @@ char cont = 'y';  // 'n'; //
 			}
 		}
 
-		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "perturbationPostHoc.py");
+		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "perturbationPostHoc.py",placeholder,numObjs);
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "ProgressionClasses/perturbationPostHoc.py");
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/perturbationPostHoc.py");
 		blenderRunnerPHGeneric.run();
@@ -1814,12 +1878,22 @@ char cont = 'y';  // 'n'; //
 			// save spec and tasktodo to db
 			dbUtil.writeStimSpec(taskId, spec);
 			dbUtil.writeTaskToDo(taskId, taskId, -1, genNum, linNum); //#####!
-
+			
+			
 			// JK 6 July don't do this for real
 //			dbUtil.writeTaskDone(taskId, taskId, filler); ///!!!!!
 
 			stimCounter = endIdx;
 		}
+		System.out.println(PngGAParams.GA_numTasks);
+		System.out.println(PngGAParams.GA_numStimsPerLin);
+		System.out.println(PngGAParams.GA_numRepsPerStim);
+		System.out.println(PngGAParams.GA_numStimsPerTrial);
+		System.out.println(Math.ceil(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
+		System.out.println(Math.round(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
+		System.out.println(Math.floor(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
+		System.out.println(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+		
 	}
 
 	void createPHTrialsFromStimObjs(List<Long> stimObjIds, int numStimsPerTrial) {
