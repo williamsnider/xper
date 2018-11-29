@@ -20,6 +20,8 @@ public abstract class AbstractTaskScene implements TaskScene {
 
 	public void initGL(int w, int h) {
 		renderer.init(w, h);
+		GL11.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		
 		if (useStencil) {
 			GL11.glClear (GL11.GL_STENCIL_BUFFER_BIT);
 			// disable color and depth buffer for writing
@@ -40,9 +42,10 @@ public abstract class AbstractTaskScene implements TaskScene {
 			GL11.glStencilMask(0);
 			// enable color and depth buffer for writing
 			GL11.glColorMask(true, true, true, true);
+			
 			GL11.glDepthMask(true);
 		} else {
-			// GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+			 GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 		}
 	}
 
@@ -50,6 +53,7 @@ public abstract class AbstractTaskScene implements TaskScene {
 		blankScreen.draw(null);
 		renderer.draw(new Drawable() {
 			public void draw(Context context) {		
+				
 				if (useStencil) {
 					// 1 will pass for fixation and marker regions
 					GL11.glStencilFunc(GL11.GL_EQUAL, 1, 1);
@@ -68,6 +72,7 @@ public abstract class AbstractTaskScene implements TaskScene {
 				}
 				// JK 24 Aug 2018 
 //				drawCustomBlank(context);
+				
 				drawCustomBlank(context, fixationOn, markerOn);
 			}}, context);
 	}

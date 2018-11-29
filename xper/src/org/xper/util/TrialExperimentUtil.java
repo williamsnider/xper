@@ -75,6 +75,8 @@ public class TrialExperimentUtil {
 				slideEventListeners);
 //		System.out.println("JK 9099 slide on " + slideOnLocalTime % 10000);
 		
+		boolean stillGoing = true;
+		
 		// wait for current slide to finish
 		do {
 			if (!eyeController.isEyeIn()) {
@@ -86,15 +88,32 @@ public class TrialExperimentUtil {
 				currentContext.setAnimationFrameIndex(currentContext.getAnimationFrameIndex()+1);
 				drawingController.animateSlide(currentTask,
 						currentContext);
-				System.out.println(" frame: " + currentContext.getAnimationFrameIndex());
+//				System.out.println(" frame: " + currentContext.getAnimationFrameIndex());
 				if (logger.isDebugEnabled()) {
 					long t = timeUtil.currentTimeMicros();
 					logger.debug(new Timestamp(t/1000).toString() + " " + t % 10000 + " frame: " + currentContext.getAnimationFrameIndex());
 				}
+				
+//				System.out.println((timeUtil.currentTimeMicros()-slideOnLocalTime)/1000);
+//				
+//				if (currentContext.getAnimationFrameIndex() < 46) {
+//					stillGoing = true;
+//				}
+//				else {
+//					stillGoing = timeUtil.currentTimeMicros() < slideOnLocalTime
+//							+ stateObject.getSlideLength() * 1000;
+//				}
 			}
-		} while (timeUtil.currentTimeMicros() < slideOnLocalTime
-				+ stateObject.getSlideLength() * 1000);
-
+//			else {
+//				stillGoing = timeUtil.currentTimeMicros() < slideOnLocalTime
+//						+ stateObject.getSlideLength() * 1000;
+//			}
+				stillGoing = timeUtil.currentTimeMicros() < slideOnLocalTime
+						+ stateObject.getSlideLength() * 1000;
+				
+				
+		} while (stillGoing);
+		
 		// finish current slide
 		drawingController.slideFinish(currentTask, currentContext);
 		long slideOffLocalTime = timeUtil.currentTimeMicros();

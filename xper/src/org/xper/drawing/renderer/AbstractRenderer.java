@@ -179,6 +179,7 @@ public abstract class AbstractRenderer implements Renderer {
 	public void init(int w, int h) {
 		widthInPixel = w;
 		heightInPixel = h;
+		System.out.println("JK 3243222 w = " + w + ", h = " + h);
 		init();
 	}
 

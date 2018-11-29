@@ -1,6 +1,8 @@
 package org.xper.png.expt.generate;
 
 public final class PngGAParams {
+	public static final boolean stereo = false;
+	
 	public static final int GA_maxNumGens = 10;
 	public static final int GA_numNonBlankStimsPerLin = 40;	//40 10
 	public static final int GA_numStimsPerLin = GA_numNonBlankStimsPerLin + 1;
@@ -22,6 +24,7 @@ public final class PngGAParams {
 	public static int PH_stability_numMorphs = 5; 							// STABILITY: 	will remain the same unless burial depth selection changes: low pot with all depths (5) + high pot " (5)
 	public static int PH_perturbation_numMorphs = 18;							// PERTURBATION:	4 rotations, 2 leans, 2 depths
 	public static int[] PH_bulbousness_morphs = {1,3,4,5,6};					// MASS: 		shape morph types applied to selected limb in mass posthoc
+	public static int PH_animacy_numFrames = 30;
 	public static int PH_animacy_numMaterials = 1;							// ANIMACY: 		how many of squish/stiff materials should be used
 	public static int targetedColoration = 0; 								// ANIMACY: 		extent to which squish/stiff materials are represented on the object
 	public static int PH_max_animacy_animations = 3; 							// ANIMACY: 		maximum of three limb animations per object

@@ -301,6 +301,7 @@ public class GAMaths {
 			
 		case 4:
 			// select PH_numObjects_fitnessMethod highest stimuli
+//			System.out.println("yes, here");
 			
 			for (int n=1;n<=PngGAParams.PH_numObjects_fitnessMethod;n++) {
 				morphIds.add(allIds.get(allIds.size()-n));

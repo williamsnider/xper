@@ -78,9 +78,8 @@ public class FixCalConfig {
 	@Bean
 	public FixationPoint experimentFixationPoint() {
 		FixationPoint f = new FixationPoint ();
-		// RAM: 180813
-		f.setColor(new RGBColor(1,1,1)); //classicConfig.xperFixationPointColor()
-		f.setSize(2); // classicConfig.xperFixationPointSize()
+		f.setColor(classicConfig.xperFixationPointColor());
+		f.setSize(classicConfig.xperFixationPointSize());
 		return f;
 	}
 	
