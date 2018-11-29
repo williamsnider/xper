@@ -846,17 +846,17 @@ char cont = 'y';  // 'n'; //
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
-//        BlenderRunnable photoRunner = new BlenderRunnable();
-//        List<String> args = new ArrayList<String>();
-//        args.add("ssh");
-//        args.add("alexandriya@172.30.9.11");
-////        args.add(basePath + "masterSubmitScript.sh");
-////        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
-//        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
-//        args.add(Integer.toString(numJobs));
-//        args.add(prefixRunGen);
-//        photoRunner.setDoWaitFor(false);
-//        photoRunner.run(args);
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+//        args.add(basePath + "masterSubmitScript.sh");
+//        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	

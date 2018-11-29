@@ -30,8 +30,8 @@ public class ImageStack implements Drawable {
     float scaler = 1.0f; //  3.45f;    // scales actual image size to viewport size
     
     // this probably should from the database 
-    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
-//    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
+//    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
+    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
     String ext = "_R.png";  
  
     String imageName;

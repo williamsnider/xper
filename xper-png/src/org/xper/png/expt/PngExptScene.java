@@ -25,8 +25,11 @@ public class PngExptScene extends AbstractTaskScene {
 	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
 	
-	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK_FIX";
-	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK";
+//	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK_FIX";
+//	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK";
+	
+	String  fixationImageStr = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered//BLANK/BLANK_FIX";
+	String  blankImageStr = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/BLANK/BLANK";
 	
 	ImageStack blankImage = new ImageStack();
 //	ImageStack fixBlankImage = new ImageStack();
