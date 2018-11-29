@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xper.png.expt.generate.PngGAParams;
+
 public class BlenderRunnable implements Runnable {
 	List<String> args = new ArrayList<String>();
 	boolean doWaitFor = true;
@@ -12,12 +14,6 @@ public class BlenderRunnable implements Runnable {
 	List<String> environAttrs = new ArrayList<String>();
 	List<Integer> possiblePositions = new ArrayList<Integer>();
 	List<String> constantAttributes = new ArrayList<String>();
-	
-	static String appPath = "/Applications/blender-279/Blender.app/Contents/MacOS/blender";
-//	static String appPath = "/home/alexandriya/blender/blender";
- 	static String blendFile = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/frameRate.blend";
-//	static String blendFile = "/home/alexandriya/blendRend/ProgressionClasses/frameRate.blend";
-//	static String blendFile = "/Users/alexandriya/Dropbox/Blender/ProgressionClasses/frameRate.blend";
 
 	public BlenderRunnable(String scriptPath) {
 		this.scriptPath = scriptPath;
@@ -43,8 +39,8 @@ public class BlenderRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		args.add(appPath);
-		args.add(blendFile);
+		args.add(PngGAParams.appPath);
+		args.add(PngGAParams.blendFile);
 		args.add("--background");
 		args.add("--python");
 		args.add(scriptPath);
