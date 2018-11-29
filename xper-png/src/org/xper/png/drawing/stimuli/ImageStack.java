@@ -36,9 +36,9 @@ public class ImageStack implements Drawable {
     int div = 1;
     
     // this probably should from the database 
-    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
-//    String ext = "_R.png";  
     String ext = ".png";
+    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
+//    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
  
     String imageName;
     String baseName;
