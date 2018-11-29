@@ -30,4 +30,19 @@ public final class PngGAParams {
 	public static int PH_max_animacy_animations = 3; 							// ANIMACY: 		maximum of three limb animations per object
 	public static int PH_numResponders_highLow = 3; 							// GENERAL: 		method 1: number of highest-/lowest-response stimuli selected for post-hoc
 	public static double[] PH_percentDivs = {0.3,0.8,1.0}; 					// GENERAL: 		method 2: thresholds on Z-score performance distribution for low-, medium-, high-response stimulus selection
+
+	// PngRandomGeneration
+	public static final String basePath = "/home/alexandriya/blendRend/ProgressionClasses/"; //"/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
+	
+	// ImageStack
+	public static final String resourcePath = "/home/alexandriya/catch_cluster_images/"; //"/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
+	
+	// PngExptScene
+	public static final String fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK_FIX"; //"/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered//BLANK/BLANK_FIX";
+	public static final String blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK"; //"/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/BLANK/BLANK";
+	
+	// BlenderRunnable
+	public static final String appPath = "/home/alexandriya/blender/blender"; //"/Applications/blender-279/Blender.app/Contents/MacOS/blender";
+	public static final String blendFile = "/home/alexandriya/blendRend/ProgressionClasses/frameRate.blend"; //"/Users/ecpc31/Dropbox/Blender/ProgressionClasses/frameRate.blend";
+
 }

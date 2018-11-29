@@ -16,6 +16,8 @@ import org.xper.png.util.PngDbUtil;
 
 import org.lwjgl.opengl.GL11;
 
+import org.xper.png.expt.generate.PngGAParams;
+
 
 public class PngExptScene extends AbstractTaskScene {
 	
@@ -24,12 +26,6 @@ public class PngExptScene extends AbstractTaskScene {
 	
 	ImageStack images = new ImageStack();
 	PngExptSpec spec = new PngExptSpec();
-	
-//	String  fixationImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK_FIX";
-//	String  blankImageStr = "/home/alexandriya/catch_cluster_images/BLANK/BLANK";
-	
-	String  fixationImageStr = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered//BLANK/BLANK_FIX";
-	String  blankImageStr = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/BLANK/BLANK";
 	
 	ImageStack blankImage = new ImageStack();
 //	ImageStack fixBlankImage = new ImageStack();
@@ -58,13 +54,11 @@ public class PngExptScene extends AbstractTaskScene {
         blankImage.setNumFrames(4);
         blankImage.genTextures();
 
-		blankImage.loadTexture(blankImageStr + "_L.png", 0);
-		blankImage.loadTexture(blankImageStr + "_R.png", 1);
-		blankImage.loadTexture(fixationImageStr + "_L.png", 2);
-		blankImage.loadTexture(fixationImageStr + "_R.png", 3);
-        
+		blankImage.loadTexture(PngGAParams.blankImageStr + "_L.png", 0);
+		blankImage.loadTexture(PngGAParams.blankImageStr + "_R.png", 1);
+		blankImage.loadTexture(PngGAParams.fixationImageStr + "_L.png", 2);
+		blankImage.loadTexture(PngGAParams.fixationImageStr + "_R.png", 3);
 	}
-
 	
 	public void setTask(ExperimentTask task) {
 		if(task == null) {

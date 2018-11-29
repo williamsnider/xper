@@ -36,10 +36,7 @@ public class ImageStack implements Drawable {
     int div = 1;
     
     // this probably should from the database 
-    String ext = ".png";
-    String resourcePath = "/Users/ecpc31/Dropbox/Blender/catch_cluster_images/Rendered/";
-//    String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
- 
+    String ext = ".png"; 
     String imageName;
     String baseName;
     
@@ -119,7 +116,7 @@ public class ImageStack implements Drawable {
     				}
     				
     				
-    				imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
+    				imageName = PngGAParams.resourcePath + optionalPath + baseName + side + numStr + ext;
     				fullFilenames.add(imageName);
 
     				if (currentImg == numAnimacyImages-1) {
@@ -134,7 +131,7 @@ public class ImageStack implements Drawable {
 //    			numFrames += 10;
 //    			for (int numImg = 0; numImg < 10; numImg++) {
 //    				numStr = String.format("_%04d", 1);
-//    				imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
+//    				imageName = PngGAParams.resourcePath + optionalPath + baseName + side + numStr + ext;
 //    				fullFilenames.add(imageName);
 //    			}
 
@@ -177,7 +174,7 @@ public class ImageStack implements Drawable {
     				}
     				side = "";
     				ext = ".png";
-    				imageName = resourcePath + optionalPath + baseName + side + numStr + ext;
+    				imageName = PngGAParams.resourcePath + optionalPath + baseName + side + numStr + ext;
     				fullFilenames.add(imageName);
     				pause++;
     				currentImg++;
@@ -194,7 +191,7 @@ public class ImageStack implements Drawable {
         				}
     				}
     				
-					imageName = resourcePath + "BLANK/BLANK_FIX" + side + ext;
+					imageName = PngGAParams.resourcePath + "BLANK/BLANK_FIX" + side + ext;
 					fullFilenames.add(imageName);
     			}
     		} else {
@@ -211,7 +208,7 @@ public class ImageStack implements Drawable {
         				}
     				}
     				
-    				imageName = resourcePath + baseName + side + ext;
+    				imageName = PngGAParams.resourcePath + baseName + side + ext;
     				fullFilenames.add(imageName);
 //
 //        			if (end==false) {
@@ -382,9 +379,9 @@ public class ImageStack implements Drawable {
     	
     	for(int n = 0; n < numFrames; n++){
     		if(n <  10){
-    			imageName = resourcePath + baseFilename + Integer.toString(n) + ext;
+    			imageName = PngGAParams.resourcePath + baseFilename + Integer.toString(n) + ext;
     		} else {
-    			imageName = resourcePath + baseFilename + ext;
+    			imageName = PngGAParams.resourcePath + baseFilename + ext;
     		}		
     		loadTexture(imageName, n);    		
     	}       	

@@ -62,18 +62,13 @@ public class PngRandomGeneration {
 	long linNum = 0;
 	List<String> specifiedPostHocStimuli = new ArrayList<String>(); 
 	
-	String basePath = "/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
-//	String basePath = "/home/alexandriya/blendRend/ProgressionClasses/"; // ProgressionClasses/";
-	
 	static public enum TrialType { GA };
 	TrialType trialType;
 		
 	public void generateGA() {	
 		
-		
 		trialType = TrialType.GA;
 		generator.setTrialType(trialType);
-		
 		doSaveThumbnails = true;
 		
 		writeExptStart();
@@ -245,8 +240,8 @@ char cont = 'y';  // 'n'; //
 //			pngMaker.MakeFromIds(stimObjIds);
 //		}
 
-		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "randomSpec.py");
-//		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "ProgressionClasses/randomSpec.py");
+		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "randomSpec.py");
+//		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/randomSpec.py");
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py");
 		blenderRunner.run();
 
@@ -299,8 +294,8 @@ char cont = 'y';  // 'n'; //
 			System.out.println("Lineage " + linNum + ": Generating and saving random stimulus " + k); 
 		}
 		
-		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "randomSpec.py",stimObjIds);
-//		BlenderRunnable blenderRunner = new BlenderRunnable(basePath + "ProgressionClasses/randomSpec.py",stimObjIds);
+		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "randomSpec.py",stimObjIds);
+//		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/randomSpec.py",stimObjIds);
 //		BlenderRunnable blenderRunner = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/randomSpec.py",stimObjIds);
 		blenderRunner.run();
 
@@ -383,13 +378,13 @@ char cont = 'y';  // 'n'; //
 		System.out.println(stimsToMorph+" MORPH");
 		System.out.println(stimsToRestore+" RESTORE");
 
-		BlenderRunnable blenderRunnerMorph = new BlenderRunnable(basePath + "morphSpec.py",stimsToMorph);
-//		BlenderRunnable blenderRunnerMorph = new BlenderRunnable(basePath + "ProgressionClasses/morphSpec.py",stimsToMorph);
+		BlenderRunnable blenderRunnerMorph = new BlenderRunnable(PngGAParams.basePath + "morphSpec.py",stimsToMorph);
+//		BlenderRunnable blenderRunnerMorph = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/morphSpec.py",stimsToMorph);
 //		BlenderRunnable blenderRunnerMorph = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/morphSpec.py",stimsToMorph);
 		blenderRunnerMorph.run();
 
-		BlenderRunnable blenderRunnerRestore = new BlenderRunnable(basePath + "restoreMorphSpec.py",stimsToRestore);
-//		BlenderRunnable blenderRunnerRestore = new BlenderRunnable(basePath + "ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
+		BlenderRunnable blenderRunnerRestore = new BlenderRunnable(PngGAParams.basePath + "restoreMorphSpec.py",stimsToRestore);
+//		BlenderRunnable blenderRunnerRestore = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
 //		BlenderRunnable blenderRunnerRestore = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/restoreMorphSpec.py",stimsToRestore);
 		blenderRunnerRestore.run();
 
@@ -405,7 +400,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(PngGAParams.basePath + "masterSubmitScript.sh");
 //        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
@@ -838,7 +833,7 @@ char cont = 'y';  // 'n'; //
 			System.out.println(constantAttributes_lin1);
 			System.out.println(possiblePositions1);
 			
-			BlenderRunnable blenderRunnerComposite_lin1 = new BlenderRunnable(basePath + "compositePostHoc.py",constantAttributes_lin1,possiblePositions1);
+			BlenderRunnable blenderRunnerComposite_lin1 = new BlenderRunnable(PngGAParams.basePath + "compositePostHoc.py",constantAttributes_lin1,possiblePositions1);
 //			BlenderRunnable blenderRunnerComposite_lin1 = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/compositePostHoc.py",constantAttributes_lin1,possiblePositions);
 			blenderRunnerComposite_lin1.run();
 		}
@@ -850,7 +845,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(PngGAParams.basePath + "masterSubmitScript.sh");
 //        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
@@ -1074,9 +1069,9 @@ char cont = 'y';  // 'n'; //
 			}
 		}
 
-		System.out.println(basePath + "animatePostHoc.py"+ placeholder+ limbCounts);
+		System.out.println(PngGAParams.basePath + "animatePostHoc.py"+ placeholder+ limbCounts);
 		
-		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "animatePostHoc.py",placeholder,limbCounts);
+		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(PngGAParams.basePath + "animatePostHoc.py",placeholder,limbCounts);
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/animatePostHoc.py",placeholder,limbCounts);
 		blenderRunnerAnimate.run();
 		
@@ -1174,8 +1169,8 @@ char cont = 'y';  // 'n'; //
 
 		// do low stim all morphs, med stim all morphs, high stim all morphs. first stim in each category is the plain one.
 		
-		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "stabilityPostHoc.py",placeholder,morphs);
-//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
+		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(PngGAParams.basePath + "stabilityPostHoc.py",placeholder,morphs);
+//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/stabilityPostHoc.py",placeholder,morphs);
 		blenderRunnerPHGeneric.run();
 
@@ -1186,7 +1181,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(PngGAParams.basePath + "masterSubmitScript.sh");
 //        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
@@ -1343,8 +1338,8 @@ char cont = 'y';  // 'n'; //
 		
 		constantAttributes.add(allMatAttrs_lin1.get(allMatAttrs_lin1.size()-2));
 
-		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable(basePath + "densityPostHoc.py", constantAttributes, "both");
-//		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable(basePath + "ProgressionClasses/densityPostHoc.py", constantAttributes, "both");
+		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable(PngGAParams.basePath + "densityPostHoc.py", constantAttributes, "both");
+//		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/densityPostHoc.py", constantAttributes, "both");
 //		BlenderRunnable blenderRunnerPHDensity = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/densityPostHoc.py" + constantAttributes);
 		blenderRunnerPHDensity.run();
 		
@@ -1355,7 +1350,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(PngGAParams.basePath + "masterSubmitScript.sh");
 //        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
@@ -1464,8 +1459,8 @@ char cont = 'y';  // 'n'; //
 		// call python here to determine which is the limb of interest
 		// load blenderspec back in order to extract id of limb of interest (in specGenerator)
 		
-		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "massPostHoc.py");
-//		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(basePath + "ProgressionClasses/massPostHoc.py");
+		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(PngGAParams.basePath + "massPostHoc.py");
+//		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/massPostHoc.py");
 //		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/massPostHoc.py");
 		blenderRunnerAnimate.run();
 		
@@ -1493,8 +1488,8 @@ char cont = 'y';  // 'n'; //
 			stimNum ++;
 		}
 		
-		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "stimRefresh.py",placeholder,objCounts);
-//		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "ProgressionClasses/stimRefresh.py",placeholder,objCounts);
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "stimRefresh.py",placeholder,objCounts);
+//		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/stimRefresh.py",placeholder,objCounts);
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/stimRefresh.py",placeholder,objCounts);
 		blenderRunnerRefresh.run();
 		
@@ -1505,7 +1500,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(PngGAParams.basePath + "masterSubmitScript.sh");
 //        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
@@ -1549,7 +1544,7 @@ char cont = 'y';  // 'n'; //
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n);
 		}
 
-		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "grassGravityPostHoc.py");
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "grassGravityPostHoc.py");
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/grassGravityPostHoc.py");
 		blenderRunnerRefresh.run();
 		
@@ -1604,7 +1599,7 @@ char cont = 'y';  // 'n'; //
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n);
 		}
 
-		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(basePath + "rollingBallPostHoc.py");
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "rollingBallPostHoc.py");
 //		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable("/Users/alexandriya/Dropbox/Blender/ProgressionClasses/rollingBallPostHoc.py");
 		blenderRunnerRefresh.run();
 		
@@ -1699,8 +1694,8 @@ char cont = 'y';  // 'n'; //
 			}
 		}
 
-		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "perturbationPostHoc.py",placeholder,numObjs);
-//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(basePath + "ProgressionClasses/perturbationPostHoc.py");
+		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(PngGAParams.basePath + "perturbationPostHoc.py",placeholder,numObjs);
+//		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable(PngGAParams.basePath + "ProgressionClasses/perturbationPostHoc.py");
 //		BlenderRunnable blenderRunnerPHGeneric = new BlenderRunnable("/Users/ecpc31/Dropbox/Blender/ProgressionClasses/perturbationPostHoc.py");
 		blenderRunnerPHGeneric.run();
 
@@ -1711,7 +1706,7 @@ char cont = 'y';  // 'n'; //
         List<String> args = new ArrayList<String>();
         args.add("ssh");
         args.add("alexandriya@172.30.9.11");
-//        args.add(basePath + "masterSubmitScript.sh");
+//        args.add(PngGAParams.basePath + "masterSubmitScript.sh");
 //        args.add("/home/alexandriya/blendRend/masterSubmitScript.sh");
         args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
         args.add(Integer.toString(numJobs));
