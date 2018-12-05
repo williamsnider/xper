@@ -137,7 +137,8 @@ public class ImageStack implements Drawable {
 
     		} else if(stimType.contains("BALL")) {
     			optionalPath = baseName + "/";
-    			totalImgNum = (numRollingImages+7)*2;
+//    			totalImgNum = (numRollingImages+7);
+    			totalImgNum = numRollingImages;
     			
     			if (PngGAParams.stereo) {
         			totalImgNum = totalImgNum*2;
@@ -165,17 +166,18 @@ public class ImageStack implements Drawable {
         				numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
     				}
     				else {
-    					if (pause < 15) {
+    					if (pause < 0) {
 //    						currentImg = currentImg;
     						currentImg = 0;
     					}
-//    					numStr = String.format("_%04d", (int)currentImg + 1);
-    					numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
+    					numStr = String.format("_%04d", (int)currentImg + 1);
+//    					numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
     				}
     				side = "";
     				ext = ".png";
     				imageName = PngGAParams.resourcePath + optionalPath + baseName + side + numStr + ext;
     				fullFilenames.add(imageName);
+    				System.out.println(imageName);
     				pause++;
     				currentImg++;
     			}

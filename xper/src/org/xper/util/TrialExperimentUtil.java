@@ -75,7 +75,7 @@ public class TrialExperimentUtil {
 				slideEventListeners);
 //		System.out.println("JK 9099 slide on " + slideOnLocalTime % 10000);
 		
-		boolean stillGoing = true;
+		boolean trialContinue = true;
 		
 		// wait for current slide to finish
 		do {
@@ -85,35 +85,30 @@ public class TrialExperimentUtil {
 				return TrialResult.EYE_BREAK;
 			}
 			if (stateObject.isAnimation()) {
+//				System.out.println("Is animation");
 				currentContext.setAnimationFrameIndex(currentContext.getAnimationFrameIndex()+1);
-				drawingController.animateSlide(currentTask,
-						currentContext);
-//				System.out.println(" frame: " + currentContext.getAnimationFrameIndex());
-				if (logger.isDebugEnabled()) {
-					long t = timeUtil.currentTimeMicros();
-					logger.debug(new Timestamp(t/1000).toString() + " " + t % 10000 + " frame: " + currentContext.getAnimationFrameIndex());
-				}
-				
-//				System.out.println((timeUtil.currentTimeMicros()-slideOnLocalTime)/1000);
-//				
-//				if (currentContext.getAnimationFrameIndex() < 46) {
-//					stillGoing = true;
-//				}
-//				else {
-//					stillGoing = timeUtil.currentTimeMicros() < slideOnLocalTime
-//							+ stateObject.getSlideLength() * 1000;
-//				}
-			}
-//			else {
-//				stillGoing = timeUtil.currentTimeMicros() < slideOnLocalTime
-//						+ stateObject.getSlideLength() * 1000;
-//			}
-				stillGoing = timeUtil.currentTimeMicros() < slideOnLocalTime
+
+					drawingController.animateSlide(currentTask,
+							currentContext);
+					System.out.println(" frame: " + currentContext.getAnimationFrameIndex());
+					System.out.println(currentContext.getAnimationFrameIndex());
+					if (logger.isDebugEnabled()) {
+						long t = timeUtil.currentTimeMicros();
+						logger.debug(new Timestamp(t/1000).toString() + " " + t % 10000 + " frame: " + currentContext.getAnimationFrameIndex());
+					}
+					//
+//					trialContinue = timeUtil.currentTimeMicros() < slideOnLocalTime
+//							+ 2000 * 1000;
+					trialContinue = timeUtil.currentTimeMicros() < slideOnLocalTime
+							+ stateObject.getSlideLength() * 1000;
+
+			} else {
+				trialContinue = timeUtil.currentTimeMicros() < slideOnLocalTime
 						+ stateObject.getSlideLength() * 1000;
-				
-				
-		} while (stillGoing);
-		
+			}
+
+		} while (trialContinue);
+
 		// finish current slide
 		drawingController.slideFinish(currentTask, currentContext);
 		long slideOffLocalTime = timeUtil.currentTimeMicros();
