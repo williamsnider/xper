@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +27,13 @@ public class ImageStack implements Drawable {
 	private static final int BYTES_PER_PIXEL = 4; //3 for RGB, 4 for RGBA
 
 	int numFrames = 1;
-    IntBuffer textureIds = BufferUtils.createIntBuffer(numFrames);
+    IntBuffer textureIds; //  = BufferUtils.createIntBuffer(numFrames);
     boolean texturesLoaded = false;
     int frameNum = 0;
     float scaler = 1.0f; //  3.45f;    // scales actual image size to viewport size
+    
+    HashMap<String, Integer> nameMap = new HashMap<String, Integer>();
+    List<Integer> textureList = new ArrayList<Integer>();	
     
     // JK 23 Oct 2018 
     // 
@@ -47,10 +51,16 @@ public class ImageStack implements Drawable {
     
 	double screenWidth;
 	double screenHeight;
+	
+	// timing ...
+	long start;
     
 	
 	// the list of filenames to load.  
     public void loadImages(List<Map<String, Object>> stimInfo){    
+
+    	start = System.nanoTime();
+    	
     	// Hard code it in stone ...
     	
     	int numAnimacyImages;
@@ -85,6 +95,9 @@ public class ImageStack implements Drawable {
 
     	// determine how many frames for this trial while building filename(s) and loading the Texture
     	numFrames = 0;
+    	
+    	nameMap.clear();
+    	textureList.clear();
 
     	for(Map<String, Object>si : stimInfo) {
     		stimType = (String)si.get("stimType");
@@ -96,7 +109,7 @@ public class ImageStack implements Drawable {
     		
     		if(stimType.contains("ANIMATE")) {
     			optionalPath = baseName + "/";
-    			totalImgNum = 60;
+    			totalImgNum = 124;
     			
     			numFrames += totalImgNum;
 
@@ -137,8 +150,9 @@ public class ImageStack implements Drawable {
 
     		} else if(stimType.contains("BALL")) {
     			optionalPath = baseName + "/";
-//    			totalImgNum = (numRollingImages+7);
     			totalImgNum = numRollingImages;
+    			int slowingCoefficient = 3;
+    			totalImgNum = numRollingImages+6;
     			
     			if (PngGAParams.stereo) {
         			totalImgNum = totalImgNum*2;
@@ -150,7 +164,7 @@ public class ImageStack implements Drawable {
     			for (int numImg = 0; numImg < totalImgNum; numImg++) {
 
     				if (PngGAParams.stereo) {
-    					if (pause < 30) {
+    					if (pause < 14) {
         					if (pause % 2 == 0) {
             					currentImg = 0;
             				} else {
@@ -166,22 +180,29 @@ public class ImageStack implements Drawable {
         				numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
     				}
     				else {
-    					if (pause < 0) {
-//    						currentImg = currentImg;
+    					if (pause < 7) {
+    						//	currentImg = currentImg;
     						currentImg = 0;
     					}
     					numStr = String.format("_%04d", (int)currentImg + 1);
-//    					numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
+    					//    					numStr = String.format("_%04d", (int)(Math.round(currentImg/2) + 1));
     				}
     				side = "";
     				ext = ".png";
     				imageName = PngGAParams.resourcePath + optionalPath + baseName + side + numStr + ext;
     				fullFilenames.add(imageName);
-    				System.out.println(imageName);
+
+    				for(int c = 0; c < slowingCoefficient; c++) {
+    					// if duplicates are needed:
+        				numFrames++;
+        				fullFilenames.add(imageName);
+    				}
     				pause++;
     				currentImg++;
     			}
     			
+//    			System.out.println(fullFilenames);
+
     		}  else if(stimType.contains("BLANK")) {
     			numFrames += numStillImages;
     			for(int n = 0; n < numStillImages; n++) {
@@ -221,21 +242,36 @@ public class ImageStack implements Drawable {
       		}
     	}
 		 
-		//this is important!
+		//this is important, it resizes the textureIds IntBuffer
 		setNumFrames(numFrames);
 		frameNum = 0;
+
     	GL11.glGenTextures(textureIds); 
     	
 		int n = 0;
 		
-//		System.out.println(numFrames);
-//		System.out.println(textureIds);
+		//
+		//if(numFrames != fullFilenames.size()) {
+		//	System.out.println("JK 223  ImageStack::loadImages() : numFrames = " + numFrames + ", "
+		//			+ "textureIds.size() = " + textureIds.capacity());
+		//}
 		
+			    	
+		// for each filename, 
 		for(String str : fullFilenames) {
-//			System.out.println(str);
 			loadTexture(str, n++);
 		}
-  		
+//System.out.println("JK 777  ImageStack::loadImages() seconds : " + ((System.nanoTime() - start) /  1e9) );	
+//System.out.println("JK 777  ImageStack::loadImages() : read " + nameMap.size() + " image files for  " 
+//			+  fullFilenames.size() + " frames ");
+		// textureList should have 1 entry for every filename
+		//System.out.println("JK 03043  ImageStack::loadImages() : textureList.size() = " + textureList.size() + ", "
+		//		+ "filenames.size() = " + fullFilenames.size());
+		
+		//for(Integer ndx: textureList) {
+		//	System.out.println("textureList[" + ndx + "] = " + textureList.get(ndx));
+		//}
+		
     	// assume success?!
     	texturesLoaded = true;
     }
@@ -250,11 +286,21 @@ public class ImageStack implements Drawable {
 
     public int loadTexture(String pathname, int textureIndex) {
     	
-//    	int actualTextureIndex = 0;
-    	    	
-    	// JK 23 Oct 2018
-    	// only load and create every other texture i.e. the left image, skip the right image
-
+    	// if it's been used before, just retrieve the index and add it to the list
+ 	    // otherwise, add the name, index pair to the map and call loadTexture() 
+    	if(nameMap.containsKey(pathname)) {
+			textureList.add(nameMap.get(pathname));   // reuse the (previously loaded) texture
+			
+			//System.out.println("JK 8273 ImageStack:loadTexture()  reusing " + pathname + " : " + textureIndex + 
+    		//		" textureIds = " + textureIds.get(textureIndex));  
+			
+			return textureIds.get(textureIndex);      // and return
+		} else {
+			nameMap.put(pathname, textureIndex);                 // otherwise, add it and load it
+			textureList.add(textureIndex);
+		}
+    	
+    	
     	try {
     		File imageFile = new File(pathname);
     		BufferedImage img = ImageIO.read(imageFile);
@@ -274,13 +320,13 @@ public class ImageStack implements Drawable {
     		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
 
     		// only for RGB
-    		//    		 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+    		//     GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
 
     		// RGBA
     		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
     		//   
-//    			    		System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex + 
-//    			    				" id = " + textureIds.get(textureIndex) + " actualNdx = " + actualTextureIndex);    		
+    		//System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex + 
+    		//	    				" textureIds = " + textureIds.get(textureIndex));    		
 
     		return textureIds.get(textureIndex);
 
@@ -301,18 +347,13 @@ public class ImageStack implements Drawable {
 		float height = (float) screenHeight / scaler; //  2    // texture.getImageHeight();		
 		float yOffset = -height / 2;
 		float xOffset = -width / 2;
-//		int actualTextureIndex = 0;
 
-		// JK 23 Oct 2018
-		// only using the left image
-//		actualTextureIndex = (int)(frameNum / div);
-		
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
 		// JK 23 Oct 2018
 //		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(actualTextureIndex));
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(frameNum));
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(textureList.get(frameNum)));
 
         GL11.glBegin(GL11.GL_QUADS);
             GL11.glTexCoord2f(0, 1);
@@ -326,29 +367,22 @@ public class ImageStack implements Drawable {
         GL11.glEnd();
      
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-    
-//System.out.println("JK 12353 ImageStack:draw() :  frameNum = " + frameNum + " : " + actualTextureIndex );    		
-
-        
+  
         if(frameNum < numFrames - 1){
         	frameNum += 1;
         } 
-
-        		
 	}
 
 	
 	public void cleanUp() {
-//		int actualTextureIndex = 0;
 		
 		for(int i = 0; i < numFrames; i++) {
-			// JK 23 Oct 2018
-			// only using the left image
-//			actualTextureIndex = (int)(frameNum / div);
-			
-//			GL11.glDeleteTextures(textureIds.get(actualTextureIndex));
-			GL11.glDeleteTextures(textureIds.get(frameNum));
+			GL11.glDeleteTextures(textureIds.get(i));
 		}
+		
+		// clear intbuffer
+		textureIds.clear();
+				
 	}
 
 	/**
@@ -365,11 +399,8 @@ public class ImageStack implements Drawable {
 
 	public void setNumFrames(int numImgs) {
 		
-		// JK 23 Oct 2018
-		// only using the left image
-//		this.numFrames = numImgs / div;
 		this.numFrames = numImgs;
-		textureIds = BufferUtils.createIntBuffer(numFrames);	
+		textureIds = BufferUtils.createIntBuffer(this.numFrames);	
 	}
 	
 	

@@ -4,21 +4,22 @@ public final class PngGAParams {
 	public static final boolean stereo = false;
 	
 	public static final int GA_maxNumGens = 10;
-	public static final int GA_numNonBlankStimsPerLin = 40;	//40 10
+	public static final int GA_numNonBlankStimsPerLin = 20;	//40 10
 	public static final int GA_numStimsPerLin = GA_numNonBlankStimsPerLin + 1;
 	public static final int GA_numRepsPerStim = 5; //5			
 	public static final int GA_numStimsPerTrial = 2;
 	public static final int GA_numLineages = 2;
-	public static final int GA_numTasks = (int) Math.ceil(GA_numStimsPerLin*GA_numRepsPerStim/GA_numStimsPerTrial); //#####! was (int) Math.ceil(GA_numStimsPerLin*GA_numLineages*GA_numRepsPerStim/GA_numStimsPerTrial)
+	public static final int GA_numTasks = (int) Math.ceil(((double)(GA_numStimsPerLin*GA_numRepsPerStim))/((double)(GA_numStimsPerTrial))); //#####! was (int) Math.ceil(GA_numStimsPerLin*GA_numLineages*GA_numRepsPerStim/GA_numStimsPerTrial)
 	
 	public static double GA_randgen_prob_objvsenvt = 0.75; 					// probability random stimulus will be alden-containing "Object" (vs "Environment")
 	
-	public static int GA_morph_numNewStimPerLin = 5; 							// number of new random stimuli per lineage (10% - 20% of total stimuli)
+	public static int GA_morph_numNewStimPerLin = 3; 							// was 5. number of new random stimuli per lineage (10% - 20% of total stimuli)
 	public static double GA_morph_prob_stick = 0.7; 							// probability of stick spec morph: new stick or stick morph (vs blender spec morph)
 	public static double GA_morph_prob_stick_new = 0.1; 						// probability stick spec morph will produce new stick (vs stick morph)
 	
 	public static double[] GA_percentDivs = {0.3,0.5,0.7,0.9,1.0}; 			// thresholds on Z-score performance distribution for response binning
-	public static double[] GA_fracPerPercentDiv = {0.1,0.15,0.2,0.2,0.35}; 	// percent of stimuli to morph chosen from each GA_percentDivs bin
+//	public static double[] GA_fracPerPercentDiv = {0.1,0.15,0.2,0.2,0.35}; 	// percent of stimuli to morph chosen from each GA_percentDivs bin
+	public static double[] GA_fracPerPercentDiv = {0.05,0.05,0.2,0.3,0.4}; 	// percent of stimuli to morph chosen from each GA_percentDivs bin
 	
 	public static int PH_numObjects_fitnessMethod = 4;
 	public static int PH_stability_numMorphs = 5; 							// STABILITY: 	will remain the same unless burial depth selection changes: low pot with all depths (5) + high pot " (5)
@@ -30,7 +31,8 @@ public final class PngGAParams {
 	public static int PH_max_animacy_animations = 3; 							// ANIMACY: 		maximum of three limb animations per object
 	public static int PH_numResponders_highLow = 3; 							// GENERAL: 		method 1: number of highest-/lowest-response stimuli selected for post-hoc
 	public static double[] PH_percentDivs = {0.3,0.8,1.0}; 					// GENERAL: 		method 2: thresholds on Z-score performance distribution for low-, medium-, high-response stimulus selection
-
+	public static int PH_distance_numDistances = 6;
+	
 	// PngRandomGeneration
 	public static final String basePath = "/home/alexandriya/blendRend/ProgressionClasses/"; //"/Users/ecpc31/Dropbox/Blender/ProgressionClasses/";
 	

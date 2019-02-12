@@ -90,17 +90,17 @@ public class TrialExperimentUtil {
 
 					drawingController.animateSlide(currentTask,
 							currentContext);
-					System.out.println(" frame: " + currentContext.getAnimationFrameIndex());
-					System.out.println(currentContext.getAnimationFrameIndex());
+//					System.out.println(" frame: " + currentContext.getAnimationFrameIndex());
+//					System.out.println(currentContext.getAnimationFrameIndex());
 					if (logger.isDebugEnabled()) {
 						long t = timeUtil.currentTimeMicros();
 						logger.debug(new Timestamp(t/1000).toString() + " " + t % 10000 + " frame: " + currentContext.getAnimationFrameIndex());
 					}
 					//
-//					trialContinue = timeUtil.currentTimeMicros() < slideOnLocalTime
-//							+ 2000 * 1000;
 					trialContinue = timeUtil.currentTimeMicros() < slideOnLocalTime
-							+ stateObject.getSlideLength() * 1000;
+							+ 1500 * 1000;
+//					trialContinue = timeUtil.currentTimeMicros() < slideOnLocalTime
+//							+ stateObject.getSlideLength() * 1000;
 
 			} else {
 				trialContinue = timeUtil.currentTimeMicros() < slideOnLocalTime

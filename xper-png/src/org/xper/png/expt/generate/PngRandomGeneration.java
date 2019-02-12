@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -22,6 +23,7 @@ import org.xper.drawing.renderer.AbstractRenderer;
 import org.xper.exception.InvalidAcqDataException;
 import org.xper.exception.NoMoreAcqDataException;
 import org.xper.exception.VariableNotFoundException;
+import org.xper.experiment.ExperimentTask;
 import org.xper.png.acq.counter.PngMarkEveryStepExptSpikeCounter;
 import org.xper.png.drawing.preview.PNGmaker;
 import org.xper.png.drawing.stick.MStickSpec;
@@ -103,13 +105,26 @@ char cont = 'y';  // 'n'; //
 				String progressType = "";
 				String postHoc;
 				
-				while (!Arrays.asList("n","b","g","c","a","gs","p","m","o","cm","s","d").contains(progressType)) {
+				while (!Arrays.asList("n","b","g","c","a","gs","p","m","o","cm","s","d","i","l","cc").contains(progressType)) {
 					System.out.println("To continue GA, enter 'n'.");
-					System.out.println("To proceed with generic post-hoc, enter 'b' (rolling ball) or 'g' (grass gravity).");
-
-					progressType = PngIOUtil.promptString("To proceed with GA post-hoc, enter 'c' (composite), 'a' (joint animacy), 'gs' (grass gravity with stimulus), 'p' (perturbation), or 'm' (mass distribution), 'o' (optics), or 'cm' (canned material density groupings)");
-//					previously: 's' (stability), 'd' (density)
+					System.out.println("");
 					
+					System.out.println("To proceed with GA post-hoc, enter:");
+					System.out.println("'b'	 (rolling ball)");
+					System.out.println("'g'	 (grass gravity)");
+					System.out.println("'gs'	 (grass gravity with stimulus)");
+					System.out.println("'c'	 (composite)");
+					System.out.println("'cc'	 (composite with camera shift)");
+					System.out.println("'i'	 (distance)");
+					System.out.println("'p'	 (perturbation)");
+					System.out.println("'m'	 (mass distribution)");
+					System.out.println("'o'	 (optics)");
+					System.out.println("'cm'	 (canned material density groupings)");
+					System.out.println("'l'	 (blockiness)");
+					System.out.println("'a'	 (joint animacy)");
+//					previously: 's' (stability), 'd' (density)
+					progressType = PngIOUtil.promptString("");
+
 					if (progressType.equals("d")) {
 						System.out.println("Density is no longer an approved post-hoc and is not supported at this time.");
 						System.out.println("");
@@ -123,9 +138,10 @@ char cont = 'y';  // 'n'; //
 					}
 				}
 				
-				if (Arrays.asList("a","gs","p","m","o","cm","s").contains(progressType)) {
+				if (Arrays.asList("c","a","gs","p","m","o","cm","s","i","l","cc").contains(progressType)) {
 					System.out.println("");
-					System.out.println("To choose custom stimuli for GA post-hoc, enter descriptive IDs now, separating entries with a Return keypress. Enter '-' when finished.");
+					System.out.println("To choose custom stimuli for GA post-hoc, "
+							+ "enter descriptive IDs now, separating entries with a Return keypress. Enter '-' when finished.");
 					System.out.println("Alternatively, enter '-' now to continue with the default selection process.");
 					String overrideAutoSelect = PngIOUtil.promptString("");
 					
@@ -184,7 +200,7 @@ char cont = 'y';  // 'n'; //
 					break;
 				case "c":
 					postHoc = "COMPOSITE";
-					createPHcomposite();
+					createPHcomposite(false);
 					break;
 				case "a":
 					postHoc = "ANIMACY";
@@ -214,13 +230,26 @@ char cont = 'y';  // 'n'; //
 					postHoc = "MATERIAL";
 					createPHmaterial();
 					break;
+				case "l":
+					postHoc = "BLOCKINESS";
+					createPHblocky();
+					break;
+				case "i":
+					postHoc = "DISTANCE";
+					createPHdistance();
+				case "cc":
+					postHoc = "COMPOSITE";
+					createPHcomposite(true);
+					break;
+				
 				}
 			}
 
 			writeExptGenDone();
 			System.out.println("\nGeneration has ended.");
 
-			cont = PngIOUtil.prompt("Continue recording?");
+//			cont = PngIOUtil.prompt("Continue recording?");
+			cont = 'n';
 		}
 
 		writeExptStop();
@@ -265,6 +294,13 @@ char cont = 'y';  // 'n'; //
 
 		// now add blanks
 		stimObjIds.addAll(blankStimObjIds);
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
@@ -272,13 +308,6 @@ char cont = 'y';  // 'n'; //
 
 		// write updated global genId and number of trials in this generation to db:
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks);
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 		
 		// get acq info and put into db:
 		getSpikeResponses(); 
@@ -313,7 +342,8 @@ char cont = 'y';  // 'n'; //
 
 		for (int gen=1;gen<genNum;gen++) { 
 			List<Long> allStimObjIds = dbUtil.readAllStimIdsForRun(prefix,runNum,gen);
-
+//			System.out.println(allStimObjIds);
+			
 			DataObject data;
 			long stimObjId;
 
@@ -407,6 +437,14 @@ char cont = 'y';  // 'n'; //
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
+			try {	
+				Thread.sleep(10000);	
+			}
+			catch (Exception e) {System.out.println(e);}
+		}
+		
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation."); 
 		createGATrialsFromStimObjs(stimObjIds);
@@ -414,18 +452,11 @@ char cont = 'y';  // 'n'; //
 		// write updated global genId and number of trials in this generation to db:
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, PngGAParams.GA_numTasks); 
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
-		
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
 
-	void createPHcomposite() {
+	void createPHcomposite(boolean cameraLocationChange) {
 
 		List<Long> blankStimObjIds = new ArrayList<Long>();	
 		List<Long> stimObjIds = new ArrayList<Long>();
@@ -459,7 +490,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -689,59 +720,82 @@ char cont = 'y';  // 'n'; //
 			}
 		}
 
-		List<String> constantAttributes_lin1 = new ArrayList<String>(); // tilt, slant, sun, distance, floor, ceiling, wallL, wallR, wallB, hMat, sMat, aMat
-
 		Double horizonTilt_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Double(horizonTilt_maxFinder_lin1);
-		constantAttributes_lin1.add(Double.toString(horizonTilt_decision_lin1));
-
 		Double horizonSlant_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Double(horizonSlant_maxFinder_lin1);
-		constantAttributes_lin1.add(Double.toString(horizonSlant_decision_lin1));
-
 		Point3d sun_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Point3d(sun_maxFinder_lin1);
 		String strSun = sun_decision_lin1.x + "," + sun_decision_lin1.y + "," + sun_decision_lin1.z;
-		constantAttributes_lin1.add(strSun);
-
 		Double distance_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Double(distance_maxFinder_lin1);
-		constantAttributes_lin1.add(Double.toString(distance_decision_lin1));
-
 		int floor_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(floor_maxFinder_lin1);
-		constantAttributes_lin1.add(Integer.toString(floor_decision_lin1));
-		
 		int ceiling_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(ceiling_maxFinder_lin1);
-		constantAttributes_lin1.add(Integer.toString(ceiling_decision_lin1));
-
 		int wallL_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(wallL_maxFinder_lin1);
-		constantAttributes_lin1.add(Integer.toString(wallL_decision_lin1));
-
 		int wallR_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(wallR_maxFinder_lin1);
-		constantAttributes_lin1.add(Integer.toString(wallR_decision_lin1));
-
 		int wallB_decision_lin1 = GAMaths.chooseStimsToMorphComposite_Integer(wallB_maxFinder_lin1);
-		constantAttributes_lin1.add(Integer.toString(wallB_decision_lin1));
-
 		String horizonMaterial_decision_lin1 = GAMaths.chooseStimsToMorphComposite_String(horizonMaterial_maxFinder_lin1);
-		constantAttributes_lin1.add(horizonMaterial_decision_lin1);
-
 		String structureMaterial_decision_lin1 = GAMaths.chooseStimsToMorphComposite_String(structureMaterial_maxFinder_lin1);
-		constantAttributes_lin1.add(structureMaterial_decision_lin1);
-
 		String aldenMaterial_decision_lin1 = GAMaths.chooseStimsToMorphComposite_String(aldenMaterial_maxFinder_lin1);
+
+		String specifyArchitecture = PngIOUtil.promptString("Would you like to specify the architecture?");
+
+		if (specifyArchitecture.equals("y")) {
+
+			floor_decision_lin1 = PngIOUtil.promptInteger("Floor?");
+			ceiling_decision_lin1 = PngIOUtil.promptInteger("Ceiling?");
+			wallL_decision_lin1 = PngIOUtil.promptInteger("Left wall?");
+			wallR_decision_lin1 = PngIOUtil.promptInteger("Right wall?");
+			wallB_decision_lin1 = PngIOUtil.promptInteger("Back wall?");
+			
+			if (Arrays.asList(ceiling_decision_lin1,wallL_decision_lin1,wallR_decision_lin1).contains(1)) {
+				wallB_decision_lin1 = 1;
+			}
+		}
+		
+		List<String> constantAttributes_lin1 = new ArrayList<String>(); // tilt, slant, sun, distance, floor, ceiling, wallL, wallR, wallB, hMat, sMat, aMat
+		constantAttributes_lin1.add(Double.toString(horizonTilt_decision_lin1));
+		constantAttributes_lin1.add(Double.toString(horizonSlant_decision_lin1));
+		constantAttributes_lin1.add(strSun);
+		constantAttributes_lin1.add(Double.toString(distance_decision_lin1));
+		constantAttributes_lin1.add(Integer.toString(floor_decision_lin1));
+		constantAttributes_lin1.add(Integer.toString(ceiling_decision_lin1));
+		constantAttributes_lin1.add(Integer.toString(wallL_decision_lin1));
+		constantAttributes_lin1.add(Integer.toString(wallR_decision_lin1));
+		constantAttributes_lin1.add(Integer.toString(wallB_decision_lin1));
+		constantAttributes_lin1.add(horizonMaterial_decision_lin1);
+		constantAttributes_lin1.add(structureMaterial_decision_lin1);
 		constantAttributes_lin1.add(aldenMaterial_decision_lin1);
-
+		
 		System.out.println("Lineage " + linNum + ": " + constantAttributes_lin1);
-
+		
 		// choose stims to morph:
 		// which fitness method? 	1 = highest only
 		// 							2 = minima, maxima
 		//							3 = low, medium, high designation and random selection
 		//							4 = highest four
-		
-		int fitnessMethod = 3;
+	
+		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
 
-		// choose best, worst alden stimuli
-		List<Long> stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 3;
+			
+			// choose best, worst alden stimuli
+			stimsToMorph_lin1 = GAMaths.choosePostHoc(stimObjId2FRZ_lin1, fitnessMethod); 
+			
+			if (fitnessMethod == 4) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+			
+		} else {
+			numDistinctObjs = specifiedPostHocStimuli.size();
+			
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+				}
+		}
 
 		System.out.println("Lineage " + linNum + ": " + stimsToMorph_lin1);
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
 
 		// lineage 1
 		List<Integer> possiblePositions1 = new ArrayList<Integer>();
@@ -804,19 +858,24 @@ char cont = 'y';  // 'n'; //
 
 			System.out.println("Num possible positions: " + possiblePositions1.size());
 			int placeholderNum = 0;
-			
-			for (int n=0;n<possiblePositions1.size();n++) {
 
-				for (int m=0;m<stimsToMorph_lin1.size();m++) {
-					stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); 
-					System.out.println("Lineage " + linNum + ": Generating and saving composite location " + possiblePositions1.get(n) + ", stimulus " + m + ", placeholder " + placeholderNum);
-					stimNum += 1;
+			if (!cameraLocationChange) {
+				
+				for (int n=0;n<possiblePositions1.size();n++) {
 					
-					stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); 
-					System.out.println("Lineage " + linNum + ": Generating and saving architecture perspective location " + possiblePositions1.get(n) + ", stimulus " + m + ", placeholder " + placeholderNum);
-					stimNum += 1;
-					placeholderNum += 1;
+					for (int m=0;m<stimsToMorph_lin1.size();m++) {
+						stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); 
+						System.out.println("Lineage " + linNum + ": Generating and saving composite location " + possiblePositions1.get(n) + ", stimulus " + m + ", placeholder " + placeholderNum);
+						stimNum += 1;
+
+						stimObjIds.add(generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(m), stimNum, "COMPOSITE")); 
+						System.out.println("Lineage " + linNum + ": Generating and saving architecture perspective location " + possiblePositions1.get(n) + ", stimulus " + m + ", placeholder " + placeholderNum);
+						stimNum += 1;
+						placeholderNum += 1;
+					}
 				}
+//			} else {
+//				asfda
 			}
 		}
 
@@ -851,21 +910,21 @@ char cont = 'y';  // 'n'; //
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 
-		// create trial structure, populate stimspec, write task-to-do
-		System.out.println("Creating trial spec for this generation.");
-		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial);
-
-		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
-
 		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
 		}
-		
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial);
+
+		// write updated global genId and number of trials in this generation to db:
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
+
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
@@ -904,7 +963,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -1085,21 +1144,21 @@ char cont = 'y';  // 'n'; //
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
-
-		// create trial structure, populate stimspec, write task-to-do
-		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
-		createAnimacyTrialsFromStimObjs(trialGroups);
-
-		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(trialGroups.size()*PngGAParams.GA_numRepsPerStim);
-		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
-
+		
 		System.out.println("Waiting for render completion...");
 		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
 		}
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
+		createAnimacyTrialsFromStimObjs(trialGroups);
+
+		// write updated global genId and number of trials in this generation to db:
+		int numTasks = (int) Math.ceil(((double) trialGroups.size())*((double) PngGAParams.GA_numRepsPerStim));
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1182,6 +1241,13 @@ char cont = 'y';  // 'n'; //
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
@@ -1189,15 +1255,8 @@ char cont = 'y';  // 'n'; //
 
 		// write updated global genId and number of trials in this generation to db:
 		int numStimsPerTrial = PngGAParams.GA_numStimsPerTrial;
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1288,7 +1347,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -1349,6 +1408,13 @@ char cont = 'y';  // 'n'; //
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
@@ -1356,15 +1422,8 @@ char cont = 'y';  // 'n'; //
 
 		// write updated global genId and number of trials in this generation to db:
 		int numStimsPerTrial = PngGAParams.GA_numStimsPerTrial;
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1392,7 +1451,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				thisZ = DataObject.fromXml(dbUtil.readStimSpec_data(currentId).getSpec());
@@ -1453,6 +1512,7 @@ char cont = 'y';  // 'n'; //
 		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(PngGAParams.basePath + "massPostHoc.py");
 		blenderRunnerAnimate.run();
 		
+		System.out.println(stimsToMorph_lin1);
 		int stimNum = stimsToMorph_lin1.size();
 		
 		for (int n=0;n<stimsToMorph_lin1.size();n++) {
@@ -1495,21 +1555,21 @@ char cont = 'y';  // 'n'; //
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1548,22 +1608,22 @@ char cont = 'y';  // 'n'; //
         System.out.println(args);
         
 		// add blanks
-		stimObjIds.addAll(blankStimObjIds);	
+		stimObjIds.addAll(blankStimObjIds);
+
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1592,7 +1652,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				thisZ = DataObject.fromXml(dbUtil.readStimSpec_data(currentId).getSpec());
@@ -1672,21 +1732,21 @@ char cont = 'y';  // 'n'; //
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1725,21 +1785,21 @@ char cont = 'y';  // 'n'; //
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 		int numStimPerTrial = 1;
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createPHTrialsFromStimObjs(stimObjIds,numStimPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) numStimPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 		
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1818,6 +1878,13 @@ char cont = 'y';  // 'n'; //
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
@@ -1825,15 +1892,8 @@ char cont = 'y';  // 'n'; //
 
 		// write updated global genId and number of trials in this generation to db:
 		int numStimsPerTrial = PngGAParams.GA_numStimsPerTrial;
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks);
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -1916,21 +1976,21 @@ char cont = 'y';  // 'n'; //
 
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
-
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
 
 		// get acq info and put into db:
 		getSpikeResponses();
@@ -2012,27 +2072,217 @@ char cont = 'y';  // 'n'; //
 		System.out.println(args);
 
 		// add blanks
-		stimObjIds.addAll(blankStimObjIds);	
+		stimObjIds.addAll(blankStimObjIds);
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
 		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
 
 		// write updated global genId and number of trials in this generation to db:
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
 		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
 
+		// get acq info and put into db:
+		getSpikeResponses();
+	}
+	
+	void createPHblocky() {
+
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
+
+		// choose stims to morph:
+		// which fitness method? 	1 = highest only
+		// 							2 = minima, maxima
+		//							3 = low, medium, high designation and random selection
+		//							4 = highest four
+
+		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
+
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 3;
+
+			ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
+			stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+
+			if (fitnessMethod == 4) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+
+		} else {
+			numDistinctObjs = specifiedPostHocStimuli.size();
+
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+			}
+		}
+
+		List<String> placeholder = new ArrayList<String>();
+		List<Integer> objCounts = new ArrayList<Integer>();
+		objCounts.add(numDistinctObjs); // document the number of objects in use per lineage
+		int stimNum = 0;
+
+		for (int n=0;n<stimsToMorph_lin1.size();n++) {
+			long currentId = stimsToMorph_lin1.get(n);
+
+			for (int m=0;m<2;m++) {
+				long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "BLOCKINESS");
+				stimObjIds.add(whichStim_lin1);
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
+				stimNum ++;
+			}
+		}
+
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "blockyPostHoc.py");
+		blenderRunnerRefresh.run();
+
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
+
+		BlenderRunnable photoRunner = new BlenderRunnable();
+		List<String> args = new ArrayList<String>();
+		args.add("ssh");
+		args.add("alexandriya@172.30.9.11");
+		args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
+		args.add(Integer.toString(numJobs));
+		args.add(prefixRunGen);
+		photoRunner.setDoWaitFor(false);
+		photoRunner.run(args);
+		System.out.println(args);
+
+		// add blanks
+		stimObjIds.addAll(blankStimObjIds);
+		
 		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) { 
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
 			try
 			{	Thread.sleep(10000);	}
 			catch (Exception e) {System.out.println(e);}
 		}
 
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
+
+		// write updated global genId and number of trials in this generation to db:
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
+
 		// get acq info and put into db:
 		getSpikeResponses();
 	}
+	
+	void createPHdistance() {
 
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
+
+		// choose stims to morph:
+		// which fitness method? 	1 = highest only
+		// 							2 = minima, maxima
+		//							3 = low, medium, high designation and random selection
+		//							4 = highest four
+
+		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
+
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 3;
+
+			ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
+			stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+
+			if (fitnessMethod == 4) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+
+		} else {
+			numDistinctObjs = specifiedPostHocStimuli.size();
+
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+			}
+		}
+
+		List<String> placeholder = new ArrayList<String>();
+		List<Integer> objCounts = new ArrayList<Integer>();
+		objCounts.add(numDistinctObjs); // document the number of objects in use per lineage
+		objCounts.add(PngGAParams.PH_distance_numDistances+1);
+		int stimNum = 0;
+
+		for (int n=0;n<stimsToMorph_lin1.size();n++) {
+			long currentId = stimsToMorph_lin1.get(n);
+
+			// includes a slot for the original distance
+			for (int m=0;m<PngGAParams.PH_distance_numDistances+1;m++) {
+				long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "DISTANCE");
+				stimObjIds.add(whichStim_lin1);
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
+				stimNum ++;
+			}
+		}
+
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "distancePostHoc.py",placeholder,objCounts);
+		blenderRunnerRefresh.run();
+
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
+
+		BlenderRunnable photoRunner = new BlenderRunnable();
+		List<String> args = new ArrayList<String>();
+		args.add("ssh");
+		args.add("alexandriya@172.30.9.11");
+		args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
+		args.add(Integer.toString(numJobs));
+		args.add(prefixRunGen);
+		photoRunner.setDoWaitFor(false);
+		photoRunner.run(args);
+		System.out.println(args);
+
+		// add blanks
+		stimObjIds.addAll(blankStimObjIds);
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
+
+		// write updated global genId and number of trials in this generation to db:
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
+
+		// get acq info and put into db:
+		getSpikeResponses();
+	}
+	
 	ArrayList<List<Long>> chooseBestObjs(int fitnessMethod) {
 
 		Map<Long, Double> stimObjId2FRZ_lin1 = new HashMap<Long, Double>();
@@ -2048,7 +2298,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
+				if (Arrays.asList("BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
 					continue;
 				}
 
@@ -2096,7 +2346,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -2134,6 +2384,29 @@ char cont = 'y';  // 'n'; //
 	
 	void createGATrialsFromStimObjs(List<Long> stimObjIds) {
 		// -- create trial structure, populate stimspec, write task-to-do
+		
+		String finishTasks = PngIOUtil.promptString("Wait for unfinished tasks to complete?");
+
+		if (finishTasks.equals("y")) {
+			System.out.println("Waiting for present tasks to finish...");
+
+			GenerationInfo info = dbUtil.readReadyGenerationInfo();
+			long lastDoneTaskId = dbUtil.readTaskDoneCompleteMaxId();
+			LinkedList<ExperimentTask> taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
+
+			while (taskToDo.size() > 0) {
+				info = dbUtil.readReadyGenerationInfo();
+				lastDoneTaskId = dbUtil.readTaskDoneCompleteMaxId();
+				taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		
+		System.out.println("Proceeding.");
 
 		// first, log stimobjids for each genid:
 		//		dbUtil.writeStimObjIdsForEachGenId(genId, stimObjIds);
@@ -2176,18 +2449,42 @@ char cont = 'y';  // 'n'; //
 
 			stimCounter = endIdx;
 		}
-		System.out.println(PngGAParams.GA_numTasks);
-		System.out.println(PngGAParams.GA_numStimsPerLin);
-		System.out.println(PngGAParams.GA_numRepsPerStim);
-		System.out.println(PngGAParams.GA_numStimsPerTrial);
-		System.out.println(Math.ceil(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
-		System.out.println(Math.round(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
-		System.out.println(Math.floor(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
-		System.out.println(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
+//		System.out.println(PngGAParams.GA_numTasks);
+//		System.out.println(PngGAParams.GA_numStimsPerLin);
+//		System.out.println(PngGAParams.GA_numRepsPerStim);
+//		System.out.println(PngGAParams.GA_numStimsPerTrial);
+		System.out.println(Math.ceil(((double) PngGAParams.GA_numStimsPerLin)*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial)));
+//		System.out.println(Math.round(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
+//		System.out.println(Math.floor(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial));
+//		System.out.println(PngGAParams.GA_numStimsPerLin*PngGAParams.GA_numRepsPerStim/PngGAParams.GA_numStimsPerTrial);
 		
 	}
 
 	void createPHTrialsFromStimObjs(List<Long> stimObjIds, int numStimsPerTrial) {
+		
+		String finishTasks = PngIOUtil.promptString("Wait for unfinished tasks to complete?");
+
+		if (finishTasks.equals("y")) {
+			System.out.println("Waiting for present tasks to finish...");
+
+			GenerationInfo info = dbUtil.readReadyGenerationInfo();
+			long lastDoneTaskId = dbUtil.readTaskDoneCompleteMaxId();
+			LinkedList<ExperimentTask> taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
+
+			while (taskToDo.size() > 0) {
+				info = dbUtil.readReadyGenerationInfo();
+				lastDoneTaskId = dbUtil.readTaskDoneCompleteMaxId();
+				taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		
+		System.out.println("Proceeding.");
+		
 		// -- create trial structure, populate stimspec, write task-to-do
 
 		// first, log stimobjids for each genid:
@@ -2207,8 +2504,8 @@ char cont = 'y';  // 'n'; //
 		int stimCounter = 0;
 		int filler = 0;
 
-		int numTasks = (int) Math.ceil(stimObjIds.size()*PngGAParams.GA_numRepsPerStim/numStimsPerTrial);
-		System.out.println(numTasks);
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) numStimsPerTrial));
+		System.out.println("Tasks: "+numTasks);
 
 		for (int n=0;n<numTasks;n++) {
 			taskId = globalTimeUtil.currentTimeMicros();
@@ -2236,7 +2533,30 @@ char cont = 'y';  // 'n'; //
 	}
 	
 	void createAnimacyTrialsFromStimObjs(List<List<Long>> trialGroups) {
-			
+		
+		String finishTasks = PngIOUtil.promptString("Wait for unfinished tasks to complete?");
+
+		if (finishTasks.equals("y")) {
+			System.out.println("Waiting for present tasks to finish...");
+
+			GenerationInfo info = dbUtil.readReadyGenerationInfo();
+			long lastDoneTaskId = dbUtil.readTaskDoneCompleteMaxId();
+			LinkedList<ExperimentTask> taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
+
+			while (taskToDo.size() > 0) {
+				info = dbUtil.readReadyGenerationInfo();
+				lastDoneTaskId = dbUtil.readTaskDoneCompleteMaxId();
+				taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		
+		System.out.println("Proceeding.");
+		
 		// -- create trial structure, populate stimspec, write task-to-do
 
 		// first, log stimobjids for each genid:
@@ -2256,7 +2576,7 @@ char cont = 'y';  // 'n'; //
 		int stimCounter = 0;
 		int filler = 0;
 
-		int numTasks = (int) Math.ceil(trialGroups.size()*PngGAParams.GA_numRepsPerStim);
+		int numTasks = (int) Math.ceil(((double) trialGroups.size())*((double) PngGAParams.GA_numRepsPerStim));
 		System.out.println(numTasks);
 
 		for (int n=0;n<numTasks;n++) {
@@ -2282,126 +2602,126 @@ char cont = 'y';  // 'n'; //
 	}
 	
 	public void getSpikeResponses() {
-		
-		long lastTrialToDo;
-		long lastTrialDone;
 
-		// first, wait for some time to make sure previous 'TaskToDo's are written to the db (the stimuli need to be presented anyway):
-		try
-		{	Thread.sleep(8000);	}
-		catch (Exception e) {System.out.println(e);}
-		
-		// Wait for spike data collection to be completed:	
-		int counter = 0;
-		System.out.print("Waiting for ACQ process.");
-		while (true)
-		{
-			lastTrialToDo = dbUtil.readTaskToDoMaxId();	// move this outside loop?
-			lastTrialDone = dbUtil.readTaskDoneCompleteMaxId();
-
-			if ( counter % 20 == 0)
-				System.out.print(".");
-			counter++;
-			if ( lastTrialToDo == lastTrialDone) { // Completed the tasks in this generation:
-				try
-				{	Thread.sleep(3000);	}
-				catch (Exception e) {System.out.println(e);}
-				System.out.println();
-				break;
-			}
-			try
-			{	Thread.sleep(300);	}
-			catch (Exception e) {System.out.println(e);}
-		}		
-
-		// obtain spike data:
-		long taskId;
-
-		//MarkStimExperimentSpikeCounter spikeCounter = new MarkStimExperimentSpikeCounter();
-		PngMarkEveryStepExptSpikeCounter spikeCounter = new PngMarkEveryStepExptSpikeCounter(); 
-		spikeCounter.setDbUtil(dbUtil);
-
-		try{
-			// get spike data for all trials:
-			SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> spikeEntry;
-//			spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
-			
-			if (useFakeSpikes) {
-				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum,linNum); 
-			} else {
-				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum,linNum,0); 
-			}
-			
-			System.out.println("SPIKE ENTRY:"+spikeEntry);
-			
-			// for each trial done in a generation:
-				// get blank FRs:
-			List<Double> blankFRs = new ArrayList<Double>();
-			for (SortedMap.Entry<Long, MarkEveryStepTaskSpikeDataEntry> entry : spikeEntry.entrySet())
-			{
-				MarkEveryStepTaskSpikeDataEntry ent = entry.getValue();				
-				taskId = ent.getTaskId();
-				
-				// get TrialSpec:
-				PngExptSpec trialSpec = PngExptSpec.fromXml(dbUtil.getSpecByTaskId(taskId).getSpec());
-				
-				// for each stimObj in the trial:
-				long stimObjId;
-				PngObjectSpec spec;
-				int entIdx;				// MarkEveryStepTaskSpikeEntry gives the following epochs:
-										//    [ fixation_pt_on, eye_in_succeed, stim, isi, ... (repeat x numStims), done_last_isi_to_task_end ]
-										//    so to index the stimuli we skip the first 2 and do every other for as many stims as we present in a trial
-
-				// first get blank stim FR data:
-				for (int n=0;n<trialSpec.getStimObjIdCount();n++) {
-					stimObjId = trialSpec.getStimObjId(n);
-					spec = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(stimObjId).getSpec());
-					
-					if ( spec.getStimType().compareTo("BLANK") == 0) {
-//						entIdx = 2*n+2;
-						entIdx = n;
-						blankFRs.add(ent.getSpikePerSec(entIdx)); 
-					}
-				}
-			}
-			
-			for (SortedMap.Entry<Long, MarkEveryStepTaskSpikeDataEntry> entry : spikeEntry.entrySet())
-			{
-				MarkEveryStepTaskSpikeDataEntry ent = entry.getValue();				
-				taskId = ent.getTaskId();
-
-				System.out.println("Entering spike info for trial: " + taskId);
-				
-				// get TrialSpec:
-				PngExptSpec trialSpec = PngExptSpec.fromXml(dbUtil.getSpecByTaskId(taskId).getSpec());
-				
-				// for each stimObj in the trial get FR data for all stims and save:
-				long stimObjId;
-				DataObject data;
-				int entIdx;
-
-				for (int n=0;n<trialSpec.getStimObjIdCount();n++) {
-					stimObjId = trialSpec.getStimObjId(n);
-					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
-					
-					// add acq info:					
-//					entIdx = 2*n+2;
-					entIdx = n; ///!!!!!
-					data.addTaskDoneId(taskId);
-					data.setSampleFrequency(ent.getSampleFrequency());
-					data.addSpikesPerSec(ent.getSpikePerSec(entIdx));
-					data.setBkgdSpikesPerSec(blankFRs);					// add blank FR data
-					data.addTrialStageData(ent.getTrialStageData(entIdx));
-					
-					// resave data:
-					dbUtil.updateStimObjData(stimObjId, data.toXml());
-				}
-			}	
-		} catch(InvalidAcqDataException ee) {
-			ee.printStackTrace();
-		} catch(NoMoreAcqDataException ee) {
-			ee.printStackTrace();
-		}
+//		long lastTrialToDo;
+//		long lastTrialDone;
+//
+//		// first, wait for some time to make sure previous 'TaskToDo's are written to the db (the stimuli need to be presented anyway):
+//		try
+//		{	Thread.sleep(8000);	}
+//		catch (Exception e) {System.out.println(e);}
+//		
+//		// Wait for spike data collection to be completed:	
+//		int counter = 0;
+//		System.out.print("Waiting for ACQ process.");
+//		while (true)
+//		{
+//			lastTrialToDo = dbUtil.readTaskToDoMaxId();	// move this outside loop?
+//			lastTrialDone = dbUtil.readTaskDoneCompleteMaxId();
+//
+//			if ( counter % 20 == 0)
+//				System.out.print(".");
+//			counter++;
+//			if ( lastTrialToDo == lastTrialDone) { // Completed the tasks in this generation:
+//				try
+//				{	Thread.sleep(3000);	}
+//				catch (Exception e) {System.out.println(e);}
+//				System.out.println();
+//				break;
+//			}
+//			try
+//			{	Thread.sleep(300);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}		
+//
+//		// obtain spike data:
+//		long taskId;
+//
+//		//MarkStimExperimentSpikeCounter spikeCounter = new MarkStimExperimentSpikeCounter();
+//		PngMarkEveryStepExptSpikeCounter spikeCounter = new PngMarkEveryStepExptSpikeCounter(); 
+//		spikeCounter.setDbUtil(dbUtil);
+//
+//		try{
+//			// get spike data for all trials:
+//			SortedMap<Long, MarkEveryStepTaskSpikeDataEntry> spikeEntry;
+////			spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum, 0);
+//			
+//			if (useFakeSpikes) {
+//				spikeEntry = spikeCounter.getFakeTaskSpikeByGeneration(prefix,runNum,genNum,linNum); 
+//			} else {
+//				spikeEntry = spikeCounter.getTaskSpikeByGeneration(prefix,runNum,genNum,linNum,0); 
+//			}
+//			
+//			System.out.println("SPIKE ENTRY:"+spikeEntry);
+//			
+//			// for each trial done in a generation:
+//				// get blank FRs:
+//			List<Double> blankFRs = new ArrayList<Double>();
+//			for (SortedMap.Entry<Long, MarkEveryStepTaskSpikeDataEntry> entry : spikeEntry.entrySet())
+//			{
+//				MarkEveryStepTaskSpikeDataEntry ent = entry.getValue();				
+//				taskId = ent.getTaskId();
+//				
+//				// get TrialSpec:
+//				PngExptSpec trialSpec = PngExptSpec.fromXml(dbUtil.getSpecByTaskId(taskId).getSpec());
+//				
+//				// for each stimObj in the trial:
+//				long stimObjId;
+//				PngObjectSpec spec;
+//				int entIdx;				// MarkEveryStepTaskSpikeEntry gives the following epochs:
+//										//    [ fixation_pt_on, eye_in_succeed, stim, isi, ... (repeat x numStims), done_last_isi_to_task_end ]
+//										//    so to index the stimuli we skip the first 2 and do every other for as many stims as we present in a trial
+//
+//				// first get blank stim FR data:
+//				for (int n=0;n<trialSpec.getStimObjIdCount();n++) {
+//					stimObjId = trialSpec.getStimObjId(n);
+//					spec = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(stimObjId).getSpec());
+//					
+//					if ( spec.getStimType().compareTo("BLANK") == 0) {
+////						entIdx = 2*n+2;
+//						entIdx = n;
+//						blankFRs.add(ent.getSpikePerSec(entIdx)); 
+//					}
+//				}
+//			}
+//			
+//			for (SortedMap.Entry<Long, MarkEveryStepTaskSpikeDataEntry> entry : spikeEntry.entrySet())
+//			{
+//				MarkEveryStepTaskSpikeDataEntry ent = entry.getValue();				
+//				taskId = ent.getTaskId();
+//
+//				System.out.println("Entering spike info for trial: " + taskId);
+//				
+//				// get TrialSpec:
+//				PngExptSpec trialSpec = PngExptSpec.fromXml(dbUtil.getSpecByTaskId(taskId).getSpec());
+//				
+//				// for each stimObj in the trial get FR data for all stims and save:
+//				long stimObjId;
+//				DataObject data;
+//				int entIdx;
+//
+//				for (int n=0;n<trialSpec.getStimObjIdCount();n++) {
+//					stimObjId = trialSpec.getStimObjId(n);
+//					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
+//					
+//					// add acq info:					
+////					entIdx = 2*n+2;
+//					entIdx = n; ///!!!!!
+//					data.addTaskDoneId(taskId);
+//					data.setSampleFrequency(ent.getSampleFrequency());
+//					data.addSpikesPerSec(ent.getSpikePerSec(entIdx));
+//					data.setBkgdSpikesPerSec(blankFRs);					// add blank FR data
+//					data.addTrialStageData(ent.getTrialStageData(entIdx));
+//					
+//					// resave data:
+//					dbUtil.updateStimObjData(stimObjId, data.toXml());
+//				}
+//			}	
+//		} catch(InvalidAcqDataException ee) {
+//			ee.printStackTrace();
+//		} catch(NoMoreAcqDataException ee) {
+//			ee.printStackTrace();
+//		}
 	}
 
 	private String getPrefix() {

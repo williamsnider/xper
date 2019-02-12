@@ -15,7 +15,7 @@ public class AldenSpec_class {
 	String whichWiggle;
 	int location;
 	double implantation;
-	int scaleShiftInDepth;
+	double scaleShiftInDepth;
 	int wallInteraction;
 
 	int densityUniform;
@@ -137,7 +137,7 @@ public class AldenSpec_class {
 	public void setScaleShiftInDepth(int scaleShiftInDepth){
 		this.scaleShiftInDepth =  scaleShiftInDepth;
 	}
-	public int getScaleShiftInDepth(){
+	public double getScaleShiftInDepth(){
 		return scaleShiftInDepth;
 	}
 	

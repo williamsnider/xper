@@ -166,7 +166,7 @@ public class ExperimentConsole extends JFrame implements
 		
         JPanel canvasPanel = new JPanel();
         consoleCanvas = getCanvas();
-        consoleCanvas.setPreferredSize(new Dimension((int)(monkeyScreenDimension.getX() / (2*canvasScaleFactor)), 
+        consoleCanvas.setPreferredSize(new Dimension((int)(monkeyScreenDimension.getX() / canvasScaleFactor), 
         		(int)(monkeyScreenDimension.getY() / canvasScaleFactor)));
 //        consoleCanvas.setPreferredSize(new Dimension(480,360));
         
@@ -662,7 +662,7 @@ public class ExperimentConsole extends JFrame implements
 				private static final long serialVersionUID = 392316101235320412L;
 
 				protected void initGL() {
-					int x = (int)(monkeyScreenDimension.getX() / (2*canvasScaleFactor));
+					int x = (int)(monkeyScreenDimension.getX() / canvasScaleFactor);
 					int y = (int)(monkeyScreenDimension.getY() / canvasScaleFactor);
 					consoleRenderer.getRenderer().init(x, y);
 				}
