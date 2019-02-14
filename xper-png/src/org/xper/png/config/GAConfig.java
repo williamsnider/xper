@@ -62,9 +62,13 @@ public class GAConfig {
 		scene.setRenderer(generalConfig.experimentGLRenderer());
 		scene.setDbUtil(generalConfig.pngDbUtil());
 		
-		// JK 16 Aug 2018
-		//   the images will contain the fixation spot so 
-		f.setSize(0);
+		// Ram Feb 14, 2019
+		// if the images contain the fixation spot, set the size to zero here
+		// why do it here? because then the db fixation size can be used for fixcal
+		// but if you are using xper's fixation spot for the experiment (in mono)
+		// then comment the next line
+		
+//		f.setSize(0);
 		scene.setFixation(f);
 		
 		scene.setMarker(classicConfig.screenMarker());

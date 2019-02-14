@@ -39,7 +39,7 @@ public class PngExptScene extends AbstractTaskScene {
 		super.initGL(w, h);
 //		System.out.println("JK 32838 w = " + w + ", h = " + h);
 		
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);          
+		GL11.glClearColor(0.5f, 0.5f, 0.5f, 0.0f);          
 		GL11.glViewport(0,0,w,h);
         GL11.glMatrixMode(GL11.GL_MODELVIEW); 
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -85,13 +85,14 @@ public class PngExptScene extends AbstractTaskScene {
 
 	protected void drawCustomBlank(Context context, final boolean fixationOn, final boolean markerOn) {
 //		fixBlankImage.draw(context);
+		// comment out the drawing of the blank images below if you want xper's fixation spot to be visible
 		if(fixationOn) {
 			blankImage.setFrameNum(2);
-			blankImage.draw(context);
+//			blankImage.draw(context);
 //			System.out.println("JK 1889 drawCustomBlank() blank with FIX on");
 		} else {
 			blankImage.setFrameNum(0);
-			blankImage.draw(context);
+//			blankImage.draw(context);
 //			System.out.println("JK 5432 drawCustomBlank() blank ");
 		}
 	}
