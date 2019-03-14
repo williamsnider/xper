@@ -39,7 +39,13 @@ public class AldenSpec_class {
 	double makePrecariousFinal;
 	Point3d rotation;
 	Point3d sun;
-
+	
+	double boundingBoxLongAxis;
+	Point3d comVector;
+	double mass;
+	Point3d horizonNormal;
+	
+	
 	public AldenSpec_class () {}
 
 	public AldenSpec_class(AldenSpec_class d) {
@@ -76,6 +82,11 @@ public class AldenSpec_class {
         this.makePrecariousFinal = d.getMakePrecariousFinal();
         this.rotation = d.getRotation();
         this.sun = d.getSun();
+        
+        this.boundingBoxLongAxis = d.getBoundingBoxLongAxis();
+    	this.comVector = d.getComVector();
+    	this.mass = d.getMass();
+    	this.horizonNormal = d.getHorizonNormal();
 	}
 	
 	public void setAldenPresent(int aldenPresent) {
@@ -277,5 +288,30 @@ public class AldenSpec_class {
 	public Point3d getSun(){
 		return sun;
 	}
-
+	
+	public void setBoundingBoxLongAxis(double boundingBoxLongAxis){
+		this.boundingBoxLongAxis = boundingBoxLongAxis;
+	}
+	public double getBoundingBoxLongAxis(){
+		return boundingBoxLongAxis;
+	}
+	public void setComVector(Point3d comVector) {
+		this.comVector = comVector;
+	}
+	public Point3d getComVector(){
+		return comVector;
+	}
+	public double getMass() {
+		return mass;
+	}
+	public void setMass(double mass) {
+		this.mass = mass;
+	}
+	public void setHorizonNormal(Point3d horizonNormal) {
+		this.horizonNormal = horizonNormal;
+	}
+	public Point3d getHorizonNormal(){
+		return horizonNormal;
+	}
+	
 }

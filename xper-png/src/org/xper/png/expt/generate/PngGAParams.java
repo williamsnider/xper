@@ -4,12 +4,15 @@ public final class PngGAParams {
 	public static final boolean stereo = false;
 	
 	public static final int GA_maxNumGens = 10;
-	public static final int GA_numNonBlankStimsPerLin = 20;	//40 10
+	public static final int GA_numNonBlankStimsPerLin = 50;	//40 10 // add additional stimuli that are from library...
 	public static final int GA_numStimsPerLin = GA_numNonBlankStimsPerLin + 1;
 	public static final int GA_numRepsPerStim = 5; //5			
-	public static final int GA_numStimsPerTrial = 2;
+	public static final int GA_numStimsPerTrial = 4;
 	public static final int GA_numLineages = 2;
 	public static final int GA_numTasks = (int) Math.ceil(((double)(GA_numStimsPerLin*GA_numRepsPerStim))/((double)(GA_numStimsPerTrial))); //#####! was (int) Math.ceil(GA_numStimsPerLin*GA_numLineages*GA_numRepsPerStim/GA_numStimsPerTrial)
+	public static final int numRenderNodes = 12;
+	public static final int GA_numFreshStimsPerLin = numRenderNodes;
+	public static final int GA_numRandomLibraryStimsPerLin = GA_numNonBlankStimsPerLin-GA_numFreshStimsPerLin;
 	
 	public static double GA_randgen_prob_objvsenvt = 0.75; 					// probability random stimulus will be alden-containing "Object" (vs "Environment")
 	

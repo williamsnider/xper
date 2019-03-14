@@ -105,7 +105,7 @@ char cont = 'y';  // 'n'; //
 				String progressType = "";
 				String postHoc;
 				
-				while (!Arrays.asList("n","b","g","c","a","gs","p","m","o","cm","s","d","i","l","cc").contains(progressType)) {
+				while (!Arrays.asList("n","b","g","c","a","gs","p","m","o","cm","s","d","i","l","cc","y","h").contains(progressType)) {
 					System.out.println("To continue GA, enter 'n'.");
 					System.out.println("");
 					
@@ -114,7 +114,7 @@ char cont = 'y';  // 'n'; //
 					System.out.println("'g'	 (grass gravity)");
 					System.out.println("'gs'	 (grass gravity with stimulus)");
 					System.out.println("'c'	 (composite)");
-					System.out.println("'cc'	 (composite with camera shift)");
+//					System.out.println("'cc'	 (composite with camera shift)");
 					System.out.println("'i'	 (distance)");
 					System.out.println("'p'	 (perturbation)");
 					System.out.println("'m'	 (mass distribution)");
@@ -122,6 +122,8 @@ char cont = 'y';  // 'n'; //
 					System.out.println("'cm'	 (canned material density groupings)");
 					System.out.println("'l'	 (blockiness)");
 					System.out.println("'a'	 (joint animacy)");
+					System.out.println("'y'	 (bilateral symmetry)");
+					System.out.println("'h' 	 (spherical sampling)");
 //					previously: 's' (stability), 'd' (density)
 					progressType = PngIOUtil.promptString("");
 
@@ -138,7 +140,7 @@ char cont = 'y';  // 'n'; //
 					}
 				}
 				
-				if (Arrays.asList("c","a","gs","p","m","o","cm","s","i","l","cc").contains(progressType)) {
+				if (Arrays.asList("c","a","gs","p","m","o","cm","s","i","l","cc","y").contains(progressType)) {
 					System.out.println("");
 					System.out.println("To choose custom stimuli for GA post-hoc, "
 							+ "enter descriptive IDs now, separating entries with a Return keypress. Enter '-' when finished.");
@@ -241,7 +243,14 @@ char cont = 'y';  // 'n'; //
 					postHoc = "COMPOSITE";
 					createPHcomposite(true);
 					break;
-				
+				case "y":
+					postHoc = "SYMMETRY";
+					createPHsymmetry();
+					break;
+				case "h":
+					postHoc = "SPHERICALSAMPLING";
+					createPHsphericalSampling();
+					break;
 				}
 			}
 
@@ -264,12 +273,21 @@ char cont = 'y';  // 'n'; //
 		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));	
 		System.out.println("Blank stimulus added."); 
 
+		int stimIndex = 0;
+		
 		// make random stims:		
-		for (int k=0;k<PngGAParams.GA_numNonBlankStimsPerLin;k++) { 
+		for (int k=0;k<PngGAParams.GA_numFreshStimsPerLin;k++) { 
 			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); 
 			System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + k); 
+			stimIndex = k;
 		}
 
+		// pad with library stims:
+		for (int k=stimIndex+1;k<PngGAParams.GA_numRandomLibraryStimsPerLin;k++) {
+			stimObjIds.add(generator.generatePHStimBlank(prefix, runNum, genNum, linNum, k, "LIBRARY"));
+			System.out.println("Lineage " + linNum + ": space-saving for random library stimulus " + k);
+		}
+		
 //		// create PNG thumbnails (not for blanks)
 //		if (doSaveThumbnails) {
 //			System.out.println("Saving PNGs.");
@@ -278,7 +296,7 @@ char cont = 'y';  // 'n'; //
 
 		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "randomSpec.py");
 		blenderRunner.run();
-
+		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage n;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
 		
@@ -490,7 +508,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("SPHERICALSAMPLING","SYMMETRY","BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -963,7 +981,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("SPHERICALSAMPLING","SYMMETRY","BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -1347,7 +1365,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("SPHERICALSAMPLING","SYMMETRY","BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());
@@ -1451,7 +1469,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("SPHERICALSAMPLING","SYMMETRY","BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				thisZ = DataObject.fromXml(dbUtil.readStimSpec_data(currentId).getSpec());
@@ -1575,6 +1593,63 @@ char cont = 'y';  // 'n'; //
 		getSpikeResponses();
 	}
 	
+	void createPHsphericalSampling() {
+		
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
+		int counter = 0;
+
+		for (int m=0;m<4;m++) {
+			for (int n=0;n<12;n++) {
+				stimObjIds.add(generator.generatePHStimBlank(prefix, runNum, genNum, linNum, counter, "SPHERICALSAMPLING"));
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " at rotation " + m);
+				counter += 1;
+			}
+		}
+		
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "sphericalSamplingPostHoc.py");
+		blenderRunnerRefresh.run();
+		
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
+		
+        BlenderRunnable photoRunner = new BlenderRunnable();
+        List<String> args = new ArrayList<String>();
+        args.add("ssh");
+        args.add("alexandriya@172.30.9.11");
+        args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
+        args.add(Integer.toString(numJobs));
+        args.add(prefixRunGen);
+        photoRunner.setDoWaitFor(false);
+        photoRunner.run(args);
+        System.out.println(args);
+        
+		// add blanks
+		stimObjIds.addAll(blankStimObjIds);
+
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
+
+		// write updated global genId and number of trials in this generation to db:
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
+		
+		// get acq info and put into db:
+		getSpikeResponses();
+	}
+
 	void createPHgrassGravity() {
 		
 		// includes stationary buried and unburied wooden balls - part of library
@@ -1652,7 +1727,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("SPHERICALSAMPLING","SYMMETRY","BLOCKINESS","DISTANCE","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","MASS","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				thisZ = DataObject.fromXml(dbUtil.readStimSpec_data(currentId).getSpec());
@@ -1703,7 +1778,7 @@ char cont = 'y';  // 'n'; //
 		for (int n=0;n<stimsToMorph_lin1.size();n++) {
 			long currentId = stimsToMorph_lin1.get(n);
 			
-			for (int m=0;m<26+1;m++) {
+			for (int m=0;m<52+1;m++) {
 				long whichStim_lin1 = generator.generatePHStim(prefix, runNum, genNum, linNum, currentId, m, "GRASSGRAVITYSTIMULUS");
 				stimObjIds.add(whichStim_lin1);
 				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
@@ -2187,6 +2262,101 @@ char cont = 'y';  // 'n'; //
 		getSpikeResponses();
 	}
 	
+	void createPHsymmetry() {
+
+		List<Long> blankStimObjIds = new ArrayList<Long>();	
+		List<Long> stimObjIds = new ArrayList<Long>();
+
+		// make blank stim:		
+		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum));
+		System.out.println("Blank stimulus added.");
+
+		// choose stims to morph:
+		// which fitness method? 	1 = highest only
+		// 							2 = minima, maxima
+		//							3 = low, medium, high designation and random selection
+		//							4 = highest four
+
+		int numDistinctObjs;
+		List<Long> stimsToMorph_lin1 = new ArrayList<Long>();
+		System.out.println("Specified post-hoc stimuli "+specifiedPostHocStimuli);
+
+		if (specifiedPostHocStimuli.size() == 0) {
+			int fitnessMethod = 3;
+
+			ArrayList<List<Long>> stimsToMorph = chooseBestObjs(fitnessMethod); 
+			stimsToMorph_lin1 = stimsToMorph.get((int)(long)linNum);
+
+			if (fitnessMethod == 4) {
+				numDistinctObjs = stimsToMorph_lin1.size();
+			} else {
+				numDistinctObjs = fitnessMethod;
+			}
+
+		} else {
+			numDistinctObjs = specifiedPostHocStimuli.size();
+
+			for (int n=0;n<specifiedPostHocStimuli.size();n++) {
+				stimsToMorph_lin1.add(dbUtil.readStimObjIdFromDescriptiveId(specifiedPostHocStimuli.get(n)));
+			}
+		}
+
+		List<String> placeholder = new ArrayList<String>();
+		List<Integer> objCounts = new ArrayList<Integer>();
+		objCounts.add(numDistinctObjs); // document the number of objects in use per lineage
+		int stimNum = 0;
+
+		for (int n=0;n<stimsToMorph_lin1.size();n++) {
+			long currentId = stimsToMorph_lin1.get(n);
+
+			// normal, x mirror, bilateral symmetry, 180 deg rotation
+			for (int m=0;m<4;m++) { 
+				long whichStim_lin1 = generator.generatePHStimAnimacy(prefix, runNum, genNum, linNum, currentId, stimNum, "SYMMETRY");
+				stimObjIds.add(whichStim_lin1);
+				System.out.println("Lineage " + linNum + ": Generating and saving stimulus " + n + " number " + m);
+				stimNum ++;
+			}
+		}
+
+		BlenderRunnable blenderRunnerRefresh = new BlenderRunnable(PngGAParams.basePath + "symmetryPostHoc.py");
+		blenderRunnerRefresh.run();
+
+		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
+		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
+
+		BlenderRunnable photoRunner = new BlenderRunnable();
+		List<String> args = new ArrayList<String>();
+		args.add("ssh");
+		args.add("alexandriya@172.30.9.11");
+		args.add("/home/alexandriya/workingBlendRend/masterSubmitScript.sh");
+		args.add(Integer.toString(numJobs));
+		args.add(prefixRunGen);
+		photoRunner.setDoWaitFor(false);
+		photoRunner.run(args);
+		System.out.println(args);
+
+		// add blanks
+		stimObjIds.addAll(blankStimObjIds);
+		
+		System.out.println("Waiting for render completion...");
+		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+			try
+			{	Thread.sleep(10000);	}
+			catch (Exception e) {System.out.println(e);}
+		}
+
+		// create trial structure, populate stimspec, write task-to-do
+		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
+		createPHTrialsFromStimObjs(stimObjIds,PngGAParams.GA_numStimsPerTrial); 
+
+		// write updated global genId and number of trials in this generation to db:
+		int numTasks = (int) Math.ceil(((double) stimObjIds.size())*((double) PngGAParams.GA_numRepsPerStim)/((double) PngGAParams.GA_numStimsPerTrial));
+		dbUtil.updateReadyGenerationInfo(prefix, runNum, genNum, linNum, numTasks); 
+
+		// get acq info and put into db:
+		getSpikeResponses();
+	}
+	
 	void createPHdistance() {
 
 		List<Long> blankStimObjIds = new ArrayList<Long>();	
@@ -2298,7 +2468,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
+				if (Arrays.asList("SPHERICALSAMPLING","SYMMETRY","BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType())) {
 					continue;
 				}
 
@@ -2346,7 +2516,7 @@ char cont = 'y';  // 'n'; //
 				currentId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(currentId).getSpec());
 
-				if (Arrays.asList("BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
+				if (Arrays.asList("SPHERICALSAMPLING","SYMMETRY","BLOCKINESS","DISTANCE","ENVT","COMPOSITE","STABILITY","PERTURBATION","BALL","GRASSGRAVITY","GRASSGRAVITYSTIMULUS","OPTICS","MATERIAL","ANIMACY_ANIMATE","ANIMACY_STILL","DENSITY","BLANK").contains(pngSpecTemp.getStimType()))
 					continue;
 
 				BlenderSpec blendObject = BlenderSpec.fromXml(dbUtil.readStimSpec_blender(currentId).getSpec());

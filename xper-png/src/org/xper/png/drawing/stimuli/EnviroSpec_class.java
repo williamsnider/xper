@@ -2,6 +2,7 @@ package org.xper.png.drawing.stimuli;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.vecmath.Point3d;
 
 public class EnviroSpec_class {
 	double horizonTilt;
@@ -21,6 +22,7 @@ public class EnviroSpec_class {
 	double fixationPointDepth;
 	String structureMaterial;
 	int aperture;
+	Point3d cameraLocation;
 	
 	
 	public EnviroSpec_class() {}
@@ -46,6 +48,8 @@ public class EnviroSpec_class {
         this.fixationPointDepth = d.getFixationPointDepth();
         this.structureMaterial = d.getStructureMaterial();
         this.aperture = d.getAperture();
+        
+        this.cameraLocation = d.getCameraLocation();
         
 	}	
 	
@@ -177,6 +181,12 @@ public class EnviroSpec_class {
 	}
 	public int getAperture() {
 		return aperture;
+	}
+	public void setCameraLocation(Point3d cameraLocation) {
+		this.cameraLocation = cameraLocation;
+	}
+	public Point3d getCameraLocation(){
+		return cameraLocation;
 	}
 
 }
