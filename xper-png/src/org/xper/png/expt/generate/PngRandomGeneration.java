@@ -16,6 +16,7 @@ import javax.vecmath.Point3d;
 
 import java.lang.Thread;
 
+import org.lwjgl.util.Renderable;
 import org.xper.Dependency;
 import org.xper.acq.counter.MarkEveryStepTaskSpikeDataEntry;
 import org.xper.db.vo.GenerationInfo;
@@ -283,7 +284,7 @@ char cont = 'y';  // 'n'; //
 		}
 
 		// pad with library stims:
-		for (int k=stimIndex+1;k<PngGAParams.GA_numRandomLibraryStimsPerLin;k++) {
+		for (int k=stimIndex+1;k<PngGAParams.GA_numNonBlankStimsPerLin;k++) {
 			stimObjIds.add(generator.generatePHStimBlank(prefix, runNum, genNum, linNum, k, "LIBRARY"));
 			System.out.println("Lineage " + linNum + ": space-saving for random library stimulus " + k);
 		}
@@ -338,22 +339,32 @@ char cont = 'y';  // 'n'; //
 		// make blank stims:		
 		blankStimObjIds.add(generator.generateBlankStim(prefix, runNum, genNum, linNum)); 
 		System.out.println("Blank stimuli added.");
-
+		
+		int stimIndex = 0;
+		
 		// make random stims:		
 		for (int k=0;k<PngGAParams.GA_morph_numNewStimPerLin;k++) { 
 			stimObjIds.add(generator.generateRandStim(prefix, runNum, genNum, linNum, k)); 
 			System.out.println("Lineage " + linNum + ": Generating and saving random stimulus " + k); 
+			stimIndex = k;
+		}
+		
+		// pad with library stims:
+		for (int k=PngGAParams.GA_morph_numNewStimPerLin;k<PngGAParams.GA_numRandomLibraryStimsPerLin+PngGAParams.GA_morph_numNewStimPerLin;k++) {
+			stimObjIds.add(generator.generatePHStimBlank(prefix, runNum, genNum, linNum, k, "LIBRARY"));
+			System.out.println("Lineage " + linNum + ": space-saving for random library stimulus " + k);
 		}
 		
 		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "randomSpec.py",stimObjIds);
 		blenderRunner.run();
 
 		System.out.println("Calculating fitness and selecting parents.");
-		int numDescendantObjs = PngGAParams.GA_numNonBlankStimsPerLin-PngGAParams.GA_morph_numNewStimPerLin;
+		int numDescendantObjs = PngGAParams.GA_numFreshStimsPerLin - PngGAParams.GA_morph_numNewStimPerLin;
+//		int numDescendantObjs = PngGAParams.GA_numNonBlankStimsPerLin-PngGAParams.GA_morph_numNewStimPerLin;
 		double unRounded = numDescendantObjs*PngGAParams.GA_randgen_prob_objvsenvt;
 		int numDescendantObjType = (int) unRounded;
 		int numDescendantEnvType = numDescendantObjs - numDescendantObjType;
-
+		
 		// for each non-blank stimulus shown previously, find lineage and add z-score and id to appropriate map
 		Map<Long, Double> stimObjId2FRZ_lin1_obj = new HashMap<Long, Double>();
 		Map<Long, Double> stimObjId2FRZ_lin1_env = new HashMap<Long, Double>();
@@ -370,13 +381,13 @@ char cont = 'y';  // 'n'; //
 				stimObjId = allStimObjIds.get(n);
 				PngObjectSpec pngSpecTemp = PngObjectSpec.fromXml(dbUtil.readStimSpec_java(stimObjId).getSpec());
 
-				if (pngSpecTemp.getStimType().equals("OBJECT") || pngSpecTemp.getStimType().equals("ENVT")) {
+				if (pngSpecTemp.getStimType().contains("OBJECT") || pngSpecTemp.getStimType().contains("ENVT") ) {
 					data = DataObject.fromXml(dbUtil.readStimSpec_data(stimObjId).getSpec());
 					
 					if (data.getLineage() == linNum) { 
 						Double zScore = data.getAvgFRminusBkgd()/data.getStdFRplusBkgd();
 						
-						if (pngSpecTemp.getStimType().equals("OBJECT")) {
+						if (pngSpecTemp.getStimType().contains("OBJECT")) {
 							stimObjId2FRZ_lin1_obj.put(stimObjId, zScore);
 						}
 						else {
@@ -413,7 +424,7 @@ char cont = 'y';  // 'n'; //
 		// create morphed stimuli:
 		for (int n=0;n<numDescendantObjs;n++) {
 
-			tempArray = generator.generateMorphStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(n),n+PngGAParams.GA_morph_numNewStimPerLin); 
+			tempArray = generator.generateMorphStim(prefix, runNum, genNum, linNum, stimsToMorph_lin1.get(n),n+PngGAParams.GA_numRandomLibraryStimsPerLin+PngGAParams.GA_morph_numNewStimPerLin); 
 			System.out.println("Lineage " + linNum + ": Generating and saving morphed stimulus " + n); 
 			whichStim = Long.parseLong(tempArray.get(0));
 			stimObjIds.add(whichStim);
