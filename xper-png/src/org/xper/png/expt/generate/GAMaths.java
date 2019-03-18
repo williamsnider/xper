@@ -37,42 +37,6 @@ public class GAMaths {
 //			System.out.println(numChild);
 		}
 		
-//		int currentStimValue = 0;
-//		int pastStimValue = 0;
-//		Map<Long, Double> stimFitness = new HashMap<Long, Double>();
-//		double choice;
-//		double place;
-//		
-//		for (int m=0;m<numPercentDivs;m++) {
-//			currentStimValue = stimsDivs[m];
-//
-//			for (int n=pastStimValue;n<currentStimValue;n++) {
-//				stimFitness.put(allIds.get(n),((double)(n-pastStimValue+1))/((double)(currentStimValue-pastStimValue)));
-//			}
-//			
-//			for (int c=0;c<percentDivs[m];c++) {
-//				choice = Math.random();
-//				place = 0;
-//				// if currentId is null, it never entered the following for loop at all... 0 stimuli selected from this category to morph...?
-//				for (int n=pastStimValue;n<currentStimValue;n++) {
-//					currentId = allIds.get(n);
-////					System.out.println(currentId);
-//					place += stimFitness.get(currentId);
-//					
-//					if (choice <= place) {
-//						morphIds.add(currentId);
-//						break;
-//					}
-//				}
-//			}
-//			
-//			pastStimValue = currentStimValue;
-//			stimFitness.clear();
-//			}
-		
-//		System.out.println(morphIds);
-//		System.out.println(morphIds.size());
-		
 		int prevStimDiv, thisStimDiv;
 		Map<Long, Double> stimFitness = new HashMap<Long, Double>();
 		
