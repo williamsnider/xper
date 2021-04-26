@@ -296,7 +296,7 @@ char cont = 'y';  // 'n'; //
 //		}
 
 		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "randomSpec.py");
-		blenderRunner.run();
+// JK skip this for now		blenderRunner.run();
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineage n;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
@@ -309,17 +309,17 @@ char cont = 'y';  // 'n'; //
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+// JK skip this for now  photoRunner.run(args);
 
 		// now add blanks
 		stimObjIds.addAll(blankStimObjIds);
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
@@ -356,7 +356,7 @@ char cont = 'y';  // 'n'; //
 		}
 		
 		BlenderRunnable blenderRunner = new BlenderRunnable(PngGAParams.basePath + "randomSpec.py",stimObjIds);
-		blenderRunner.run();
+// JK skip this for now		blenderRunner.run();
 
 		System.out.println("Calculating fitness and selecting parents.");
 		int numDescendantObjs = PngGAParams.GA_numFreshStimsPerLin - PngGAParams.GA_morph_numNewStimPerLin;
@@ -1156,7 +1156,7 @@ char cont = 'y';  // 'n'; //
 		System.out.println(PngGAParams.basePath + "animatePostHoc.py"+ placeholder+ limbCounts);
 		
 		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(PngGAParams.basePath + "animatePostHoc.py",placeholder,limbCounts);
-		blenderRunnerAnimate.run();
+// JK skip this for now		blenderRunnerAnimate.run();
 		
 		int numJobs = stimObjIds.size(); //all R, allL, all non-blank stims in lineages 1 and 2;
 		String prefixRunGen = prefix + "_r-" + runNum + "_g-" + genNum + "_l-" + linNum;
@@ -1433,17 +1433,17 @@ char cont = 'y';  // 'n'; //
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+// JK skip this for now        photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
@@ -1539,7 +1539,7 @@ char cont = 'y';  // 'n'; //
 		// load blenderspec back in order to extract id of limb of interest (in specGenerator)
 		
 		BlenderRunnable blenderRunnerAnimate = new BlenderRunnable(PngGAParams.basePath + "massPostHoc.py");
-		blenderRunnerAnimate.run();
+// JK skip this for now		blenderRunnerAnimate.run();
 		
 		System.out.println(stimsToMorph_lin1);
 		int stimNum = stimsToMorph_lin1.size();
@@ -1580,17 +1580,17 @@ char cont = 'y';  // 'n'; //
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+// JK skip this for now       photoRunner.run(args);
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
@@ -1636,18 +1636,18 @@ char cont = 'y';  // 'n'; //
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+// JK skip this for now        photoRunner.run(args);
         System.out.println(args);
         
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);
 
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
@@ -1960,17 +1960,17 @@ char cont = 'y';  // 'n'; //
         args.add(Integer.toString(numJobs));
         args.add(prefixRunGen);
         photoRunner.setDoWaitFor(false);
-        photoRunner.run(args);
+// JK skip this for now      photoRunner.run(args);
 		
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for this generation.");
@@ -2057,18 +2057,18 @@ char cont = 'y';  // 'n'; //
 		args.add(Integer.toString(numJobs));
 		args.add(prefixRunGen);
 		photoRunner.setDoWaitFor(false);
-		photoRunner.run(args);
+// JK skip this for now		photoRunner.run(args);
 		System.out.println(args);
 
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);	
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
@@ -2154,18 +2154,18 @@ char cont = 'y';  // 'n'; //
 		args.add(Integer.toString(numJobs));
 		args.add(prefixRunGen);
 		photoRunner.setDoWaitFor(false);
-		photoRunner.run(args);
+// JK skip this for now		photoRunner.run(args);
 		System.out.println(args);
 
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
@@ -2248,18 +2248,18 @@ char cont = 'y';  // 'n'; //
 		args.add(Integer.toString(numJobs));
 		args.add(prefixRunGen);
 		photoRunner.setDoWaitFor(false);
-		photoRunner.run(args);
+// JK skip this for now      photoRunner.run(args);
 		System.out.println(args);
 
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");
@@ -2343,18 +2343,18 @@ char cont = 'y';  // 'n'; //
 		args.add(Integer.toString(numJobs));
 		args.add(prefixRunGen);
 		photoRunner.setDoWaitFor(false);
-		photoRunner.run(args);
+// JK skip this for now		photoRunner.run(args);
 		System.out.println(args);
 
 		// add blanks
 		stimObjIds.addAll(blankStimObjIds);
 		
-		System.out.println("Waiting for render completion...");
-		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
-			try
-			{	Thread.sleep(10000);	}
-			catch (Exception e) {System.out.println(e);}
-		}
+// JK skip this for now		System.out.println("Waiting for render completion...");
+//		while (dbUtil.readRenderStatus(prefix, runNum, genNum, linNum) == 0) {
+//			try
+//			{	Thread.sleep(10000);	}
+//			catch (Exception e) {System.out.println(e);}
+//		}
 
 		// create trial structure, populate stimspec, write task-to-do
 		System.out.println("Creating trial spec for lineage " + linNum + " of this generation.");

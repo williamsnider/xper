@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 import org.xper.drawing.Context;
 import org.xper.drawing.Drawable;
 import org.xper.png.drawing.preview.DrawingManager;
+import org.xper.util.ThreadUtil;
 
 public class Image implements Drawable {
 	
@@ -30,9 +31,9 @@ public class Image implements Drawable {
 	
 	boolean texturesLoaded = false;
 	int frameNum = 0;
-	String resourcePath = "/home/alexandriya/catch_cluster_images/"; //  res/marked/";  //"res/"; // 
-	String ext = "_m.png"; // ".png";  // 
-	String baseFilename = "sizing2";
+	String resourcePath = "/home/justin/jkcode/xper-png/images/"; 
+	String ext = ".jpg"; // ".png";  // 
+	String baseFilename = "img";
 	
 	String imageName;
 	String baseName;
@@ -59,10 +60,11 @@ public class Image implements Drawable {
 			BufferedImage img = ImageIO.read(imageFile);
 			imgWidth = img.getWidth();
 			imgHeight = img.getHeight();
-			System.out.println("loaded image : " + imgWidth + ", " + imgHeight);
+//			System.out.println("loaded image : " + imgWidth + ", " + imgHeight);
 			byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
 	
-//			bgr2rgb(src);
+//			
+			bgr2rgb(src);
 	
 			pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
 			
@@ -88,24 +90,25 @@ public class Image implements Drawable {
 	
 	
 	public static void testImage(){
-		String resourcePath = "/home/alexandriya/catch_cluster_images/"; 
-		String ext = ".jpg"; //  ".png"; // ".png";  // 
-		String baseFilename = "test"; //  "earth_PNG36"; // "180709_r-219_g-1_l-0_s-9_R"; // "earth_PNG36"; //
-		
+		String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
+		String ext = ".png"; // ".png";  // 
+		String baseFilename = "img";  //		
 		String testImageName = resourcePath + baseFilename + ext;
 		int numTrials = 1;    
-		DrawingManager testWindow = new DrawingManager(1050, 1400);
+		DrawingManager testWindow = new DrawingManager(1200, 1920);
 		
 		for(int i = 0; i < numTrials; i++){
-			Image img = new Image();		
-			img.loadTexture(testImageName);
+			Image img = new Image();	
 			List<Image> images = new ArrayList<Image>();
+
+			testImageName = resourcePath + baseFilename + Integer.toString(0 + 0) + ext;
+			img.loadTexture(testImageName);
+			System.out.println("JK 272621 loading " + testImageName);
 			images.add(img);
 			testWindow.setStimObjs(images);		// add object to be drawn
 		}
-		
-		testWindow.drawStimuli();	
-		
+		testWindow.drawStimuli();
+		System.out.println("done " + testImageName);
 	}
 
  

@@ -53,7 +53,6 @@ public class TrialExperimentConsoleRenderer {
 		double eyeWindowCenterX = renderer.deg2mm(eyeWindowCenter.getX());
 		double eyeWindowCenterY = renderer.deg2mm(eyeWindowCenter.getY());
 		double eyeWindowSize = renderer.deg2mm(window.getSize());
-
 		GLUtil.drawCircle(circle, eyeWindowSize, false, eyeWindowCenterX, eyeWindowCenterY, 0.0);
 	}
 	

@@ -20,12 +20,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-# Dump of table acqdata
+# Dump of table AcqData
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `acqdata`;
+DROP TABLE IF EXISTS `AcqData`;
 
-CREATE TABLE `acqdata` (
+CREATE TABLE `AcqData` (
   `tstamp` bigint(20) NOT NULL DEFAULT '0',
   `data` longblob NOT NULL,
   PRIMARY KEY (`tstamp`)
@@ -33,12 +33,12 @@ CREATE TABLE `acqdata` (
 
 
 
-# Dump of table acqsession
+# Dump of table AcqSession
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `acqsession`;
+DROP TABLE IF EXISTS `AcqSession`;
 
-CREATE TABLE `acqsession` (
+CREATE TABLE `AcqSession` (
   `start_time` bigint(20) NOT NULL DEFAULT '0',
   `stop_time` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`start_time`)
@@ -46,12 +46,12 @@ CREATE TABLE `acqsession` (
 
 
 
-# Dump of table behmsg
+# Dump of table BehMsg
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `behmsg`;
+DROP TABLE IF EXISTS `BehMsg`;
 
-CREATE TABLE `behmsg` (
+CREATE TABLE `BehMsg` (
   `tstamp` bigint(20) NOT NULL DEFAULT '0',
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `msg` longtext COLLATE utf8_unicode_ci NOT NULL,
@@ -60,12 +60,12 @@ CREATE TABLE `behmsg` (
 
 
 
-# Dump of table behmsgeye
+# Dump of table BehMsgEye
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `behmsgeye`;
+DROP TABLE IF EXISTS `BehMsgEye`;
 
-CREATE TABLE `behmsgeye` (
+CREATE TABLE `BehMsgEye` (
   `tstamp` bigint(20) NOT NULL DEFAULT '0',
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `msg` longtext COLLATE utf8_unicode_ci NOT NULL,
@@ -74,12 +74,12 @@ CREATE TABLE `behmsgeye` (
 
 
 
-# Dump of table explog
+# Dump of table ExpLog
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `explog`;
+DROP TABLE IF EXISTS `ExpLog`;
 
-CREATE TABLE `explog` (
+CREATE TABLE `ExpLog` (
   `tstamp` bigint(20) NOT NULL DEFAULT '0',
   `memo` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`tstamp`)
@@ -87,35 +87,35 @@ CREATE TABLE `explog` (
 
 
 
-# Dump of table internalstate
+# Dump of table InternalState
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `internalstate`;
+DROP TABLE IF EXISTS `InternalState`;
 
-CREATE TABLE `internalstate` (
+CREATE TABLE `InternalState` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `arr_ind` int(11) NOT NULL DEFAULT '0',
   `val` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`name`,`arr_ind`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-LOCK TABLES `internalstate` WRITE;
-/*!40000 ALTER TABLE `internalstate` DISABLE KEYS */;
+LOCK TABLES `InternalState` WRITE;
+/*!40000 ALTER TABLE `InternalState` DISABLE KEYS */;
 
-INSERT INTO `internalstate` (`name`, `arr_ind`, `val`)
+INSERT INTO `InternalState` (`name`, `arr_ind`, `val`)
 VALUES
 	('task_to_do_gen_ready',0,'<GenerationInfo>\n  <genId>0</genId>\n  <taskCount>0</taskCount>\n</GenerationInfo>');
 
-/*!40000 ALTER TABLE `internalstate` ENABLE KEYS */;
+/*!40000 ALTER TABLE `InternalState` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table rfinfo
+# Dump of table RFInfo
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `rfinfo`;
+DROP TABLE IF EXISTS `RFInfo`;
 
-CREATE TABLE `rfinfo` (
+CREATE TABLE `RFInfo` (
   `tstamp` bigint(20) NOT NULL DEFAULT '0',
   `info` longtext COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`tstamp`)
@@ -123,12 +123,12 @@ CREATE TABLE `rfinfo` (
 
 
 
-# Dump of table rfstimspec
+# Dump of table RFStimSpec
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `rfstimspec`;
+DROP TABLE IF EXISTS `RFStimSpec`;
 
-CREATE TABLE `rfstimspec` (
+CREATE TABLE `RFStimSpec` (
   `id` bigint(20) NOT NULL DEFAULT '0',
   `spec` longtext COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
@@ -136,12 +136,12 @@ CREATE TABLE `rfstimspec` (
 
 
 
-# Dump of table stimspec
+# Dump of table StimSpec
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `stimspec`;
+DROP TABLE IF EXISTS `StimSpec`;
 
-CREATE TABLE `stimspec` (
+CREATE TABLE `StimSpec` (
   `id` bigint(20) NOT NULL DEFAULT '0',
   `spec` longtext COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
@@ -149,12 +149,12 @@ CREATE TABLE `stimspec` (
 
 
 
-# Dump of table systemvar
+# Dump of table SystemVar
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `systemvar`;
+DROP TABLE IF EXISTS `SystemVar`;
 
-CREATE TABLE `systemvar` (
+CREATE TABLE `SystemVar` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `arr_ind` int(11) NOT NULL DEFAULT '0',
   `tstamp` bigint(20) NOT NULL DEFAULT '0',
@@ -163,10 +163,10 @@ CREATE TABLE `systemvar` (
   KEY `name_arr_ind` (`name`,`arr_ind`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-LOCK TABLES `systemvar` WRITE;
-/*!40000 ALTER TABLE `systemvar` DISABLE KEYS */;
+LOCK TABLES `SystemVar` WRITE;
+/*!40000 ALTER TABLE `SystemVar` DISABLE KEYS */;
 
-INSERT INTO `systemvar` (`name`, `arr_ind`, `tstamp`, `val`)
+INSERT INTO `SystemVar` (`name`, `arr_ind`, `tstamp`, `val`)
 VALUES
 	('xper_slide_length',0,1097009302111741,'750'),
 	('xper_inter_slide_interval',0,1097009302112036,'250'),
@@ -338,16 +338,16 @@ VALUES
 	('xper_fixation_sync_channel_reference',0,1097000000000400,'common'),
 	('xper_fixation_sync_high_volt',0,1097000000000400,'4');
 
-/*!40000 ALTER TABLE `systemvar` ENABLE KEYS */;
+/*!40000 ALTER TABLE `SystemVar` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-# Dump of table taskdone
+# Dump of table TaskDone
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `taskdone`;
+DROP TABLE IF EXISTS `TaskDone`;
 
-CREATE TABLE `taskdone` (
+CREATE TABLE `TaskDone` (
   `tstamp` bigint(20) NOT NULL DEFAULT '0',
   `task_id` bigint(20) NOT NULL DEFAULT '0',
   `part_done` tinyint(4) NOT NULL DEFAULT '0',
@@ -356,12 +356,12 @@ CREATE TABLE `taskdone` (
 
 
 
-# Dump of table tasktodo
+# Dump of table TaskToDo
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `tasktodo`;
+DROP TABLE IF EXISTS `TaskToDo`;
 
-CREATE TABLE `tasktodo` (
+CREATE TABLE `TaskToDo` (
   `task_id` bigint(20) NOT NULL DEFAULT '0',
   `stim_id` bigint(20) NOT NULL DEFAULT '0',
   `xfm_id` bigint(20) NOT NULL DEFAULT '0',
@@ -371,12 +371,12 @@ CREATE TABLE `tasktodo` (
 
 
 
-# Dump of table thumbnail
+# Dump of table Thumbnail
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `thumbnail`;
+DROP TABLE IF EXISTS `Thumbnail`;
 
-CREATE TABLE `thumbnail` (
+CREATE TABLE `Thumbnail` (
   `id` bigint(20) NOT NULL DEFAULT '0',
   `data` longblob NOT NULL,
   PRIMARY KEY (`id`)
@@ -384,12 +384,12 @@ CREATE TABLE `thumbnail` (
 
 
 
-# Dump of table xfmspec
+# Dump of table XfmSpec
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `xfmspec`;
+DROP TABLE IF EXISTS `XfmSpec`;
 
-CREATE TABLE `xfmspec` (
+CREATE TABLE `XfmSpec` (
   `id` bigint(20) NOT NULL DEFAULT '0',
   `spec` longtext COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)

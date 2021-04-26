@@ -16,7 +16,8 @@ public class PngExperimentConsoleRenderer extends
 		if (messageHandler instanceof PngExperimentMessageHandler) {
 			PngExperimentMessageHandler r = (PngExperimentMessageHandler) messageHandler;
 			if (r.isTargetOn()) {
-				RGBColor targetColor = new RGBColor(1f, 1f, 0f);
+				RGBColor targetColor = new RGBColor(1f, 0f, 0f);
+				
 				Coordinates2D pos = r.getTargetPosition();
 				double eyeWinSize = r.getTargetEyeWindowSize();
 				if (pos != null) {

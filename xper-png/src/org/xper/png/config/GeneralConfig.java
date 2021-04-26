@@ -33,6 +33,7 @@ import org.xper.console.ExperimentConsole;
 import org.xper.console.ExperimentMessageReceiver;
 
 import org.xper.drawing.Coordinates2D;
+import org.xper.drawing.RGBColor;
 import org.xper.drawing.object.BlankScreen;
 import org.xper.drawing.object.Circle;
 import org.xper.drawing.object.MonkeyWindow;
@@ -50,7 +51,7 @@ import org.xper.eye.strategy.EyeInStrategy;
 import org.xper.eye.vo.EyeDeviceReading;
 import org.xper.eye.vo.EyeWindow;
 import org.xper.juice.mock.NullDynamicJuice;
-
+import org.xper.png.renderer.PngPerspectiveRenderer;
 import org.xper.png.util.PngDbUtil;
 
 @Configuration(defaultLazy=Lazy.TRUE)
@@ -320,31 +321,35 @@ public class GeneralConfig {
 	
 	// *** added by SHS ***  
 	
-	/*	@Bean
-	public PngPerspectiveRenderer experimentGLRenderer () {
-		//PerspectiveStereoRenderer renderer = new PerspectiveStereoRenderer();
-		//PerspectiveRenderer renderer = new PerspectiveRenderer();				// not using stereo
-		PngPerspectiveRenderer renderer = new PngPerspectiveRenderer();		// using my version w background color setting
+	
+	  @Bean 
+	   public PngPerspectiveRenderer experimentGLRenderer () {
+		  //PerspectiveStereoRenderer renderer = new PerspectiveStereoRenderer();
+		   //PerspectiveRenderer renderer = new PerspectiveRenderer(); // not using stereo 
+	     PngPerspectiveRenderer renderer = new PngPerspectiveRenderer(); // using my version w background color setting
+		  renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
+		  renderer.setDepth(classicConfig.xperMonkeyScreenDepth());
+		  renderer.setHeight(classicConfig.xperMonkeyScreenHeight());
+		  renderer.setWidth(classicConfig.xperMonkeyScreenWidth());
+		  renderer.setPupilDistance(classicConfig.xperMonkeyPupilDistance());
+		  //renderer.setInverted(classicConfig.xperMonkeyScreenInverted()); // only used for stereo rendering
+		  renderer.setRgbColor(new RGBColor(0.4f,0.0f,0.0f));  // set background color to gray 
+		  return renderer;
+	  }
+	 
+	
+/*	@Bean
+	public PerspectiveStereoRenderer experimentGLRenderer () {
+		PerspectiveStereoRenderer renderer = new PerspectiveStereoRenderer();
+		//PerspectiveRenderer  renderer = new PerspectiveRenderer();
 		renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
 		renderer.setDepth(classicConfig.xperMonkeyScreenDepth());
 		renderer.setHeight(classicConfig.xperMonkeyScreenHeight());
 		renderer.setWidth(classicConfig.xperMonkeyScreenWidth());
 		renderer.setPupilDistance(classicConfig.xperMonkeyPupilDistance());
 		//renderer.setInverted(classicConfig.xperMonkeyScreenInverted());  		// only used for stereo rendering
-		renderer.setRgbColor(new RGBColor(0.5f,0.5f,0.5f));						// set background color to gray		
-		return renderer;
-	}*/
-	
-	@Bean
-	public PerspectiveStereoRenderer experimentGLRenderer () {
-		PerspectiveStereoRenderer renderer = new PerspectiveStereoRenderer();
-		renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
-		renderer.setDepth(classicConfig.xperMonkeyScreenDepth());
-		renderer.setHeight(classicConfig.xperMonkeyScreenHeight());
-		renderer.setWidth(classicConfig.xperMonkeyScreenWidth());
-		renderer.setPupilDistance(classicConfig.xperMonkeyPupilDistance());
-		renderer.setInverted(classicConfig.xperMonkeyScreenInverted());  		// only used for stereo rendering
 		return renderer;
 	}
 	
+*/	
 }

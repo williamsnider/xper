@@ -6,7 +6,7 @@ import org.xper.drawing.RGBColor;
 
 public class PngPerspectiveRenderer extends PerspectiveRenderer {
 	
-	public RGBColor backgroundColor = new RGBColor(0f,0f,0f);	// initialize to black background color
+	public RGBColor backgroundColor = new RGBColor(0f,0f,0.0f);	// initialize to black background color
 	float r,g,b;
 	
 	public void init() {

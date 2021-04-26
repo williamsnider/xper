@@ -65,7 +65,7 @@ public class PngTrialExperiment implements Experiment {
 							Thread.sleep(SlideTrialExperimentState.NO_TASK_SLEEP_INTERVAL);
 						} catch (InterruptedException e) {
 						}
-//						System.out.println("JK 04126 PngTrialExperiment : TrialResult.NO_MORE_TASKS");
+						System.out.println("JK 04126 PngTrialExperiment : TrialResult.NO_MORE_TASKS");
 						return TrialResult.NO_MORE_TASKS;
 					}
 

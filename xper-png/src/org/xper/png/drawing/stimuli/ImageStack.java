@@ -285,7 +285,10 @@ public class ImageStack implements Drawable {
     
 
     public int loadTexture(String pathname, int textureIndex) {
-    	
+
+    	pathname = "/home/justin/jkcode/ConnorLab/xper-png/images/img4.png";
+    	//System.out.println("JK 82273 ImageStack:loadTexture()  " + pathname);
+
     	// if it's been used before, just retrieve the index and add it to the list
  	    // otherwise, add the name, index pair to the map and call loadTexture() 
     	if(nameMap.containsKey(pathname)) {
@@ -319,12 +322,14 @@ public class ImageStack implements Drawable {
     		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
     		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
 
-    		// only for RGB
-    		//     GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
-
-    		// RGBA
-    		GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);    		
-    		//   
+    		if(pixels.remaining() % 3 == 0) {
+    			// only for RGB
+    		 	GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, img.getWidth(), img.getHeight(), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+    		} else {
+    			// RGBA
+    			GL11.glTexImage2D( GL11.GL_TEXTURE_2D, 0,  GL11.GL_RGBA8, img.getWidth(), img.getHeight(), 0,  GL11.GL_RGBA,  GL11.GL_UNSIGNED_BYTE, pixels);
+    		}
+    		   
     		//System.out.println("JK 5353 ImageStack:loadTexture() " + imageFile + " : " + textureIndex + 
     		//	    				" textureIds = " + textureIds.get(textureIndex));    		
 
@@ -351,8 +356,6 @@ public class ImageStack implements Drawable {
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
-		// JK 23 Oct 2018
-//		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(actualTextureIndex));
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(textureList.get(frameNum)));
 
         GL11.glBegin(GL11.GL_QUADS);
@@ -398,7 +401,6 @@ public class ImageStack implements Drawable {
 	}
 
 	public void setNumFrames(int numImgs) {
-		
 		this.numFrames = numImgs;
 		textureIds = BufferUtils.createIntBuffer(this.numFrames);	
 	}

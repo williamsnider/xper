@@ -31,6 +31,7 @@ public class MonkeyWindow implements Window {
 		screenWidth = mode.getWidth();
 		screenHeight = mode.getHeight();
 	}
+	
 	public void create() {
 		try {
 			System.setProperty("org.lwjgl.opengl.Display.noinput", "true");
@@ -41,8 +42,10 @@ public class MonkeyWindow implements Window {
 			} else {
 				// for testing, use half screen width and half screen height as
 				// width and height of monkey window
-				int height = (int)(screenHeight / canvasScaleFactor);
-				int width = height * 8 / 3;
+				//int height = (int)(screenHeight / canvasScaleFactor);
+				//int width = height * 8 / 3;
+				int height = (int)(screenHeight / 2);
+				int width = (int)(screenWidth/ 2);
 				Display.setDisplayMode(new DisplayMode(width,height));
 				Display.setTitle("Monkey Monitor");
 			}

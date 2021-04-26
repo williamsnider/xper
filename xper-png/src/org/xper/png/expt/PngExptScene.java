@@ -37,7 +37,8 @@ public class PngExptScene extends AbstractTaskScene {
 	public void initGL(int w, int h) {
 		super.setUseStencil(true);
 		super.initGL(w, h);
-//		System.out.println("JK 32838 w = " + w + ", h = " + h);
+//		
+		System.out.println("JK 32838 w = " + screenWidth + ", h = " + screenHeight);
 		
 		GL11.glClearColor(0.5f, 0.5f, 0.5f, 0.0f);          
 		GL11.glViewport(0,0,w,h);
