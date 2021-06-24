@@ -31,7 +31,7 @@ public class Image implements Drawable {
 	
 	boolean texturesLoaded = false;
 	int frameNum = 0;
-	String resourcePath = "/home/justin/jkcode/xper-png/images/"; 
+	String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
 	String ext = ".jpg"; // ".png";  // 
 	String baseFilename = "img";
 	
@@ -52,7 +52,7 @@ public class Image implements Drawable {
 	}
 	
 	
-	int loadTexture(String pathname) {
+	public int loadTexture(String pathname) {
 		textureIndex = 0;
 	
 		try {
@@ -60,10 +60,9 @@ public class Image implements Drawable {
 			BufferedImage img = ImageIO.read(imageFile);
 			imgWidth = img.getWidth();
 			imgHeight = img.getHeight();
-//			System.out.println("loaded image : " + imgWidth + ", " + imgHeight);
-			byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
-	
-//			
+			System.out.println("JK 651222 loaded image : " + imgWidth + ", " + imgHeight);
+			byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();	
+			
 			bgr2rgb(src);
 	
 			pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
@@ -90,7 +89,8 @@ public class Image implements Drawable {
 	
 	
 	public static void testImage(){
-		String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
+		//String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
+		String resourcePath = "/home/justin/choiceImages/"; 
 		String ext = ".png"; // ".png";  // 
 		String baseFilename = "img";  //		
 		String testImageName = resourcePath + baseFilename + ext;
@@ -101,7 +101,7 @@ public class Image implements Drawable {
 			Image img = new Image();	
 			List<Image> images = new ArrayList<Image>();
 
-			testImageName = resourcePath + baseFilename + Integer.toString(0 + 0) + ext;
+			testImageName = resourcePath + baseFilename + Integer.toString(5 + 0) + ext;
 			img.loadTexture(testImageName);
 			System.out.println("JK 272621 loading " + testImageName);
 			images.add(img);

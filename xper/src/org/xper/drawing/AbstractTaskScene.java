@@ -20,8 +20,7 @@ public abstract class AbstractTaskScene implements TaskScene {
 
 	public void initGL(int w, int h) {
 		renderer.init(w, h);
-		GL11.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		
+	
 		if (useStencil) {
 			GL11.glClear (GL11.GL_STENCIL_BUFFER_BIT);
 			// disable color and depth buffer for writing

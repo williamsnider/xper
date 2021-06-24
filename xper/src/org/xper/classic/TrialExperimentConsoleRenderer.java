@@ -26,7 +26,7 @@ public class TrialExperimentConsoleRenderer {
 	@Dependency
 	Square square;
 	
-	double eyeIndicatorSize = 2.5;
+	double eyeIndicatorSize = 10; // JK  2.5;
 	double voltageIndicatorSize = 5;
 	double voltageMin = -10.0;
 	double voltageMax = 10.0;
@@ -54,6 +54,9 @@ public class TrialExperimentConsoleRenderer {
 		double eyeWindowCenterY = renderer.deg2mm(eyeWindowCenter.getY());
 		double eyeWindowSize = renderer.deg2mm(window.getSize());
 		GLUtil.drawCircle(circle, eyeWindowSize, false, eyeWindowCenterX, eyeWindowCenterY, 0.0);
+		
+		System.out.println("JK 92632 " + eyeWindowSize + " : " + eyeWindowCenterX + " : " + eyeWindowCenterY);
+	
 	}
 	
 	void drawEyeDeviceReading(String devId) {
@@ -74,9 +77,19 @@ public class TrialExperimentConsoleRenderer {
 			if (messageHandler.isEyeIn()) {
 				solid = true;
 			} 
-			GLUtil.drawCircle(circle, eyeIndicatorSize, solid, renderer.deg2mm(eyeDegree.getX()), renderer
-					.deg2mm(eyeDegree.getY()), 0.0);
-
+//	JK		GLUtil.drawCircle(circle, eyeIndicatorSize, solid, renderer.deg2mm(eyeDegree.getX()), renderer
+//					.deg2mm(eyeDegree.getY()), 0.0);
+			
+			double jx = renderer.deg2mm(eyeDegree.getX());
+			double jy = renderer.deg2mm(eyeDegree.getY());
+			
+			if(jx > 600) jx = 600 ;
+			if(jx < -600) jx = -600 ;
+			if(jy > 600) jy = 600 ;
+			if(jy > -600) jy = -600 ;
+			GLUtil.drawCircle(circle, eyeIndicatorSize, true, jx, jy, 0.0);
+					
+					
 			// Eye Voltage
 			Coordinates2D eyeVolt = reading.getVolt();
 			double xmin = renderer.getXmin();
@@ -91,6 +104,10 @@ public class TrialExperimentConsoleRenderer {
 					/ (voltageMax - voltageMin) + ymin);
 
 			GLUtil.drawSquare(square, voltageIndicatorSize, true, xmm, ymm, 0);
+			
+			System.out.println("JK 87632 " + renderer.deg2mm(eyeDegree.getX()) + " : " + renderer.deg2mm(eyeDegree.getY()));
+
+			
 		}
 	}
 	

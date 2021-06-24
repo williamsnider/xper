@@ -47,12 +47,15 @@ public class PngExperimentState extends SlideTrialExperimentState {
 	public PngExperimentState () {
 	}
 	
-	
-	
 	public int getNumSlidesPerTrial() {
-		return PngExptSpec.fromXml(getCurrentTask().getStimSpec()).getStimObjIdCount();
+		return 1;  // PngExptSpec.fromXml(getCurrentTask().getStimSpec()).getStimObjIdCount();
 		
 	}
+	
+//	public int getNumSlidesPerTrial() {
+//		return PngExptSpec.fromXml(getCurrentTask().getStimSpec()).getStimObjIdCount();
+//		
+//	}
 
 	public int getCorrectTrialCount() {
 		return correctTrialCount;
@@ -141,26 +144,26 @@ public class PngExperimentState extends SlideTrialExperimentState {
 	public void setAnimationStates(PngDbUtil dbUtil) {
 		animationStates.clear();
 		long taskId = this.getCurrentTask().getTaskId();
-		List<String> typeStrs = dbUtil.readAllStimTypesByTask(taskId);
+//		List<String> typeStrs = dbUtil.readAllStimTypesByTask(taskId);
 //		System.out.println(typeStrs);
 		
-		for(String str : typeStrs) {
-			if(str.contains("ANIMATE")) {
-				animationStates.add(Boolean.TRUE);
-			}else if (str.contains("BALL")){
-				animationStates.add(Boolean.TRUE);
-			}else {
-				animationStates.add(Boolean.FALSE);
-			}
-		}
-		
+//		for(String str : typeStrs) {
+//			if(str.contains("ANIMATE")) {
+//				animationStates.add(Boolean.TRUE);
+//			}else if (str.contains("BALL")){
+//				animationStates.add(Boolean.TRUE);
+//			}else {
+//				animationStates.add(Boolean.FALSE);
+//			}
+//		}
+//		
 //		for(Boolean b : animationStates) {
 //			System.out.println("JK 83832 setAnimationStates() : state == " + b.toString());
 //		}
 	}
 	
 	public void setAnimationForSlide(int slideNum) {
-		super.setAnimation(this.animationStates.get(slideNum));
+//		super.setAnimation(this.animationStates.get(slideNum));
 	}
 	
 		

@@ -38,38 +38,16 @@
 		</copy>
 	</target>
 
-<!--  JK 21 June 2018	
 	<target name="compile" depends="prepare">
-		<javac srcdir="src" destdir="${build.home}" target="1.6" source="1.6" bootclasspath='/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar' includeantruntime="false">
+		<javac srcdir="src" destdir="${build.home}"> 
 			<classpath refid="classpath" />
 		</javac>
-		<javac srcdir="app" destdir="${build.home}" target="1.6" source="1.6" bootclasspath='/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar' includeantruntime="false">
+		<javac srcdir="app" destdir="${build.home}"> 
 			<classpath refid="classpath" />
 		</javac>
 	</target>
 
-JK 21 June 2018 
---> 
-	
-	<!--  JK 21 June 2018	--> 
-		<target name="compile" depends="prepare">
-			<javac srcdir="src" destdir="${build.home}"> 
-				<classpath refid="classpath" />
-			</javac>
-			<javac srcdir="app" destdir="${build.home}"> 
-				<classpath refid="classpath" />
-			</javac>
-		</target>
 
-	<!-- JK 21 June 2018 -->  
-	
-	
-	
-	
-	
-	
-	
-	
 	<target name="dist" depends="compile">
 		<jar jarfile="${png.home}/xper-png.jar" basedir="${build.home}">
 		</jar>

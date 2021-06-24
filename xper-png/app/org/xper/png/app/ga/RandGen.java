@@ -2,6 +2,7 @@ package org.xper.png.app.ga;
 
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.xper.png.expt.generate.PngRandomGeneration;
+import org.xper.png.expt.generate.SimpleRandomGeneration;
 import org.xper.util.FileUtil;
 
 public class RandGen {
@@ -10,6 +11,7 @@ public class RandGen {
 				FileUtil.loadConfigClass("experiment.config_class"));
 
 		PngRandomGeneration gen = context.getBean(PngRandomGeneration.class);
-		gen.generateGA(); 
+		gen.setTaskCount(100);
+		gen.generate(); 
 	}
 }

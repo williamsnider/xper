@@ -79,7 +79,7 @@ public class GeneralConfig {
 		console.setConsoleRenderer(consoleRenderer());
 		console.setMonkeyScreenDimension(monkeyWindow().getScreenDimension());
 		console.setModel(classicConfig.experimentConsoleModel());
-//		console.setCanvasScaleFactor(2.5);
+		console.setCanvasScaleFactor(3);
 		
 		ExperimentMessageReceiver receiver = classicConfig.messageReceiver();
 		// register itself to avoid circular reference
@@ -89,7 +89,7 @@ public class GeneralConfig {
 	}
 	
 	@Bean
-	public AbstractRenderer consoleGLRenderer() {
+	public PerspectiveRenderer consoleGLRenderer() {
 		PerspectiveRenderer renderer = new PerspectiveRenderer();
 		renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
 		renderer.setDepth(classicConfig.xperMonkeyScreenDepth());
@@ -324,16 +324,13 @@ public class GeneralConfig {
 	
 	  @Bean 
 	   public PngPerspectiveRenderer experimentGLRenderer () {
-		  //PerspectiveStereoRenderer renderer = new PerspectiveStereoRenderer();
-		   //PerspectiveRenderer renderer = new PerspectiveRenderer(); // not using stereo 
-	     PngPerspectiveRenderer renderer = new PngPerspectiveRenderer(); // using my version w background color setting
-		  renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
+		  PngPerspectiveRenderer renderer = new PngPerspectiveRenderer(); 
+	   	  renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
 		  renderer.setDepth(classicConfig.xperMonkeyScreenDepth());
 		  renderer.setHeight(classicConfig.xperMonkeyScreenHeight());
 		  renderer.setWidth(classicConfig.xperMonkeyScreenWidth());
 		  renderer.setPupilDistance(classicConfig.xperMonkeyPupilDistance());
-		  //renderer.setInverted(classicConfig.xperMonkeyScreenInverted()); // only used for stereo rendering
-		  renderer.setRgbColor(new RGBColor(0.4f,0.0f,0.0f));  // set background color to gray 
+		  renderer.setRgbColor(new RGBColor(0.5f,0.5f,0.5f));  // set background color 
 		  return renderer;
 	  }
 	 

@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.xper.db.vo.GenerationInfo;
 import org.xper.db.vo.GenerationTaskDoneList;
 import org.xper.db.vo.StimSpecEntry;
 import org.xper.db.vo.TaskDoneEntry;
@@ -34,8 +35,57 @@ public class PngDbUtil extends DbUtil {
 	}
 	
 
+	/**
+	 * Write ready generation in InternalState table. This is used to initialize
+	 * the <code>task_to_do_gen_ready</code> variable when none is in
+	 * InternalState table.
+	 * 
+	 * @param genId
+	 * @param count
+	 */
+
+	public void writeReadyGenerationInfo(long genId, int taskCount) {
+		GenerationInfo info = new GenerationInfo();
+		info.setGenId(genId);
+		info.setTaskCount(taskCount);
+
+		String xml = info.toXml();
+
+		writeInternalState("task_to_do_gen_ready", 0, xml);
+	}
 	
-	
+	/**
+	 * Write TaskToDo table.
+	 * 
+	 * @param taskId
+	 * @param stimId
+	 * @param xfmId
+	 * @param genId
+	 */
+
+	public void writeTaskToDo(long taskId, long stimId, long xfmId, long genId) {
+		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		jt.update("insert into TaskToDo(task_id, stim_id, xfm_id, gen_id) values (?, ?, ?, ?)", 
+						new Object[] { taskId, stimId, xfmId, genId });
+	}
+
+	/**
+	 * Update <code>task_to_do_gen_ready</code> with new genId and count
+	 * value.
+	 * 
+	 * @param genId
+	 * @param count
+	 */
+	public void updateReadyGenerationInfo(long genId, int taskCount) {
+		GenerationInfo info = new GenerationInfo();
+		info.setGenId(genId);
+		info.setTaskCount(taskCount);
+
+		String xml = info.toXml();
+
+		updateInternalState("task_to_do_gen_ready", 0, xml);
+	}
+
 	
 	public long getStimIdByTaskId(long paramLong) {
 		SimpleJdbcTemplate jt = new SimpleJdbcTemplate(dataSource);
@@ -189,10 +239,6 @@ public List<Long> readAllStimObjIdsByTask(long taskId) {
 		return allIds;
 	}
 	
-//
-// FROM alexandriya_180218_test.StimObjData
-//# where id = 1532369879621234
-//order by id desc;
 
 
 //JK 26 July 2018
