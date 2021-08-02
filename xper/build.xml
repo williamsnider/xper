@@ -59,6 +59,8 @@
 			<fileset dir="lib" />
 		</copy>
 		<!-- JK 25 June 2018 
+		-->
+		
 		<copy todir="${dist.home}/native/windows" failonerror="false">
 			<fileset dir="${native.home}/windows" />
 		</copy>
@@ -68,7 +70,7 @@
 		<copy todir="${dist.home}/native/macos" failonerror="false">
 			<fileset dir="${native.home}/macos" />
 		</copy>
-		-->
+		
 
 		<jar jarfile="${dist.home}/xper.jar" basedir="${build.home}">
 		</jar>

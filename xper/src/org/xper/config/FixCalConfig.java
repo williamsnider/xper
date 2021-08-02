@@ -49,6 +49,10 @@ public class FixCalConfig {
 	@ExternalValue("fixcal.screen_setup")
 	public String fixcalScreenSetup;
 	
+	@ExternalValue("jk.test")
+	public String jkTest;
+	
+	
 	@Bean
 	public EyeInStrategy eyeInStrategy () {
 		StereoEyeInStrategy strategy = new StereoEyeInStrategy();
@@ -59,6 +63,9 @@ public class FixCalConfig {
 	
 	@Bean
 	public AbstractRenderer experimentGLRenderer () {
+		
+		
+		
 		if (fixcalScreenSetup.equalsIgnoreCase("stereo")) {
 			PerspectiveStereoRenderer renderer = new PerspectiveStereoRenderer();
 			renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
@@ -69,6 +76,7 @@ public class FixCalConfig {
 			renderer.setInverted(classicConfig.xperMonkeyScreenInverted());
 			return renderer;
 		} else if (fixcalScreenSetup.equalsIgnoreCase("mono")){
+
 			return classicConfig.experimentGLRenderer();
 		} else {
 			throw new ExperimentSetupException("Invalid screen setup: " + fixcalScreenSetup);

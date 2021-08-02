@@ -376,6 +376,8 @@ public class ClassicConfig {
 	
 	@Bean
 	public AbstractRenderer experimentGLRenderer () {
+		System.out.println("JK 24567 ");
+
 		PerspectiveRenderer renderer = new PerspectiveRenderer();
 		renderer.setDistance(xperMonkeyScreenDistance());
 		renderer.setDepth(xperMonkeyScreenDepth());

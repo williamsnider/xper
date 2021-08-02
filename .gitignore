@@ -29,3 +29,4 @@ dist
 **/xper.properties
 xper/class/
 images
+xper-png/bin/.gitignore
