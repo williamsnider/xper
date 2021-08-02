@@ -286,7 +286,7 @@ public class ImageStack implements Drawable {
 
     public int loadTexture(String pathname, int textureIndex) {
 
-    	pathname = "/home/justin/jkcode/ConnorLab/xper-png/images/img4.png";
+    	pathname = "/home/justin/jkcode/ConnorLab/Alice/images/img4.png";
     	//System.out.println("JK 82273 ImageStack:loadTexture()  " + pathname);
 
     	// if it's been used before, just retrieve the index and add it to the list
