@@ -4,6 +4,9 @@ import org.lwjgl.opengl.GL11;
 
 public class PerspectiveRenderer extends AbstractRenderer {
 	public void init() {
+		
+		System.out.println("JK 637363");
+		
 		super.init();
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();       

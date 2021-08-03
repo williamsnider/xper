@@ -31,7 +31,9 @@ public class Image implements Drawable {
 	
 	boolean texturesLoaded = false;
 	int frameNum = 0;
-	String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
+=======
+	String resourcePath = "/home/justin/jkcode/ConnorLab/Alice/images/"; 
+>>>>>>> f4358b3a418b75bbcd53edf328f1ffa8134a3113
 	String ext = ".jpg"; // ".png";  // 
 	String baseFilename = "img";
 	
