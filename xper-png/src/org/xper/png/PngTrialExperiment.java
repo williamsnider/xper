@@ -140,6 +140,7 @@ public class PngTrialExperiment implements Experiment {
 				} finally {
 					try {
 						TrialExperimentUtil.cleanupTrial(stateObject);
+						System.out.println("JK 66644 run() stopped?");
 					} catch (Exception e) {
 						logger.warn(e.getMessage());
 						e.printStackTrace();

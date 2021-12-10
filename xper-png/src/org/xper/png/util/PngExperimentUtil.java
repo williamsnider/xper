@@ -13,15 +13,10 @@ import org.xper.util.ThreadUtil;
 
 public class PngExperimentUtil {
 	
-	// JK 26 July 2018
-	// need to specify animation here
 	public static void getNextTask(PngDbUtil dbUtil, PngExperimentState state) {
 		
 		// this  TrialExperimentUtil.getNextTask(state):
 		state.setCurrentTask(state.getTaskDataSource().getNextTask());
-		
-		
-
 	}
 	
 	public static boolean isTargetOn (PngTrialContext context) {

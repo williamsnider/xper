@@ -42,7 +42,7 @@ public class PngExptScene extends AbstractTaskScene {
 	}
 
 	public void drawStimulus(Context context) {
-//		System.out.println("JK 0239 PngExptScene:drawStimulus(): slide index = " + c.getSlideIndex());
+		System.out.println("JK 0239 PngExptScene:drawStimulus() ");
 		image.draw(context);
 	}
 

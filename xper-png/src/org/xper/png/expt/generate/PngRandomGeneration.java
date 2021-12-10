@@ -78,7 +78,8 @@ public class PngRandomGeneration {
 		String ext = ".png";
 		
 		System.out.print("JK 833862 SimpleRandomGeneration generate() ");
-		long genId = 1;
+		long genId = -1;
+		long linId = -1;
 		try {
 			genId = dbUtil.readReadyGenerationInfo().getGenId() + 1;
 		} catch (VariableNotFoundException e) {
@@ -94,7 +95,7 @@ public class PngRandomGeneration {
 			
 			long taskId = System.currentTimeMillis() * 1000L;
      		dbUtil.writeStimSpec(taskId, im1.toXml());
-			dbUtil.writeTaskToDo(taskId, taskId, -1, genId);
+			dbUtil.writeTaskToDo(taskId, taskId, -1, genId, linId);
 		}
 		dbUtil.updateReadyGenerationInfo(genId, taskCount);
 		System.out.println("done.");

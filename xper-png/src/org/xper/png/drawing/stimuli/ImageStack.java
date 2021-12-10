@@ -34,9 +34,7 @@ public class ImageStack implements Drawable {
     
     HashMap<String, Integer> nameMap = new HashMap<String, Integer>();
     List<Integer> textureList = new ArrayList<Integer>();	
-    
-    // JK 23 Oct 2018 
-    // 
+
     int div = 1;
     
     // this probably should from the database 
@@ -54,7 +52,6 @@ public class ImageStack implements Drawable {
 	
 	// timing ...
 	long start;
-    
 	
 	// the list of filenames to load.  
     public void loadImages(List<Map<String, Object>> stimInfo){    
@@ -62,8 +59,7 @@ public class ImageStack implements Drawable {
     	start = System.nanoTime();
     	
     	// Hard code it in stone ...
-    	
-    	int numAnimacyImages;
+       	int numAnimacyImages;
     	int numStillImages;
     	int numRollingImages;
     	
@@ -261,18 +257,7 @@ public class ImageStack implements Drawable {
 		for(String str : fullFilenames) {
 			loadTexture(str, n++);
 		}
-//System.out.println("JK 777  ImageStack::loadImages() seconds : " + ((System.nanoTime() - start) /  1e9) );	
-//System.out.println("JK 777  ImageStack::loadImages() : read " + nameMap.size() + " image files for  " 
-//			+  fullFilenames.size() + " frames ");
-		// textureList should have 1 entry for every filename
-		//System.out.println("JK 03043  ImageStack::loadImages() : textureList.size() = " + textureList.size() + ", "
-		//		+ "filenames.size() = " + fullFilenames.size());
-		
-		//for(Integer ndx: textureList) {
-		//	System.out.println("textureList[" + ndx + "] = " + textureList.get(ndx));
-		//}
-		
-    	// assume success?!
+		// assume success?!
     	texturesLoaded = true;
     }
 	

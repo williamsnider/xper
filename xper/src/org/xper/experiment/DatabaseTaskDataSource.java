@@ -91,11 +91,11 @@ public class DatabaseTaskDataSource implements TaskDataSource, Threadable {
 			while (!threadHelper.isDone()) {
 				if (lastDoneTaskId < 0) {
 					lastDoneTaskId = dbUtil.readTaskDoneCompleteMaxId();
+					System.out.println("JK 298372 run() lastDoneTaskId = " + lastDoneTaskId );					
 				}
 				GenerationInfo info = dbUtil.readReadyGenerationInfo();
 				if (info.getGenId() > currentGenId) {
-					// new generation found
-			
+					// new generation found			
 					LinkedList<ExperimentTask> taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
 	
 					if (logger.isDebugEnabled()) {
@@ -106,7 +106,6 @@ public class DatabaseTaskDataSource implements TaskDataSource, Threadable {
 						currentGeneration.set(taskToDo);
 						currentGenId = info.getGenId();
 						System.out.println("found  generation : " + currentGenId + " with " + taskToDo.size() + " tasks ");					
-						
 					}
 				}
 				try {

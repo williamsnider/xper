@@ -209,12 +209,7 @@ public class PngDbUtil extends DbUtil {
 								 "FROM StimObjData where id = ?", stimObjId);
 	
 	}
-	
-//	SELECT  extractvalue(spec, '/StimSpec/object')
-//	FROM StimSpec
-//	where id = 1532619299807779
-	
-	
+
 	
 // JK 26 July 2018
 public List<Long> readAllStimObjIdsByTask(long taskId) {
