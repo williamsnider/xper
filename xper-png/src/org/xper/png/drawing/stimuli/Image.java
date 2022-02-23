@@ -94,14 +94,14 @@ public class Image implements Drawable {
 		String ext = ".png"; // ".png";  // 
 		String baseFilename = "img";  //		
 		String testImageName = resourcePath + baseFilename + ext;
-		int numTrials = 1;    
+		int numTrials = 4;    
 		DrawingManager testWindow = new DrawingManager(1200, 1920);
 		
 		for(int i = 0; i < numTrials; i++){
 			Image img = new Image();	
 			List<Image> images = new ArrayList<Image>();
 
-			testImageName = resourcePath + baseFilename + Integer.toString(5 + 0) + ext;
+			testImageName = resourcePath + baseFilename + Integer.toString(i + 0) + ext;
 			img.loadTexture(testImageName);
 			System.out.println("JK 272621 loading " + testImageName);
 			images.add(img);
