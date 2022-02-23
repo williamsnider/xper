@@ -31,9 +31,9 @@ public class Image implements Drawable {
 	
 	boolean texturesLoaded = false;
 	int frameNum = 0;
-=======
+//=======
 	String resourcePath = "/home/justin/jkcode/ConnorLab/Alice/images/"; 
->>>>>>> f4358b3a418b75bbcd53edf328f1ffa8134a3113
+//>>>>>>> f4358b3a418b75bbcd53edf328f1ffa8134a3113
 	String ext = ".jpg"; // ".png";  // 
 	String baseFilename = "img";
 	
@@ -91,23 +91,21 @@ public class Image implements Drawable {
 	
 	
 	public static void testImage(){
-		//String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
 		String resourcePath = "/home/justin/choiceImages/"; 
 		String ext = ".png"; // ".png";  // 
 		String baseFilename = "img";  //		
 		String testImageName = resourcePath + baseFilename + ext;
-		int numTrials = 1;    
+		int numTrials = 4;    
 		DrawingManager testWindow = new DrawingManager(1200, 1920);
+		List<Image> images = new ArrayList<Image>();
 		
 		for(int i = 0; i < numTrials; i++){
 			Image img = new Image();	
-			List<Image> images = new ArrayList<Image>();
-
-			testImageName = resourcePath + baseFilename + Integer.toString(5 + 0) + ext;
+			testImageName = resourcePath + baseFilename + Integer.toString(i + 0) + ext;
 			img.loadTexture(testImageName);
 			System.out.println("JK 272621 loading " + testImageName);
 			images.add(img);
-			testWindow.setStimObjs(images);		// add object to be drawn
+			testWindow.setStimObjs(images);		// add object to be drawn			
 		}
 		testWindow.drawStimuli();
 		System.out.println("done " + testImageName);
