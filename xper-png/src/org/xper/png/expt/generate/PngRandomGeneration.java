@@ -71,7 +71,7 @@ public class PngRandomGeneration {
 
 		ImageSpec im1 = new ImageSpec();
 		
-		String basepath = "/home/justin/choiceImages/img";
+		String basepath = "/home/justin/images/img";
 		String ext = ".png";
 		
 		System.out.print("JK 833862 SimpleRandomGeneration generate() ");
