@@ -70,7 +70,9 @@ public class Image implements Drawable {
 			return 0; 
 	
 		} catch(IOException e) {
+			System.out.println("JK 92416 : " + pathname);
 			e.printStackTrace();
+			
 			throw new RuntimeException(e);
 		}
 	}

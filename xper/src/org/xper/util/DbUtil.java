@@ -348,10 +348,10 @@ public class DbUtil {
 		final LinkedList<ExperimentTask> taskToDo = new LinkedList<ExperimentTask>();
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
 		
-		// JKbookmark
-		genId = 2;
-		linId = -1; 
-		lastDoneTaskId = -1;
+		// JK BM
+//		genId = 2;
+//		linId = -1; 
+//		lastDoneTaskId = -1;
 		
 		jt.query(
 				" select t.task_id, t.stim_id, t.xfm_id, t.gen_id, t.lin_id, " +
@@ -373,7 +373,7 @@ public class DbUtil {
 						task.setXfmSpec(rs.getString("xfm_spec"));
 						taskToDo.add(task);
 					}});
-		System.out.println(taskToDo.size() + ", " + genId + ", " + linId + ", " + lastDoneTaskId );
+		System.out.println("JK 8261 : " + taskToDo.size() + ", " + genId + ", " + linId + ", " + lastDoneTaskId );
 		return taskToDo;
 	}
 

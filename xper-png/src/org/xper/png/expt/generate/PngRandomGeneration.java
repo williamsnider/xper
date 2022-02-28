@@ -70,16 +70,16 @@ public class PngRandomGeneration {
 	
 	
 	public void generate() {
-		int NumImages = 5;
+		int NumImages = 17;
 
 		ImageSpec im1 = new ImageSpec();
 		
-		String basepath = "/home/justin/choiceImages/img";
+		String basepath = "/home/justin/images/img";
 		String ext = ".png";
 		
 		System.out.print("JK 833862 SimpleRandomGeneration generate() ");
 		long genId = -1;
-		long linId = -1;
+		long linId = 0;
 		try {
 			genId = dbUtil.readReadyGenerationInfo().getGenId() + 1;
 		} catch (VariableNotFoundException e) {
