@@ -70,11 +70,12 @@ public class PngRandomGeneration {
 	
 	
 	public void generate() {
-		int NumImages = 17;
+		int NumImages = 7;
+		int offset = 10;
 
 		ImageSpec im1 = new ImageSpec();
 		
-		String basepath = "/home/justin/images/img";
+		String basepath = "/home/justin/images/8k/img";
 		String ext = ".png";
 		
 		System.out.print("JK 833862 SimpleRandomGeneration generate() ");
@@ -89,8 +90,7 @@ public class PngRandomGeneration {
 			if (i % 10 == 0) {
 				System.out.print(".");
 			}
-			im1.setFilename(basepath + Integer.toString((int)(Math.round(Math.random() * NumImages))) + ext);
-		
+			im1.setFilename(basepath + Integer.toString((int)(Math.round(Math.random() *( NumImages+ offset))) ) + ext);
 			System.out.println(im1.toXml());
 			
 			long taskId = System.currentTimeMillis() * 1000L;

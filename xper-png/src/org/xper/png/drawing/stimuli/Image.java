@@ -92,17 +92,19 @@ public class Image implements Drawable {
 	
 	public static void testImage(){
 		//String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
-		String resourcePath = "/home/justin/choiceImages/"; 
+		String resourcePath = "/home/justin/images/8k/";
+		
 		String ext = ".png"; // ".png";  // 
 		String baseFilename = "img";  //		
 		String testImageName = resourcePath + baseFilename + ext;
-		int numTrials = 9;    
+		int numTrials = 7;    
+		int offset = 17;
 		DrawingManager testWindow = new DrawingManager(1200, 1920);
 		List<Image> images = new ArrayList<Image>();
 		
 		for(int i = 0; i < numTrials; i++){
 			Image img = new Image();	
-			testImageName = resourcePath + baseFilename + Integer.toString(i + 0) + ext;
+			testImageName = resourcePath + baseFilename + Integer.toString(i + offset) + ext;
 			img.loadTexture(testImageName);
 			System.out.println("JK 272621 loading " + testImageName);
 			images.add(img);

@@ -68,7 +68,8 @@ public class GAConfig {
 		// but if you are using xper's fixation spot for the experiment (in mono)
 		// then comment the next line
 		
-//		f.setSize(0);
+//	
+		f.setSize(0);
 		scene.setFixation(f);
 		
 		scene.setMarker(classicConfig.screenMarker());
