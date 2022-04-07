@@ -70,12 +70,12 @@ public class PngRandomGeneration {
 	
 	
 	public void generate() {
-		int NumImages = 7;
-		int offset = 10;
+		int NumImages = 14;
+		int offset = 0;
 
 		ImageSpec im1 = new ImageSpec();
 		
-		String basepath = "/home/justin/images/8k/img";
+		String basepath = "/home/connorlab/images/img";
 		String ext = ".png";
 		
 		System.out.print("JK 833862 SimpleRandomGeneration generate() ");
