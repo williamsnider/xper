@@ -115,12 +115,13 @@ public class Image implements Drawable {
 
 	@Override
 	public void draw(Context context) {
-		float width = imgWidth; // texture.getImageWidth();
-		float height = imgHeight; // texture.getImageHeight();		
+		float width = (float) context.getRenderer().getVpWidthmm();
+		float height = (float) context.getRenderer().getVpHeightmm();
 		float yOffset = -height / 2.0f;
 		float xOffset = -width / 2.0f; 
 				
-		System.out.printf("JK 254 draw() w = %f, h = %f\n", width, height );
+		
+		System.out.printf("JK 254 draw() xOffset = %f, yOffset = %f\n", xOffset, yOffset );
 	
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(textureIndex));
@@ -129,7 +130,7 @@ public class Image implements Drawable {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, imgWidth, imgHeight, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
-	float x = 1.0f;	
+	float x = 1.0f; // 1.0f;	
        GL11.glColor3d(1.0, 1.0, 1.0);
        GL11.glBegin(GL11.GL_QUADS);
            GL11.glTexCoord2f(0, x);
