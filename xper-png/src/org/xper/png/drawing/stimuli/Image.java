@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.xper.drawing.Context;
+import org.xper.drawing.Coordinates2D;
 import org.xper.drawing.Drawable;
 import org.xper.png.drawing.preview.DrawingManager;
 import org.xper.util.ThreadUtil;
@@ -70,7 +71,9 @@ public class Image implements Drawable {
 			return 0; 
 	
 		} catch(IOException e) {
+			System.out.println("JK 92416 : " + pathname);
 			e.printStackTrace();
+			
 			throw new RuntimeException(e);
 		}
 	}
@@ -90,23 +93,25 @@ public class Image implements Drawable {
 	
 	public static void testImage(){
 		//String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
-		String resourcePath = "/home/justin/choiceImages/"; 
+		String resourcePath = "/home/connorlab/images/";
+		
 		String ext = ".png"; // ".png";  // 
 		String baseFilename = "img";  //		
 		String testImageName = resourcePath + baseFilename + ext;
-		int numTrials = 1;    
+		int numTrials = 14;    
+		int offset = 0;
 		DrawingManager testWindow = new DrawingManager(1200, 1920);
+		List<Image> images = new ArrayList<Image>();
 		
-		for(int i = 0; i < numTrials; i++){
+		for(int i = 1; i < numTrials; i++){
 			Image img = new Image();	
-			List<Image> images = new ArrayList<Image>();
-
-			testImageName = resourcePath + baseFilename + Integer.toString(5 + 0) + ext;
+			testImageName = resourcePath + baseFilename + Integer.toString(i + offset) + ext;
 			img.loadTexture(testImageName);
 			System.out.println("JK 272621 loading " + testImageName);
 			images.add(img);
-			testWindow.setStimObjs(images);		// add object to be drawn
 		}
+		testWindow.setStimDurMs(2000);
+		testWindow.setStimObjs(images);		// add objects to be drawn
 		testWindow.drawStimuli();
 		System.out.println("done " + testImageName);
 	}
@@ -115,34 +120,46 @@ public class Image implements Drawable {
 
 	@Override
 	public void draw(Context context) {
-
-		float width = imgWidth; // texture.getImageWidth();
-		float height = imgHeight; // texture.getImageHeight();		
-		float yOffset = -height / 2;
-		float xOffset = -width / 2; 
 		
+//		Coordinates2D centermm = new Coordinates2D(0,0);
+//
+//
+//		float width = (float) context.getRenderer().deg2mm((float)imgWidth); // texture.getImageWidth();
+//		float height = (float) context.getRenderer().deg2mm((float)imgHeight); // texture.getImageHeight();		
+//		
+//		Coordinates2D pixels2D = context.getRenderer().pixel2mm(new Coordinates2D(imgWidth, imgHeight));
+//		
+//		float width = imgWidth; // texture.getImageWidth();
+//		float height = imgHeight; // texture.getImageHeight();	
+		float width = (float) context.getRenderer().getVpWidthmm();
+		float height = (float) context.getRenderer().getVpHeightmm();
+		System.out.println("AC WIDTH: " + width);
+		System.out.println("AC HEIGHT: " + height);
+		float yOffset = -height / 2.0f;
+		float xOffset = -width / 2.0f; 
+				
+		
+		System.out.printf("JK 254 draw() xOffset = %f, yOffset = %f\n", xOffset, yOffset );
+	
 		GL11.glEnable(GL11.GL_TEXTURE_2D);  	
-
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIds.get(textureIndex));
-		
 		// from http://wiki.lwjgl.org/index.php?title=Multi-Texturing_with_GLSL
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, imgWidth, imgHeight, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
 		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
-		
+	float x = 1.0f; // 1.0f;	
        GL11.glColor3d(1.0, 1.0, 1.0);
        GL11.glBegin(GL11.GL_QUADS);
-           GL11.glTexCoord2f(0, 1);
+           GL11.glTexCoord2f(0, x);
            GL11.glVertex2f(xOffset, yOffset);
-           GL11.glTexCoord2f(1, 1);
+           GL11.glTexCoord2f(x, x);
            GL11.glVertex2f(xOffset + width, yOffset);
-           GL11.glTexCoord2f(1, 0);
+           GL11.glTexCoord2f(x, 0);
            GL11.glVertex2f(xOffset + width, yOffset + height);
            GL11.glTexCoord2f(0, 0);
            GL11.glVertex2f(xOffset, yOffset + height);
        GL11.glEnd();
-
 
        // delete the texture
        GL11.glDeleteTextures(textureIds.get(textureIndex));

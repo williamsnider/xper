@@ -517,7 +517,8 @@ public class ExperimentConsole extends JFrame implements
 	}
 
 	void stop() {
-		final JDialog progress = GuiUtil.createProgressDialog(this, "Shuting down experiment...");
+		// JK BM
+		final JDialog progress = GuiUtil.createProgressDialog(this, "Shutting down experiment...");
 		ThreadUtil.backgroundRun(new Runnable() {
 			public void run() {
 				for (IConsolePlugin p : consolePlugins) {

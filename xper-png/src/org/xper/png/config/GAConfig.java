@@ -68,7 +68,8 @@ public class GAConfig {
 		// but if you are using xper's fixation spot for the experiment (in mono)
 		// then comment the next line
 		
-//		f.setSize(0);
+//	
+		f.setSize(0);
 		scene.setFixation(f);
 		
 		scene.setMarker(classicConfig.screenMarker());
@@ -100,8 +101,6 @@ public class GAConfig {
 	// -shs: set slide length and ISI here (not via db):
 	@Bean
 	public PngExperimentState experimentState() {
-//		System.out.println("JK GAConfig : experimentState()");
-
 		PngExperimentState state = new PngExperimentState();
 		state.setLocalTimeUtil(baseConfig.localTimeUtil());
 		state.setTrialEventListeners(generalConfig.trialEventListeners());
@@ -123,19 +122,13 @@ public class GAConfig {
 		state.setSlidePerTrial(classicConfig.xperSlidePerTrial());
 		state.setSlideLength(classicConfig.xperSlideLength());
 		state.setInterSlideInterval(classicConfig.xperInterSlideInterval());
-		
-		// JK 16 Aug 2018 
 		//state.setDoEmptyTask(classicConfig.xperDoEmptyTask());
 		state.setDoEmptyTask(false);
-		
 		state.setSleepWhileWait(true);
 		state.setPause(classicConfig.xperExperimentInitialPause());
 		state.setDelayAfterTrialComplete(classicConfig.xperDelayAfterTrialComplete());
 		state.setRepeatTrialIfEyeBreak(true);
-		
-		// JK 1 Aug 2016
-		//state.setTimeoutPenaltyDelay(xperTimeoutPenaltyDelay());
-		
+	
 		return state;
 	}	
 }

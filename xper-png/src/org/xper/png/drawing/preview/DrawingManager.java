@@ -27,6 +27,7 @@ public class DrawingManager implements Drawable{
 	
 	int height;
 	int width;
+	int stimDurMs = 1000;
 	
 	PNGmaker pngMaker;
 	
@@ -78,7 +79,7 @@ public class DrawingManager implements Drawable{
 //				pngMaker.saveImage_file(stimObjIds.get(stimCounter),height,width, imageFolderName);
 //			pngMaker.saveImage_db(stimObjIds.get(stimCounter),height,width);
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(stimDurMs);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -129,4 +130,13 @@ public class DrawingManager implements Drawable{
 		this.stimObjs = stimObjs;
 		nStim = stimObjs.size();
 	}
+	
+	public void setStimDurMs(int stimDurMillis) {
+		this.stimDurMs = stimDurMillis;
+	}
+	
+	public int getStimDurMs() {
+		return this.stimDurMs;
+	}
+	
 }
