@@ -55,7 +55,7 @@ public class TrialExperimentConsoleRenderer {
 		double eyeWindowSize = renderer.deg2mm(window.getSize());
 		GLUtil.drawCircle(circle, eyeWindowSize, false, eyeWindowCenterX, eyeWindowCenterY, 0.0);
 		
-		System.out.println("JK 92632 " + eyeWindowSize + " : " + eyeWindowCenterX + " : " + eyeWindowCenterY);
+		//System.out.println("JK 92632 " + eyeWindowSize + " : " + eyeWindowCenterX + " : " + eyeWindowCenterY);
 	
 	}
 	
@@ -89,7 +89,6 @@ public class TrialExperimentConsoleRenderer {
 			if(jy > -600) jy = -600 ;
 			GLUtil.drawCircle(circle, eyeIndicatorSize, true, jx, jy, 0.0);
 					
-					
 			// Eye Voltage
 			Coordinates2D eyeVolt = reading.getVolt();
 			double xmin = renderer.getXmin();
@@ -105,7 +104,7 @@ public class TrialExperimentConsoleRenderer {
 
 			GLUtil.drawSquare(square, voltageIndicatorSize, true, xmm, ymm, 0);
 			
-			System.out.println("JK 87632 " + renderer.deg2mm(eyeDegree.getX()) + " : " + renderer.deg2mm(eyeDegree.getY()));
+			//System.out.println("JK 87632 " + renderer.deg2mm(eyeDegree.getX()) + " : " + renderer.deg2mm(eyeDegree.getY()));
 
 			
 		}

@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.xper.drawing.Context;
+import org.xper.drawing.Coordinates2D;
 import org.xper.drawing.Drawable;
 import org.xper.png.drawing.preview.DrawingManager;
 import org.xper.util.ThreadUtil;
@@ -70,7 +71,9 @@ public class Image implements Drawable {
 			return 0; 
 	
 		} catch(IOException e) {
+			System.out.println("JK 92416 : " + pathname);
 			e.printStackTrace();
+			
 			throw new RuntimeException(e);
 		}
 	}
@@ -90,17 +93,19 @@ public class Image implements Drawable {
 	
 	public static void testImage(){
 		//String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
-		String resourcePath = "/home/justin/choiceImages/"; 
+		String resourcePath = "/home/connorlab/images/";
+		
 		String ext = ".png"; // ".png";  // 
 		String baseFilename = "img";  //		
 		String testImageName = resourcePath + baseFilename + ext;
-		int numTrials = 9;    
+		int numTrials = 14;    
+		int offset = 0;
 		DrawingManager testWindow = new DrawingManager(1200, 1920);
 		List<Image> images = new ArrayList<Image>();
 		
-		for(int i = 0; i < numTrials; i++){
+		for(int i = 1; i < numTrials; i++){
 			Image img = new Image();	
-			testImageName = resourcePath + baseFilename + Integer.toString(i + 0) + ext;
+			testImageName = resourcePath + baseFilename + Integer.toString(i + offset) + ext;
 			img.loadTexture(testImageName);
 			System.out.println("JK 272621 loading " + testImageName);
 			images.add(img);
@@ -115,8 +120,21 @@ public class Image implements Drawable {
 
 	@Override
 	public void draw(Context context) {
+		
+//		Coordinates2D centermm = new Coordinates2D(0,0);
+//
+//
+//		float width = (float) context.getRenderer().deg2mm((float)imgWidth); // texture.getImageWidth();
+//		float height = (float) context.getRenderer().deg2mm((float)imgHeight); // texture.getImageHeight();		
+//		
+//		Coordinates2D pixels2D = context.getRenderer().pixel2mm(new Coordinates2D(imgWidth, imgHeight));
+//		
+//		float width = imgWidth; // texture.getImageWidth();
+//		float height = imgHeight; // texture.getImageHeight();	
 		float width = (float) context.getRenderer().getVpWidthmm();
 		float height = (float) context.getRenderer().getVpHeightmm();
+		System.out.println("AC WIDTH: " + width);
+		System.out.println("AC HEIGHT: " + height);
 		float yOffset = -height / 2.0f;
 		float xOffset = -width / 2.0f; 
 				

@@ -97,7 +97,8 @@ public class DatabaseTaskDataSource implements TaskDataSource, Threadable {
 				if (info.getGenId() > currentGenId) {
 					// new generation found			
 					LinkedList<ExperimentTask> taskToDo = dbUtil.readExperimentTasks(info.getGenId(), info.getLinId(), lastDoneTaskId);
-	
+					System.out.println("JK 6343 run() taskToDo.size() = " + taskToDo.size() );					
+
 					if (logger.isDebugEnabled()) {
 						logger.debug("Generation " + info.getGenId() + " Lineage " + info.getLinId() + " size: "
 								+ taskToDo.size());

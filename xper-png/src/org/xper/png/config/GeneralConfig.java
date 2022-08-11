@@ -79,8 +79,9 @@ public class GeneralConfig {
 		console.setConsoleRenderer(consoleRenderer());
 		console.setMonkeyScreenDimension(monkeyWindow().getScreenDimension());
 		console.setModel(classicConfig.experimentConsoleModel());
-		console.setCanvasScaleFactor(3);
-		
+// JK BM		console.setCanvasScaleFactor(3);
+		console.setCanvasScaleFactor(2.5);
+
 		ExperimentMessageReceiver receiver = classicConfig.messageReceiver();
 		// register itself to avoid circular reference
 		receiver.addMessageReceiverEventListener(console);
@@ -94,7 +95,7 @@ public class GeneralConfig {
 		renderer.setDistance(classicConfig.xperMonkeyScreenDistance());
 		renderer.setDepth(classicConfig.xperMonkeyScreenDepth());
 		renderer.setHeight(classicConfig.xperMonkeyScreenHeight());
-		renderer.setWidth(classicConfig.xperMonkeyScreenWidth()/2);
+		renderer.setWidth(classicConfig.xperMonkeyScreenWidth()/1);
 		renderer.setPupilDistance(classicConfig.xperMonkeyPupilDistance());
 		return renderer;
 	}
@@ -330,7 +331,7 @@ public class GeneralConfig {
 		  renderer.setHeight(classicConfig.xperMonkeyScreenHeight());
 		  renderer.setWidth(classicConfig.xperMonkeyScreenWidth());
 		  renderer.setPupilDistance(classicConfig.xperMonkeyPupilDistance());
-		  renderer.setRgbColor(new RGBColor(0.5f,0.5f,0.5f));  // set background color 
+		  renderer.setRgbColor(new RGBColor(0.0f,0.0f,0.0f));  // set background color 
 		  return renderer;
 	  }
 	 

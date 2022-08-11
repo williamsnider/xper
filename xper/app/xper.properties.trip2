@@ -41,9 +41,8 @@ mock.config_class=
 
 #
 acq.server_host=localhost
-# 
-acq.driver_name=none
-#acq.driver_name=comedi
+# acq.driver_name=none
+acq.driver_name=comedi
 
 #
 console.host=172.30.6.56
