@@ -2,7 +2,7 @@
 *assuming maven is installed (apt install maven)
 (helpful guide with using maven: https://spring.io/guides/gs/maven/)
 
-pom.xml has jeromq as a dependency. Therefore running this maven command should download jeromq (java implementation of zeromq)
+I've edited pom.xml to have jeromq as a dependency. Therefore running this maven command should download jeromq (java implementation of zeromq):
 ```
 mvn package
 ```
@@ -35,8 +35,8 @@ cd ../..
 
 ## Terminal #1: Publisher (c++)
 ```
-g++ publisher.cpp -o publisher -lzmq
-./publisher
+g++ publisher.cpp -o publisher.out -lzmq
+./publisher.out
 ```
 
 ## Terminal #2: Receiver (java)
