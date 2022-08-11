@@ -347,6 +347,12 @@ public class DbUtil {
 			long linId, long lastDoneTaskId) {
 		final LinkedList<ExperimentTask> taskToDo = new LinkedList<ExperimentTask>();
 		JdbcTemplate jt = new JdbcTemplate(dataSource);
+		
+		// JK BM
+//		genId = 2;
+//		linId = -1; 
+//		lastDoneTaskId = -1;
+		
 		jt.query(
 				" select t.task_id, t.stim_id, t.xfm_id, t.gen_id, t.lin_id, " +
 						" (select spec from StimSpec s where s.id = t.stim_id ) as stim_spec, " +
@@ -367,6 +373,7 @@ public class DbUtil {
 						task.setXfmSpec(rs.getString("xfm_spec"));
 						taskToDo.add(task);
 					}});
+		System.out.println("JK 8261 : " + taskToDo.size() + ", " + genId + ", " + linId + ", " + lastDoneTaskId );
 		return taskToDo;
 	}
 
@@ -520,7 +527,8 @@ public class DbUtil {
 		info.setTaskCount(taskCount);
 
 		String xml = info.toXml();
-		// JK 	System.out.println("DbUtil: " + xml);
+		// JK 	
+		System.out.println("JK 286652 DbUtil: updateReadyGenerationInfo() : " + xml);
 		updateInternalState("task_to_do_gen_ready", 0, xml);
 	}
 
@@ -785,6 +793,9 @@ public class DbUtil {
 				" select max(task_id) as max_task_id " +
 				" from TaskDone " +
 				" where part_done = 0"); 
+		
+		System.out.println("JK 79293 : readTaskDoneCompleteMaxId() maxId = " + maxId);
+		
 		return maxId;
 	}
 

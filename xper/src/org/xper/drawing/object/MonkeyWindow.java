@@ -45,7 +45,7 @@ public class MonkeyWindow implements Window {
 				//int height = (int)(screenHeight / canvasScaleFactor);
 				//int width = height * 8 / 3;
 				int height = (int)(screenHeight / 2);
-				int width = (int)(screenWidth/ 2);
+				int width = (int)(screenWidth / 2);
 				Display.setDisplayMode(new DisplayMode(width,height));
 				Display.setTitle("Monkey Monitor");
 			}
