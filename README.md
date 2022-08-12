@@ -23,6 +23,7 @@ cd ../..
 2. Build cppzmq via cmake
 ```
 git clone https://github.com/zeromq/cppzmq.git
+cd cppzmq
 mkdir build
 cd build
 cmake ..
