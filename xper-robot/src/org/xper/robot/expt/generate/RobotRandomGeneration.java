@@ -63,10 +63,10 @@ public class RobotRandomGeneration {
 	
 	
 	public void generate() {
-		int NumImages = 11;
+		int NumImages = 20;
 		int offset = 0;
 		ImageSpec im1 = new ImageSpec();
-		String basepath = "/home/justin/jkcode/OConnorLab/images/img";
+		String basepath = "/home/oconnorlab/code/images/img-";
 		String ext = ".png";
 		
 		System.out.print("JK 833862 RobotRandomGeneration generate() ");

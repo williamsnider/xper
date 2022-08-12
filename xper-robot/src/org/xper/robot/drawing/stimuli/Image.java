@@ -32,10 +32,9 @@ public class Image implements Drawable {
 	
 	boolean texturesLoaded = false;
 	int frameNum = 0;
-//=======
 	String resourcePath = "/home/justin/jkcode/ConnorLab/Alice/images/"; 
-//>>>>>>> f4358b3a418b75bbcd53edf328f1ffa8134a3113
-	String ext = ".jpg"; // ".png";  // 
+
+	String ext = ".jpg"; 
 	String baseFilename = "img";
 	
 	String imageName;
@@ -60,12 +59,13 @@ public class Image implements Drawable {
 	
 		try {
 			File imageFile = new File(pathname);
-			BufferedImage img = ImageIO.read(imageFile);
+			BufferedImage img = new BufferedImage(1920, 1080, BufferedImage.TYPE_INT_RGB);   //
+			img = ImageIO.read(imageFile);
 			imgWidth = img.getWidth();
 			imgHeight = img.getHeight();
 			System.out.println("JK 651222 loaded image : " + imgWidth + ", " + imgHeight);
-			byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();	
-			
+					
+		    byte[] src = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();	
 			bgr2rgb(src);
 	
 			pixels = (ByteBuffer)BufferUtils.createByteBuffer(src.length).put(src, 0x00000000, src.length).flip();
@@ -95,9 +95,9 @@ public class Image implements Drawable {
 	
 	public static void testImage(){
 		//String resourcePath = "/home/justin/jkcode/ConnorLab/xper-png/images/"; 
-		String resourcePath = "/home/connorlab/images/";
+		String resourcePath = "/home/oconnorlab/code/images/";
 		String ext = ".png"; 
-		String baseFilename = "img";  //		
+		String baseFilename = "img-";  //	
 		String testImageName = resourcePath + baseFilename + ext;
 		int numTrials = 14;    
 		int offset = 0;
